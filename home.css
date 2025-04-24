@@ -1,0 +1,104 @@
+/* inter, montserrat */@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+    background-color: rgba(234, 151, 27, 0.968);
+    font-family: "montserrat";
+}
+.background-decoration {
+    background-color: rgba(227, 227, 227, 0.897);
+
+    overflow: hidden;
+    border-radius: 200px;
+}
+h1 {
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 1.5em;
+    font-family: "montserrat";
+}
+h2 {
+    font-weight: 500;
+    font-size: 1rem;
+    font-family: "montserrat";
+}
+
+
+header {
+    height: 200px;
+    background-color: rgba(245, 118, 27, 0.908);
+    font-family: "montserrat";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+header .title {
+    text-align: center;
+    width: 600px;
+    border-radius: 3500px;
+    padding: 2%;
+    background-color: rgb(49, 171, 196);
+    font-weight: 450;
+    font-size: 4rem;
+}
+.main {
+    padding: 3%;
+}
+
+.blockquote {
+    background-color: rgb(172, 172, 232);
+    border-radius: 130px;
+}
+blockquote {
+    background-color: rgba(184, 197, 209, 0.76);
+    width: 60vw;
+    padding: 3%;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 130px;
+    font-style: italic;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
+    & p.author {
+        text-align: right;
+        padding-right: 100px;
+    }
+}
+
+.main .about{
+    padding: 5%;
+    flex: 1;
+    border-right: black 1px solid;
+}
+.main .content .about > p{
+    font-size: 1.3em;
+    font-weight: 500;
+    margin-bottom: 5%;
+}
+.main .about li {
+    padding-left: 30px;
+    line-height: 1.5;
+}
+.main .content {
+    padding: 3%;
+    display: flex;
+}
+.instructions {
+    padding: 5%;
+
+    flex: 1;
+}
+
+
+footer {
+    width: 100vw;
+    height: 200px;
+    background-color: rgba(245, 118, 27, 0.908);
+    display: flex;
+    & h1{
+        border-bottom: 1px solid black;
+    }
+}
+footer >*{
+    font-family: "inter";
+    padding: 5%;
+    flex: 1;
+}
