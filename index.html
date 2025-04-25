@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Scouter - Find Like-minded Researchers</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo-link">
+                <div class="logo">
+                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="16" r="15" stroke="#4a6bff" stroke-width="2"/>
+                        <path d="M10 16L16 10M16 10L22 16M16 10V22" stroke="#4a6bff" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="logo-text">Research Scooter</span>
+                </div>
+            </a>
+            
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link active">Home</a></li>
+                    <li class="nav-item"><a href="results.html" class="nav-link">New Search</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">My Researchers</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                </ul>
+            </nav>
+            
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-outline">Sign Up</a>
+                <a href="#" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Discover Your Research Community</h1>
+                <p class="subtitle">Find like-minded researchers and potential collaborators based on your research interests</p>
+                
+                <div class="search-container">
+                    <form id="research-search" action="results.html" method="get">
+                        <div class="search-field">
+                            <input 
+                                type="text" 
+                                name="query"
+                                id="research-query"
+                                placeholder="Enter your research interest (e.g., Machine Learning, Bioinformatics)" 
+                                class="search-input">
+                            <button type="submit" class="btn btn-primary search-btn">Find Researchers</button>
+                        </div>
+                        <div class="popular-tags">
+                            <span class="tag-label">Popular:</span>
+                            <button type="button" class="tag-button">Machine Learning</button>
+                            <button type="button" class="tag-button">Data Science</button>
+                            <button type="button" class="tag-button">Quantum Computing</button>
+                            <button type="button" class="tag-button">Climate Science</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2>How Research Scooter Works</h2>
+                <div class="feature-cards">
+                    <div class="feature-card">
+                        <div class="feature-icon">1</div>
+                        <h3>Enter Your Research Interest</h3>
+                        <p>Tell us what you're researching or interested in studying</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">2</div>
+                        <h3>Discover Researchers</h3>
+                        <p>We find professors and PhD students working on similar topics</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">3</div>
+                        <h3>Connect & Collaborate</h3>
+                        <p>Save profiles, access their publications, and reach out</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <div class="container">
+                <h2>What Researchers Say</h2>
+                <div class="testimonial-cards">
+                    <div class="testimonial-card">
+                        <p>"Research Scooter helped me find three collaborators for my latest paper on neural networks."</p>
+                        <div class="testimonial-author">
+                            <strong>Dr. Sarah Chen</strong>
+                            <span>Stanford University</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"As a PhD student, finding the right mentors was challenging until I discovered this platform."</p>
+                        <div class="testimonial-author">
+                            <strong>James Wilson</strong>
+                            <span>MIT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta-section">
+            <div class="container">
+                <h2>Ready to Expand Your Research Network?</h2>
+                <p>Join thousands of researchers who are discovering new connections every day</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary btn-large">Get Started</a>
+                    <a href="#" class="btn btn-outline btn-large">Learn More</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-text">Research Scooter</span>
+                    <p>Connecting researchers worldwide</p>
+                </div>
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>About</h4>
+                        <ul>
+                            <li><a href="#">Our Mission</a></li>
+                            <li><a href="#">How It Works</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-group">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Research Insights</a></li>
+                            <li><a href="#">Academic Journals</a></li>
+                            <li><a href="#">API Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-group">
+                        <h4>Contact</h4>
+                        <ul>
+                            <li><a href="#">Support</a></li>
+                            <li><a href="#">Feedback</a></li>
+                            <li><a href="#">Join Our Team</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Research Scooter. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple script to make popular tags work
+        document.addEventListener('DOMContentLoaded', function() {
+            const tagButtons = document.querySelectorAll('.tag-button');
+            const searchInput = document.getElementById('research-query');
+            
+            tagButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    searchInput.value = this.textContent.trim();
+                    searchInput.focus();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

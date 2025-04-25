@@ -1,0 +1,605 @@
+/* 
+* Research Scooter - Main Stylesheet
+* A clean, minimalist design for academic researcher discovery
+*/
+
+/* ===== Base Styles ===== */
+:root {
+    /* Color palette */
+    --primary: #4a6bff;
+    --primary-dark: #3a56e0;
+    --primary-light: #eaedff;
+    --secondary: #f5f7ff;
+    --text: #333333;
+    --text-light: #6e7276;
+    --text-lighter: #9da0a4;
+    --border: #e1e4e8;
+    --white: #ffffff;
+    --success: #2ea843;
+    --error: #e53e3e;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    background-color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.container {
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+img, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary);
+    transition: all 0.2s ease-in-out;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+ul, ol {
+    list-style: none;
+}
+
+button {
+    cursor: pointer;
+    font: inherit;
+    background: none;
+    border: none;
+}
+
+input, select, textarea {
+    font: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2.625rem;
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+h3 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+}
+
+p {
+    margin-bottom: 16px;
+}
+
+section {
+    padding: 80px 0;
+}
+
+/* ===== Header ===== */
+.site-header {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-link {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-icon {
+    margin-right: 8px;
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.main-nav {
+    margin-left: auto;
+}
+
+.nav-list {
+    display: flex;
+}
+
+.nav-item {
+    margin-left: 24px;
+}
+
+.nav-link {
+    color: var(--text);
+    font-weight: 500;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover, 
+.nav-link.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: 40px;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    text-align: center;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--secondary);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-large {
+    padding: 12px 32px;
+    font-size: 1rem;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+    padding: 64px 0 80px;
+    text-align: center;
+    background-color: var(--secondary);
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto 40px;
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.search-field {
+    display: flex;
+}
+
+.search-input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.25);
+}
+
+.search-btn {
+    padding: 16px 32px;
+    font-size: 1rem;
+    margin-left: 8px;
+}
+
+.popular-tags {
+    margin-top: 16px;
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.tag-label {
+    margin-right: 8px;
+}
+
+.tag-button {
+    display: inline-block;
+    margin: 0 8px;
+    padding: 4px 12px;
+    background-color: var(--white);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: none;
+}
+
+.tag-button:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* ===== Features Section ===== */
+.features {
+    padding: 80px 0;
+    background-color: var(--white);
+}
+
+.feature-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.feature-card {
+    flex: 1;
+    padding: 32px;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background-color: var(--secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.feature-card p {
+    color: var(--text-light);
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+/* ===== Testimonials Section ===== */
+.testimonials {
+    padding: 80px 0;
+    background-color: var(--secondary);
+}
+
+.testimonial-cards {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+}
+
+.testimonial-card {
+    max-width: 500px;
+    padding: 32px;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.testimonial-card p {
+    font-size: 1rem;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.testimonial-author {
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-author strong {
+    color: var(--text);
+}
+
+.testimonial-author span {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+/* ===== CTA Section ===== */
+.cta-section {
+    padding: 64px 0;
+    text-align: center;
+    background-color: var(--white);
+}
+
+.cta-section h2 {
+    margin-bottom: 16px;
+}
+
+.cta-section p {
+    margin-bottom: 32px;
+    color: var(--text-light);
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+/* ===== Footer ===== */
+.site-footer {
+    padding: 64px 0 32px;
+    background-color: var(--secondary);
+    border-top: 1px solid var(--border);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.footer-logo {
+    flex: 1;
+}
+
+.footer-logo p {
+    margin-top: 8px;
+    color: var(--text-light);
+}
+
+.footer-links {
+    flex: 2;
+    display: flex;
+    justify-content: space-around;
+}
+
+.link-group h4 {
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.link-group ul li {
+    margin-bottom: 8px;
+}
+
+.link-group ul li a {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.link-group ul li a:hover {
+    color: var(--primary);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* ===== User Menu ===== */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 40px;
+}
+
+.username {
+    font-weight: 500;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* ===== Responsive Styles ===== */
+@media (max-width: 992px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .feature-cards, 
+    .testimonial-cards {
+        flex-direction: column;
+    }
+    
+    .feature-card, 
+    .testimonial-card {
+        margin-bottom: 16px;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+    }
+    
+    .footer-logo {
+        margin-bottom: 32px;
+        text-align: center;
+    }
+    
+    .footer-links {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .link-group {
+        flex: 1;
+        min-width: 150px;
+        margin-bottom: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-wrap: wrap;
+    }
+    
+    .main-nav {
+        order: 3;
+        width: 100%;
+        margin-top: 16px;
+        margin-left: 0;
+    }
+    
+    .nav-list {
+        justify-content: center;
+    }
+    
+    .nav-item {
+        margin: 0 12px;
+    }
+    
+    .auth-buttons {
+        margin-left: 0;
+    }
+    
+    .search-field {
+        flex-direction: column;
+    }
+    
+    .search-input {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    .search-btn {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .feature-card,
+    .testimonial-card {
+        padding: 20px;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+    }
+    
+    .link-group {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    section {
+        padding: 48px 0;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+        margin-bottom: 24px;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .popular-tags {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .tag-button {
+        margin: 4px 0;
+    }
+    
+    .cta-section {
+        padding: 40px 0;
+    }
+}
