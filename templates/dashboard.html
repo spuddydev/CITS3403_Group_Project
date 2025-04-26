@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - ResearchMatch{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div style="background: linear-gradient(to right, #f8f8f8, #ffffff); padding: 80px 40px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+    <h1 style="font-size: 3rem; font-weight: 700; color: #1d1d1f;">Welcome, {{ user_name }} 👋</h1>
+    <p style="font-size: 1.3rem; color: #4b4b4b;">Explore top-tier research, discover trends, and make connections.</p>
+</div>
+
+<!-- Circular Stats Section -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-10 text-center">
+        <div class="d-flex justify-content-around align-items-center flex-wrap">
+            <div class="stat-bubble">
+                <div class="bubble-circle">3</div>
+                <p class="bubble-label">Interests</p>
+            </div>
+            <div class="stat-bubble">
+                <div class="bubble-circle">5</div>
+                <p class="bubble-label">Matches</p>
+            </div>
+            <div class="stat-bubble">
+                <div class="bubble-circle">2</div>
+                <p class="bubble-label">Connections</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Cards with Tightened Layout -->
+<div class="row gx-5 gy-4" style="margin-top: 40px; margin-bottom: 60px;">
+    <div class="col-md-4 d-flex align-items-stretch">
+        <div class="glass-card p-4 text-center hover-zoom w-100">
+            <img src="https://img.icons8.com/ios-filled/100/0071e3/upload.png" alt="Upload" style="width: 70px; margin-bottom: 20px;">
+            <h5 class="card-title mb-3">Upload Interests</h5>
+            <p class="card-text mb-3">Enter your research interests and let us find matching projects for you.</p>
+            <a href="/upload" class="btn mb-0">Go</a>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-stretch">
+        <div class="glass-card p-4 text-center hover-zoom w-100">
+            <img src="https://img.icons8.com/ios-filled/100/0071e3/bar-chart.png" alt="Trends" style="width: 70px; margin-bottom: 20px;">
+            <h5 class="card-title mb-3">View Trends</h5>
+            <p class="card-text mb-3">See what’s trending in research right now at UWA.</p>
+            <a href="/trends" class="btn mb-0">Go</a>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-stretch">
+        <div class="glass-card p-4 text-center hover-zoom w-100">
+            <img src="https://img.icons8.com/ios-filled/100/0071e3/conference-call.png" alt="Social" style="width: 70px; margin-bottom: 20px;">
+            <h5 class="card-title mb-3">Social Hub</h5>
+            <p class="card-text mb-3">Connect with peers who share your research interests.</p>
+            <a href="/social" class="btn mb-0">Go</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
