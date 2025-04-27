@@ -1,6 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from database.schema import db
+from dotenv import load_dotenv
+import os
 
+# Initialise environment
+load_dotenv()
+
+# Initialise flask app
 app = Flask(__name__)
+
+# Configure app and initialise
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS").lower() in ("true", 1)
+db.init_app(app)
+
+# If no database exists, create one !
+with app.app_context():
+    if not os.path.exists('site.db'):
+        db.create_all()
+
 
 # Home Page
 @app.route('/')
@@ -10,8 +29,8 @@ def home():
 # Dashboard Page
 @app.route('/dashboard')
 def dashboard():
-    user_name = "ashane"  # Example user name
-    return render_template('dashboard.html', user_name=user_name)
+    username = "ashane"  # Example user name
+    return render_template('dashboard.html', user_name=username)
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
