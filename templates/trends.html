@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Trends - ResearchMatch{% endblock %}
+
+{% block content %}
+    <h2>Trending Research at UWA</h2>
+    <canvas id="trendsChart" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('trendsChart').getContext('2d');
+        var trendsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ trend_labels | tojson | safe }},
+                datasets: [{
+                    label: 'Interest Level',
+                    data: {{ trend_data | tojson | safe }},
+                    backgroundColor: '#0071e3'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>    
+{% endblock %}
