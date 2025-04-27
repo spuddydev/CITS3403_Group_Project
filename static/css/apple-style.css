@@ -111,7 +111,7 @@ input[type="text"]:focus, input[type="file"]:focus {
 
 /* Circular Stat Bubbles */
 .stat-bubble {
-    margin: 20px;
+    padding: 10px;
     text-align: center;
 }
 
@@ -139,6 +139,22 @@ input[type="text"]:focus, input[type="file"]:focus {
     margin-top: 10px;
     font-size: 0.95rem;
     color: #4b4b4b;
+}
+
+.bubble-label {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: #4b4b4b;
+}
+
+.stat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 125px; 
+    overflow-x: auto;
+    padding: 20px 0;
 }
 
 /* Smooth transitions globally */
