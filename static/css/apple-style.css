@@ -161,3 +161,15 @@ input[type="text"]:focus, input[type="file"]:focus {
 a, .btn, .card, .input, .nav-link {
     transition: all 0.3s ease;
 }
+
+/* IOS sizing */
+@media (max-width: 768px) {
+    .bubble-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
+    .stat-container {
+        gap: 50px; 
+    }
+}
