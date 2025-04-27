@@ -63,6 +63,24 @@ def social():
     ]
     return render_template('social.html', similar_users=similar_users)
 
+# Settings Page
+@app.route('/settings')
+def settings():
+    # Mock data for demonstration purposes
+    user = {
+        'username': 'ashane',
+        'email': 'ashane@example.com',
+        'faculty': 'Computer Science'
+    }
+    
+    preferences = {
+        'new_matches': True,
+        'connection_requests': True,
+        'trending_updates': False
+    }
+    
+    return render_template('settings.html', user=user, preferences=preferences)
+
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)
