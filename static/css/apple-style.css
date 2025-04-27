@@ -111,7 +111,7 @@ input[type="text"]:focus, input[type="file"]:focus {
 
 /* Circular Stat Bubbles */
 .stat-bubble {
-    margin: 20px;
+    padding: 10px;
     text-align: center;
 }
 
@@ -141,7 +141,35 @@ input[type="text"]:focus, input[type="file"]:focus {
     color: #4b4b4b;
 }
 
+.bubble-label {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: #4b4b4b;
+}
+
+.stat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 125px; 
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
 /* Smooth transitions globally */
 a, .btn, .card, .input, .nav-link {
     transition: all 0.3s ease;
+}
+
+/* IOS sizing */
+@media (max-width: 768px) {
+    .bubble-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
+    .stat-container {
+        gap: 50px; 
+    }
 }
