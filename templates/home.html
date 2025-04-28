@@ -1,9 +1,713 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - ResearchMatch{% endblock %}
+{% block title %}ResearchMatch - Discover Research Opportunities{% endblock %}
 
 {% block content %}
-    <h1>Welcome to ResearchMatch</h1>
-    <p>Connect with UWA research opportunities based on your passions.</p>
-    <a href="/dashboard" class="btn">Sign In</a>
+<div class="pro-container">
+    <!-- Hero Section -->
+    <section class="pro-hero">
+        <div class="hero-content">
+            <h1 class="animated-text">Connecting minds.<br>Creating discoveries.</h1>
+            <p class="hero-subtitle">ResearchMatch helps students and academics find their perfect research collaborations at UWA.</p>
+            <div class="cta-wrapper">
+                <a href="/dashboard" class="cta-button primary">
+                    <span>Get Started</span>
+                    <svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 5H12M12 5L8.5 1.5M12 5L8.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="hero-graphics">
+            <div class="connection-visualization">
+                <div class="node node-1">
+                    <div class="node-icon">AI</div>
+                </div>
+                <div class="node node-2">
+                    <div class="node-icon">CS</div>
+                </div>
+                <div class="node node-3">
+                    <div class="node-icon">ML</div>
+                </div>
+                <div class="connection c1-2"></div>
+                <div class="connection c1-3"></div>
+                <div class="connection c2-3"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="pro-section features-section">
+        <div class="section-header">
+            <h2>Find your perfect match</h2>
+            <p class="section-subtitle">Our intelligent platform helps you discover research opportunities that align with your interests and goals.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card card-interests">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Share your interests</h3>
+                <p>Upload your research preferences and academic background to find relevant opportunities.</p>
+            </div>
+            
+            <div class="feature-card card-trends">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Discover trends</h3>
+                <p>Explore what's trending in research across different disciplines at UWA.</p>
+            </div>
+            
+            <div class="feature-card card-connections">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Connect with peers</h3>
+                <p>Build your academic network by connecting with students and supervisors who share your interests.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="pro-section stats-section">
+        <div class="stat-card stat-projects">
+            <span class="stat-number" data-count="200">0</span>
+            <span class="stat-label">Research Projects</span>
+        </div>
+        <div class="stat-card stat-researchers">
+            <span class="stat-number" data-count="150">0</span>
+            <span class="stat-label">Active Researchers</span>
+        </div>
+        <div class="stat-card stat-success">
+            <span class="stat-number" data-count="95">0</span>
+            <span class="stat-label">Success Rate</span>
+            <span class="stat-unit">%</span>
+        </div>
+    </section>
+
+    <!-- Testimonial Section -->
+    <section class="pro-section testimonial-section">
+        <div class="testimonial-card">
+            <div class="quote-mark">"</div>
+            <blockquote>
+                ResearchMatch transformed my academic journey. I found my current research project within days, and it perfectly aligns with my interests and career goals.
+            </blockquote>
+            <div class="testimonial-author">
+                <div class="author-avatar">SJ</div>
+                <div class="author-details">
+                    <p class="author-name">Sarah Johnson</p>
+                    <p class="author-title">PhD Student, Computer Science</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="pro-section cta-section">
+        <h2>Ready to discover your research potential?</h2>
+        <a href="/dashboard" class="cta-button primary">
+            <span>Start Exploring</span>
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 5H12M12 5L8.5 1.5M12 5L8.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </section>
+</div>
+
+<style>
+    /* Professional Home Page styles with more color */
+    :root {
+        --primary-color: #0071E3;
+        --primary-dark: #005BBB;
+        --primary-light: #E1F0FF;
+        --accent-purple: #5E5CE6;
+        --accent-pink: #FF2D55;
+        --accent-orange: #FF9500;
+        --accent-teal: #5AC8FA;
+        --accent-green: #34C759;
+        --accent-red: #FF3B30;
+        --text-primary: #1D1D1F;
+        --text-secondary: #86868B;
+        --background-light: #FBFBFD;
+        --background-medium: #F5F5F7;
+        --border-light: rgba(0, 0, 0, 0.1);
+    }
+    
+    .pro-container {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    /* Hero Section */
+    .pro-hero {
+        display: flex;
+        align-items: center;
+        min-height: 85vh;
+        padding: 60px 120px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #F0F7FF 0%, #EDF6FF 25%, #E5F0FF 50%, #E1EFFF 75%, #D6EBFF 100%);
+    }
+    
+    .hero-content {
+        flex: 1;
+        max-width: 600px;
+        z-index: 2;
+    }
+    
+    .animated-text {
+        font-size: 64px;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+        margin-bottom: 24px;
+        background: linear-gradient(90deg, var(--accent-purple), var(--primary-color), var(--accent-teal));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 300% 100%;
+        animation: gradient-shift 8s infinite alternate;
+    }
+    
+    @keyframes gradient-shift {
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 100% 50%;
+        }
+    }
+    
+    .hero-subtitle {
+        font-size: 22px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        max-width: 90%;
+    }
+    
+    .cta-wrapper {
+        display: flex;
+        gap: 20px;
+    }
+    
+    .cta-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-size: 18px;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-button.primary {
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+        color: white;
+        box-shadow: 0 4px 20px rgba(0, 113, 227, 0.2);
+    }
+    
+    .cta-button.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 113, 227, 0.3);
+    }
+    
+    .cta-button.primary svg {
+        transition: transform 0.3s ease;
+    }
+    
+    .cta-button.primary:hover svg {
+        transform: translateX(3px);
+    }
+    
+    .hero-graphics {
+        flex: 1;
+        position: relative;
+        height: 500px;
+    }
+    
+    .connection-visualization {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .node {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        animation: float 6s infinite ease-in-out;
+    }
+    
+    .node-1 {
+        top: 30%;
+        left: 20%;
+        animation-delay: 0s;
+        background: linear-gradient(135deg, #E1F0FF, var(--primary-light));
+    }
+    
+    .node-2 {
+        top: 60%;
+        left: 55%;
+        animation-delay: 2s;
+        background: linear-gradient(135deg, #FFE1E1, #FFEFEF);
+    }
+    
+    .node-3 {
+        top: 25%;
+        left: 70%;
+        animation-delay: 1s;
+        background: linear-gradient(135deg, #E6E1FF, #F0EFFF);
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .node-icon {
+        font-size: 24px;
+        font-weight: 700;
+    }
+    
+    .node-1 .node-icon {
+        color: var(--primary-color);
+    }
+    
+    .node-2 .node-icon {
+        color: var(--accent-pink);
+    }
+    
+    .node-3 .node-icon {
+        color: var(--accent-purple);
+    }
+    
+    .connection {
+        position: absolute;
+        height: 2px;
+        z-index: 1;
+    }
+    
+    .c1-2 {
+        width: 250px;
+        top: 40%;
+        left: 25%;
+        transform: rotate(30deg);
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-pink));
+    }
+    
+    .c1-3 {
+        width: 300px;
+        top: 30%;
+        left: 25%;
+        transform: rotate(-5deg);
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+    }
+    
+    .c2-3 {
+        width: 200px;
+        top: 45%;
+        left: 60%;
+        transform: rotate(-60deg);
+        background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+    }
+    
+    /* Section styles */
+    .pro-section {
+        padding: 100px 120px;
+        position: relative;
+    }
+    
+    .section-header {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 60px;
+    }
+    
+    .section-header h2 {
+        font-size: 48px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        letter-spacing: -0.02em;
+    }
+    
+    .section-subtitle {
+        font-size: 20px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+    }
+    
+    /* Features section */
+    .features-section {
+        background: var(--background-light);
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-top: 5px solid;
+    }
+    
+    .card-interests {
+        border-color: var(--primary-color);
+    }
+    
+    .card-trends {
+        border-color: var(--accent-orange);
+    }
+    
+    .card-connections {
+        border-color: var(--accent-green);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+        margin-bottom: 24px;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+    
+    .card-interests .feature-icon {
+        background: rgba(0, 113, 227, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .card-trends .feature-icon {
+        background: rgba(255, 149, 0, 0.1);
+        color: var(--accent-orange);
+    }
+    
+    .card-connections .feature-icon {
+        background: rgba(52, 199, 89, 0.1);
+        color: var(--accent-green);
+    }
+    
+    .feature-card h3 {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+    }
+    
+    .feature-card p {
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--text-secondary);
+    }
+    
+    /* Stats section */
+    .stats-section {
+        display: flex;
+        justify-content: space-around;
+        padding: 80px 120px;
+        background: linear-gradient(90deg, var(--accent-purple), var(--primary-color));
+        color: white;
+    }
+    
+    .stat-card {
+        text-align: center;
+        position: relative;
+        padding: 30px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .stat-projects {
+        border-bottom: 4px solid var(--accent-orange);
+    }
+    
+    .stat-researchers {
+        border-bottom: 4px solid var(--accent-teal);
+    }
+    
+    .stat-success {
+        border-bottom: 4px solid var(--accent-green);
+    }
+    
+    .stat-number {
+        font-size: 72px;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    .stat-unit {
+        font-size: 36px;
+        position: absolute;
+        top: 20px;
+        margin-left: 5px;
+    }
+    
+    .stat-label {
+        font-size: 18px;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+    
+    /* Testimonial section */
+    .testimonial-section {
+        background: var(--background-medium);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .testimonial-card {
+        max-width: 800px;
+        background: white;
+        padding: 60px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        position: relative;
+        background: linear-gradient(135deg, #fff 0%, #fff 85%, #F0F7FF 100%);
+        border-left: 6px solid var(--accent-purple);
+    }
+    
+    .quote-mark {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        font-size: 120px;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--accent-purple), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 0;
+        opacity: 0.3;
+    }
+    
+    blockquote {
+        font-size: 24px;
+        line-height: 1.5;
+        color: var(--text-primary);
+        margin: 0 0 40px 0;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+    }
+    
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-purple));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 15px;
+    }
+    
+    .author-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .author-title {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+    
+    /* CTA section */
+    .cta-section {
+        text-align: center;
+        background: linear-gradient(135deg, #F0F7FF 0%, #E5F0FF 100%);
+    }
+    
+    .cta-section h2 {
+        font-size: 48px;
+        margin-bottom: 40px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        background: linear-gradient(90deg, var(--text-primary), var(--accent-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .pro-hero {
+            padding: 60px 80px;
+        }
+        
+        .animated-text {
+            font-size: 54px;
+        }
+        
+        .pro-section {
+            padding: 80px;
+        }
+        
+        .features-grid {
+            gap: 20px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .pro-hero {
+            flex-direction: column;
+            text-align: center;
+            padding: 60px 40px;
+        }
+        
+        .hero-content {
+            max-width: 100%;
+            margin-bottom: 60px;
+        }
+        
+        .hero-subtitle {
+            max-width: 100%;
+        }
+        
+        .cta-wrapper {
+            justify-content: center;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            padding: 40px;
+        }
+        
+        .quote-mark {
+            font-size: 80px;
+            top: 20px;
+            left: 20px;
+        }
+        
+        .pro-section {
+            padding: 60px 40px;
+        }
+        
+        .stats-section {
+            flex-direction: column;
+            gap: 40px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .animated-text {
+            font-size: 42px;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+        }
+        
+        .section-header h2 {
+            font-size: 36px;
+        }
+        
+        .cta-section h2 {
+            font-size: 36px;
+        }
+        
+        blockquote {
+            font-size: 20px;
+        }
+    }
+</style>
+
+<script>
+    // Animated counter for stats
+    document.addEventListener('DOMContentLoaded', function() {
+        const stats = document.querySelectorAll('.stat-number');
+        
+        const observerOptions = {
+            threshold: 0.5
+        };
+        
+        const observer = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const countTo = parseInt(target.getAttribute('data-count'));
+                    const duration = 2000; // 2 seconds
+                    let count = 0;
+                    const step = countTo / (duration / 30); // Update every 30ms
+                    
+                    const counter = setInterval(function() {
+                        count += step;
+                        if (count >= countTo) {
+                            target.textContent = countTo;
+                            clearInterval(counter);
+                        } else {
+                            target.textContent = Math.floor(count);
+                        }
+                    }, 30);
+                    
+                    observer.unobserve(target);
+                }
+            });
+        }, observerOptions);
+        
+        stats.forEach(stat => {
+            observer.observe(stat);
+        });
+    });
+</script>
 {% endblock %}
