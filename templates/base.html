@@ -482,7 +482,10 @@
                     </div>
                     <div class="user-profile">
                         <div class="nav-action-item">
-                            <i class="fas fa-cog"></i>
+                            <a href="/settings">
+                              <i class="fas fa-cog"></i>
+
+                            </a>
                         </div>
                         <div class="user-avatar">
                             {{ user_name[0].upper() if user_name else 'U' }}
@@ -577,7 +580,7 @@
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
-                        <a href="#" class="sidebar-link">
+                        <a href="/settings" class="sidebar-link">
                             <span class="sidebar-icon" style="color: var(--accent-yellow);">
                                 <i class="fas fa-cog"></i>
                             </span>
