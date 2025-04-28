@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Social Hub - ResearchMatch{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Connect with Other Researchers</h2>
+
+    {% if similar_users %}
+    <div class="row gx-4 gy-4">
+        {% for user in similar_users %}
+        <div class="col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <h5 class="mb-2">{{ user.name }}</h5>
+                <p class="mb-3 text-muted">Interests: {{ user.interests }}</p>
+                <a href="#" class="btn btn-outline-primary btn-sm">Connect</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted text-center">No users to display at this time. Check back later or upload your interests.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

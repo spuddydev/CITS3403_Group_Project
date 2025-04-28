@@ -1,0 +1,17 @@
+# Virtual environments
+venv/
+.venv/
+
+# Cache info
+__pycache__/
+*.pyc
+
+# Database files
+*.db
+*.sqlite
+
+# Flask Tracking 
+instance/
+
+# Environment Setup
+.env

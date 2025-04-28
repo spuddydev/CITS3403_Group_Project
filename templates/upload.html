@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Interests - ResearchMatch{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Upload Your Research Interests</h2>
+
+    <!-- Interest Upload Form -->
+    <form method="POST" action="/upload" class="mb-5">
+        <div class="mb-3">
+            <label for="keywords" class="form-label">Enter Keywords (e.g., AI, Robotics, Health)</label>
+            <input type="text" id="keywords" name="keywords" class="form-control" placeholder="Type your interests here..." required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <!-- Matched Projects -->
+    {% if matched_projects %}
+    <h3 class="mb-4 text-center">Matched Research Projects</h3>
+    <div class="row gx-4 gy-4">
+        {% for project in matched_projects %}
+        <div class="col-md-6">
+            <div class="glass-card p-4 h-100">
+                <h5 class="mb-2">{{ project.title }}</h5>
+                <p class="mb-2">Supervisor: {{ project.supervisor }}</p>
+                <a href="{{ project.link }}" class="btn btn-outline-primary btn-sm" target="_blank">Learn More</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted text-center">No matches found yet. Enter your interests above to find projects.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

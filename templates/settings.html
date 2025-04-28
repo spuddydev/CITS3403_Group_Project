@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - ResearchMatch{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Account Settings</h2>
+
+    <!-- Profile Settings -->
+    <div class="card p-4 mb-5 shadow-sm">
+        <h4 class="mb-3">Update Profile</h4>
+        <form method="POST" action="/settings">
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ user.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <!-- Password Change -->
+    <div class="card p-4 mb-5 shadow-sm">
+        <h4 class="mb-3">Change Password</h4>
+        <form method="POST" action="/change-password">
+            <div class="mb-3">
+                <label for="current_password" class="form-label">Current Password</label>
+                <input type="password" id="current_password" name="current_password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="new_password" class="form-label">New Password</label>
+                <input type="password" id="new_password" name="new_password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+        </form>
+    </div>
+
+    <!-- Critical Actions -->
+    <div class="card p-4 shadow-sm">
+        <h4 class="mb-3 text-danger">Danger Zone</h4>
+        <form method="POST" action="/clear-interests" class="mb-3">
+            <button type="submit" class="btn btn-warning">Clear My Interests</button>
+        </form>
+        <form method="POST" action="/delete-account">
+            <button type="submit" class="btn btn-danger">Delete My Account</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
