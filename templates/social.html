@@ -3,6 +3,7 @@
 {% block title %}Social Hub - ResearchMatch{% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
 
 <div class="container my-5">
     <h2 class="mb-4 text-center">Connect with Other Researchers</h2>
@@ -24,4 +25,16 @@
     {% endif %}
 </div>
 
+=======
+    <h2>Social Hub</h2>
+    <p>Connect with others who share your research interests.</p>
+    <ul class="list-group">
+        {% for user in similar_users %}
+        <li class="list-group-item">
+            <strong>{{ user.name }}</strong> - Interested in {{ user.interests }}
+            <button class="btn btn-sm">Connect</button>
+        </li>
+        {% endfor %}
+    </ul>
+>>>>>>> 79aaa7f4f6475c20bddb82c1da8ab62b7d58f479
 {% endblock %}

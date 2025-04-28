@@ -3,6 +3,7 @@
 {% block title %}Upload Interests - ResearchMatch{% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
 
 <div class="container my-5">
     <h2 class="mb-4 text-center">Upload Your Research Interests</h2>
@@ -35,4 +36,24 @@
     {% endif %}
 </div>
 
+=======
+    <h2>Upload Your Research Interests</h2>
+    <form action="/upload" method="POST">
+        <label for="keywords">Enter Keywords</label>
+        <input type="text" id="keywords" name="keywords" placeholder="e.g., AI, Robotics, Health">
+        <button type="submit" class="btn">Submit</button>
+    </form>
+
+    <hr>
+
+    <h3>Your Matched Projects</h3>
+    <ul class="list-group">
+        {% for project in matched_projects %}
+        <li class="list-group-item">
+            <strong>{{ project.title }}</strong> - {{ project.supervisor }}
+            <a href="{{ project.link }}" class="btn btn-sm">More Info</a>
+        </li>
+        {% endfor %}
+    </ul>
+>>>>>>> 79aaa7f4f6475c20bddb82c1da8ab62b7d58f479
 {% endblock %}
