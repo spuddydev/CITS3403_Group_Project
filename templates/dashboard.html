@@ -3,57 +3,367 @@
 {% block title %}Dashboard - ResearchMatch{% endblock %}
 
 {% block content %}
-
-<!-- Hero Section -->
-<div style="background: linear-gradient(to right, #f8f8f8, #ffffff); padding: 80px 40px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
-    <h1 style="font-size: 3rem; font-weight: 700; color: #1d1d1f;">Welcome, {{ user_name }} 👋</h1>
-    <p style="font-size: 1.3rem; color: #4b4b4b;">Explore top-tier research, discover trends, and make connections.</p>
-</div>
-
-<!-- Stats Section -->
-<div class="text-center mb-5">
-    <div class="stat-container">
-        <div class="stat-bubble">
-            <div class="bubble-circle">3</div>
-            <p class="bubble-label">Interests</p>
+<div class="dashboard-container">
+    <!-- Welcome Header -->
+    <div class="dashboard-header">
+        <div class="welcome-message">
+            <div class="greeting-container">
+                <h1>Welcome back, <span class="user-name">{{ user_name }}</span></h1>
+                <p class="date-info">Monday, April 27 • <span class="status online">Online</span></p>
+            </div>
+            <div class="actions-container">
+                <button class="action-button primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Add New Interest</span>
+                </button>
+                <button class="action-button secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    <span>Filter Results</span>
+                </button>
+            </div>
         </div>
-        <div class="stat-bubble">
-            <div class="bubble-circle">5</div>
-            <p class="bubble-label">Matches</p>
+
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-card research-card">
+                <div class="stat-icon research-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3>3</h3>
+                    <p>Research Interests</p>
+                </div>
+                <div class="stat-action">
+                    <a href="/upload">Manage</a>
+                </div>
+            </div>
+            
+            <div class="stat-card matches-card">
+                <div class="stat-icon matches-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="18" y1="8" x2="23" y2="13"></line>
+                        <line x1="23" y1="8" x2="18" y2="13"></line>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3>5</h3>
+                    <p>Project Matches</p>
+                </div>
+                <div class="stat-action">
+                    <a href="#matches">View All</a>
+                </div>
+            </div>
+            
+            <div class="stat-card connections-card">
+                <div class="stat-icon connections-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3>2</h3>
+                    <p>Academic Connections</p>
+                </div>
+                <div class="stat-action">
+                    <a href="/social">Connect</a>
+                </div>
+            </div>
+            
+            <div class="stat-card profile-card">
+                <div class="stat-icon profile-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3>85%</h3>
+                    <p>Profile Completion</p>
+                </div>
+                <div class="stat-action">
+                    <a href="#profile">Complete</a>
+                </div>
+            </div>
         </div>
-        <div class="stat-bubble">
-            <div class="bubble-circle">2</div>
-            <p class="bubble-label">Connections</p>
+    </div>
+    
+    <!-- Dashboard Main Content -->
+    <div class="dashboard-content">
+        <!-- Left Column -->
+        <div class="content-column main-column">
+            <section class="dashboard-section" id="matches">
+                <div class="section-header">
+                    <h2>Research Matches</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                
+                <div class="matches-grid">
+                    <div class="match-card ai-match">
+                        <div class="match-header">
+                            <div class="match-category">Artificial Intelligence</div>
+                            <div class="match-score">95% Match</div>
+                        </div>
+                        <h3 class="match-title">AI Applications in Healthcare</h3>
+                        <p class="match-description">Research focusing on machine learning algorithms to improve diagnostic accuracy in medical imaging analysis.</p>
+                        <div class="match-meta">
+                            <div class="supervisor">
+                                <span class="meta-label">Supervisor:</span>
+                                <span class="meta-value">Dr. Sarah Smith</span>
+                            </div>
+                            <div class="department">
+                                <span class="meta-label">Department:</span>
+                                <span class="meta-value">Computer Science</span>
+                            </div>
+                        </div>
+                        <div class="match-footer">
+                            <button class="match-action primary">View Details</button>
+                            <button class="match-action secondary">Save</button>
+                        </div>
+                    </div>
+                    
+                    <div class="match-card robotics-match">
+                        <div class="match-header">
+                            <div class="match-category">Robotics</div>
+                            <div class="match-score">87% Match</div>
+                        </div>
+                        <h3 class="match-title">Advanced Robotics in Mining</h3>
+                        <p class="match-description">Developing autonomous robotic systems for hazardous mining environments to improve safety and efficiency.</p>
+                        <div class="match-meta">
+                            <div class="supervisor">
+                                <span class="meta-label">Supervisor:</span>
+                                <span class="meta-value">Dr. Michael Lee</span>
+                            </div>
+                            <div class="department">
+                                <span class="meta-label">Department:</span>
+                                <span class="meta-value">Mechanical Engineering</span>
+                            </div>
+                        </div>
+                        <div class="match-footer">
+                            <button class="match-action primary">View Details</button>
+                            <button class="match-action secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2>Your Research Interests</h2>
+                    <a href="/upload" class="view-all">Manage</a>
+                </div>
+                
+                <div class="interests-container">
+                    <div class="interest-tag ai-tag">
+                        <span>Artificial Intelligence</span>
+                        <button class="remove-interest" aria-label="Remove interest">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="interest-tag ml-tag">
+                        <span>Machine Learning</span>
+                        <button class="remove-interest" aria-label="Remove interest">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="interest-tag robotics-tag">
+                        <span>Robotics</span>
+                        <button class="remove-interest" aria-label="Remove interest">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="add-interest">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Add Interest</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Right Column -->
+        <div class="content-column side-column">
+            <section class="dashboard-section trends-section">
+                <div class="section-header">
+                    <h2>Research Trends</h2>
+                    <a href="/trends" class="view-all">View Report</a>
+                </div>
+                
+                <div class="trends-container">
+                    <div class="trend-item">
+                        <div class="trend-rank ai-rank">1</div>
+                        <div class="trend-info">
+                            <div class="trend-details">
+                                <h4>Artificial Intelligence</h4>
+                                <span class="trend-change positive">↑ 12%</span>
+                            </div>
+                            <div class="trend-bar">
+                                <div class="trend-progress ai-progress" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-item">
+                        <div class="trend-rank health-rank">2</div>
+                        <div class="trend-info">
+                            <div class="trend-details">
+                                <h4>Health Sciences</h4>
+                                <span class="trend-change positive">↑ 8%</span>
+                            </div>
+                            <div class="trend-bar">
+                                <div class="trend-progress health-progress" style="width: 82%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-item">
+                        <div class="trend-rank climate-rank">3</div>
+                        <div class="trend-info">
+                            <div class="trend-details">
+                                <h4>Climate Science</h4>
+                                <span class="trend-change positive">↑ 5%</span>
+                            </div>
+                            <div class="trend-bar">
+                                <div class="trend-progress climate-progress" style="width: 74%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-item">
+                        <div class="trend-rank mining-rank">4</div>
+                        <div class="trend-info">
+                            <div class="trend-details">
+                                <h4>Mining Technology</h4>
+                                <span class="trend-change negative">↓ 3%</span>
+                            </div>
+                            <div class="trend-bar">
+                                <div class="trend-progress mining-progress" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-item">
+                        <div class="trend-rank neuro-rank">5</div>
+                        <div class="trend-info">
+                            <div class="trend-details">
+                                <h4>Neuroscience</h4>
+                                <span class="trend-change positive">↑ 2%</span>
+                            </div>
+                            <div class="trend-bar">
+                                <div class="trend-progress neuro-progress" style="width: 58%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="dashboard-section connections-section">
+                <div class="section-header">
+                    <h2>Academic Connections</h2>
+                    <a href="/social" class="view-all">View All</a>
+                </div>
+                
+                <div class="connections-container">
+                    <div class="connection-card">
+                        <div class="connection-avatar">JD</div>
+                        <div class="connection-info">
+                            <h4>John Doe</h4>
+                            <p>AI, Robotics</p>
+                        </div>
+                        <button class="connect-button connected">Connected</button>
+                    </div>
+                    
+                    <div class="connection-card">
+                        <div class="connection-avatar">JS</div>
+                        <div class="connection-info">
+                            <h4>Jane Smith</h4>
+                            <p>Health, Neuroscience</p>
+                        </div>
+                        <button class="connect-button connected">Connected</button>
+                    </div>
+                    
+                    <div class="suggested-connections">
+                        <h5>Suggested Connections</h5>
+                        
+                        <div class="connection-card suggested">
+                            <div class="connection-avatar">AS</div>
+                            <div class="connection-info">
+                                <h4>Alan Stein</h4>
+                                <p>Machine Learning</p>
+                            </div>
+                            <button class="connect-button primary">Connect</button>
+                        </div>
+                        
+                        <div class="connection-card suggested">
+                            <div class="connection-avatar">MR</div>
+                            <div class="connection-info">
+                                <h4>Maria Rodriguez</h4>
+                                <p>Data Science, AI</p>
+                            </div>
+                            <button class="connect-button primary">Connect</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </div>
 
-<!-- Quick Links -->
-<div class="row gx-5 gy-4" style="margin-top: 40px; margin-bottom: 60px;">
-    <div class="col-md-4 d-flex align-items-stretch">
-        <div class="glass-card p-4 text-center hover-zoom w-100">
-            <img src="https://img.icons8.com/ios-filled/100/0071e3/upload.png" alt="Upload" style="width: 70px; margin-bottom: 20px;">
-            <h5 class="card-title mb-3">Upload Interests</h5>
-            <p class="card-text mb-3">Enter your research interests and let us find matching projects for you.</p>
-            <a href="/upload" class="btn mb-0">Go</a>
-        </div>
-    </div>
-    <div class="col-md-4 d-flex align-items-stretch">
-        <div class="glass-card p-4 text-center hover-zoom w-100">
-            <img src="https://img.icons8.com/ios-filled/100/0071e3/bar-chart.png" alt="Trends" style="width: 70px; margin-bottom: 20px;">
-            <h5 class="card-title mb-3">View Trends</h5>
-            <p class="card-text mb-3">See what’s trending in research right now at UWA.</p>
-            <a href="/trends" class="btn mb-0">Go</a>
-        </div>
-    </div>
-    <div class="col-md-4 d-flex align-items-stretch">
-        <div class="glass-card p-4 text-center hover-zoom w-100">
-            <img src="https://img.icons8.com/ios-filled/100/0071e3/conference-call.png" alt="Social" style="width: 70px; margin-bottom: 20px;">
-            <h5 class="card-title mb-3">Social Hub</h5>
-            <p class="card-text mb-3">Connect with peers who share your research interests.</p>
-            <a href="/social" class="btn mb-0">Go</a>
-        </div>
-    </div>
-</div>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover effect to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                card.style.transform = 'translateY(-5px)';
+                card.style.boxShadow = 'var(--shadow-md)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = 'var(--shadow-sm)';
+            });
+        });
+        
+        // Match cards hover effect
+        const matchCards = document.querySelectorAll('.match-card');
+        matchCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                card.style.boxShadow = 'var(--shadow-md)';
+                card.style.borderColor = 'transparent';
+                card.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                card.style.boxShadow = 'none';
+                card.style.borderColor = 'var(--border-light)';
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
 {% endblock %}

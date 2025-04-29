@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1800">
+  <!-- Title -->
+  <text x="550" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle">ResearchMatch Sitemap</text>
+  
+  <!-- Home Page Window -->
+  <g transform="translate(450, 90)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="270" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Home Page</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">About</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Interests</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Upload</text>
+    
+    <rect x="10" y="155" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="175" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Trends</text>
+    
+    <rect x="10" y="195" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="215" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Blog</text>
+    
+    <rect x="10" y="235" width="180" height="30" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="255" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Login</text>
+  </g>
+  
+  <!-- Login Window -->
+  <g transform="translate(200, 450)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Login</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Username</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Password</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Forgot Password</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Register</text>
+  </g>
+  
+  <!-- Register Window -->
+  <g transform="translate(700, 450)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Register</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Username</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Email</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Password</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Terms and Conditions</text>
+  </g>
+  
+  <!-- Dashboard Window -->
+  <g transform="translate(450, 700)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Dashboard</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Upload Interests</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">View Trends</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Social Hub</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Settings</text>
+  </g>
+  
+  <!-- Upload Interests Window -->
+  <g transform="translate(150, 1000)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Upload Interests</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Enter Keywords</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Categories</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Search Projects</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Upload Interior</text>
+  </g>
+  
+  <!-- Trends Window -->
+  <!-- Find the View Trends window g element and move it to the end of the SVG code -->
+<!-- This will make it render on top of other elements -->
+
+<!-- Option 1: Move to end of SVG -->
+<!-- Cut the entire View Trends window code block that starts with: -->
+<g transform="translate(450, 1000)">
+  <!-- Browser window -->
+  <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <!-- Title bar -->
+  <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+  <!-- Traffic lights -->
+  <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+  <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+  <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+  <!-- Window title -->
+  <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">View Trends</text>
+  
+  <!-- Content -->
+  <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+  <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Bookmarks</text>
+  
+  <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+  <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Categories</text>
+  
+  <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+  <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Archives</text>
+  
+  <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+  <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Trends Interior</text>
+</g>
+  
+  <!-- Social Hub Window -->
+  <g transform="translate(750, 1000)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Social Hub</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Similar Users</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Connect</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Messages</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Shared Projects</text>
+  </g>
+  
+  <!-- Settings Window -->
+  <g transform="translate(450, 1300)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Settings</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Profile Settings</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Account Settings</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Preferences</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Logout</text>
+  </g>
+  
+  <!-- Footer Window -->
+  <g transform="translate(450, 1600)">
+    <!-- Browser window -->
+    <rect x="0" y="0" width="200" height="180" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="200" height="25" rx="5" ry="5" fill="#333" stroke="#000" stroke-width="1.5"/>
+    <!-- Traffic lights -->
+    <circle cx="15" cy="12.5" r="5" fill="#FF5F56" stroke="#E0443E" stroke-width="0.5"/>
+    <circle cx="35" cy="12.5" r="5" fill="#FFBD2E" stroke="#DEA123" stroke-width="0.5"/>
+    <circle cx="55" cy="12.5" r="5" fill="#27C93F" stroke="#1AAB29" stroke-width="0.5"/>
+    <!-- Window title -->
+    <text x="100" y="17" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Footer</text>
+    
+    <!-- Content -->
+    <rect x="10" y="35" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="55" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">About Us</text>
+    
+    <rect x="10" y="75" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Contact</text>
+    
+    <rect x="10" y="115" width="180" height="30" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Privacy Policy</text>
+    
+    <rect x="10" y="155" width="180" height="25" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+    <text x="100" y="173" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Terms of Service</text>
+  </g>
+  
+  <!-- Connection Lines -->
+  <!-- Home to Login/Register -->
+  <line x1="550" y1="325" x2="300" y2="450" stroke="#333" stroke-width="2"/>
+  <line x1="550" y1="325" x2="800" y2="450" stroke="#333" stroke-width="2"/>
+  
+  <!-- Login/Register to Dashboard -->
+  <line x1="300" y1="630" x2="550" y2="700" stroke="#333" stroke-width="2"/>
+  <line x1="800" y1="630" x2="550" y2="700" stroke="#333" stroke-width="2"/>
+  
+  <!-- Dashboard to features -->
+  <line x1="550" y1="880" x2="250" y2="1000" stroke="#333" stroke-width="2"/>
+  <line x1="550" y1="880" x2="550" y2="1000" stroke="#333" stroke-width="2"/>
+  <line x1="550" y1="880" x2="850" y2="1000" stroke="#333" stroke-width="2"/>
+  
+  <!-- Dashboard to Settings -->
+  <line x1="550" y1="880" x2="550" y2="1300" stroke="#333" stroke-width="2"/>
+  
+  <!-- Settings to Footer -->
+  <line x1="550" y1="1480" x2="550" y2="1600" stroke="#333" stroke-width="2"/>
+  
+  <!-- Legend -->
+  <rect x="850" y="90" width="20" height="20" rx="3" ry="3" fill="#FF7E4F" stroke="#000" stroke-width="1"/>
+  <text x="880" y="105" font-family="Arial, sans-serif" font-size="14" text-anchor="start">Public Link</text>
+  
+  <rect x="850" y="120" width="20" height="20" rx="3" ry="3" fill="#27AE60" stroke="#000" stroke-width="1"/>
+  <text x="880" y="135" font-family="Arial, sans-serif" font-size="14" text-anchor="start">Member Only Link</text>
+  
+  <rect x="850" y="150" width="20" height="20" rx="3" ry="3" fill="#F39C12" stroke="#000" stroke-width="1"/>
+  <text x="880" y="165" font-family="Arial, sans-serif" font-size="14" text-anchor="start">Log In or Sign up</text>
+  
+  <rect x="850" y="180" width="20" height="20" rx="3" ry="3" fill="#3498DB" stroke="#000" stroke-width="1"/>
+  <text x="880" y="195" font-family="Arial, sans-serif" font-size="14" text-anchor="start">Outside Link</text>
+</svg>

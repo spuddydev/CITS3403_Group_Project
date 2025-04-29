@@ -15,3 +15,6 @@ instance/
 
 # Environment Setup
 .env
+
+# Automatic files
+.DS_Store
