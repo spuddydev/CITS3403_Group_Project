@@ -21,9 +21,12 @@ with app.app_context():
     if not os.path.exists('site.db'):
         db.create_all()
 
-
 # Home Page
 @app.route('/')
+def default():
+    return redirect(url_for('home'))
+
+@app.route('/home')
 def home():
     return render_template('home.html')
 
