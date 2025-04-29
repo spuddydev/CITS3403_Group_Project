@@ -11,8 +11,9 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configure app and initialise
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS").lower() in ("true", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///site.db")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "False").lower() in ("true", "1")
 db.init_app(app)
 
 # If no database exists, create one !
@@ -20,9 +21,12 @@ with app.app_context():
     if not os.path.exists('site.db'):
         db.create_all()
 
-
 # Home Page
 @app.route('/')
+def default():
+    return redirect(url_for('home'))
+
+@app.route('/home')
 def home():
     return render_template('home.html')
 
