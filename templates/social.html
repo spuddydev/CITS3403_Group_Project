@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Social Hub - ResearchMatch{% endblock %}
+
+{% block content %}
+<div class="py-5 text-center">
+    <h2 class="display-6 fw-bold text-dark">Social Hub</h2>
+    <p class="lead text-muted mb-4">Connect with others who share your research interests.</p>
+
+    <ul class="list-group">
+        {% for user in similar_users %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ user.name }}</strong> - Interested in {{ user.interests }}
+            </div>
+            <button class="btn btn-primary btn-sm">Connect</button>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - ResearchMatch{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="bg-light rounded-4 text-center p-5 mb-5">
+    <h1 class="display-4 fw-bold text-dark">Welcome, {{ user_name }} 👋</h1>
+    <p class="lead text-secondary">Explore top-tier research, discover trends, and make connections.</p>
+</div>
+
+<!-- Stats Section -->
+<div class="text-center mb-5">
+    <div class="stat-container">
+        <div class="stat-bubble">
+            <div class="bubble-circle">3</div>
+            <p class="bubble-label">Interests</p>
+        </div>
+        <div class="stat-bubble">
+            <div class="bubble-circle">5</div>
+            <p class="bubble-label">Matches</p>
+        </div>
+        <div class="stat-bubble">
+            <div class="bubble-circle">2</div>
+            <p class="bubble-label">Connections</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Links -->
+<div class="row g-5">
+    <div class="col-md-4 d-flex align-items-stretch">
+        <div class="glass-card text-center hover-zoom w-100">
+            <img src="https://img.icons8.com/ios-filled/100/0071e3/upload.png" alt="Upload" class="mb-3" style="width: 70px;">
+            <h5 class="card-title mb-3">Upload Interests</h5>
+            <p class="card-text mb-3">Enter your research interests and let us find matching projects for you.</p>
+            <a href="/upload" class="btn">Go</a>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-stretch">
+        <div class="glass-card text-center hover-zoom w-100">
+            <img src="https://img.icons8.com/ios-filled/100/0071e3/bar-chart.png" alt="Trends" class="mb-3" style="width: 70px;">
+            <h5 class="card-title mb-3">View Trends</h5>
+            <p class="card-text mb-3">See what’s trending in research right now at UWA.</p>
+            <a href="/trends" class="btn">Go</a>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-stretch">
+        <div class="glass-card text-center hover-zoom w-100">
+            <img src="https://img.icons8.com/ios-filled/100/0071e3/conference-call.png" alt="Social" class="mb-3" style="width: 70px;">
+            <h5 class="card-title mb-3">Social Hub</h5>
+            <p class="card-text mb-3">Connect with peers who share your research interests.</p>
+            <a href="/social" class="btn">Go</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

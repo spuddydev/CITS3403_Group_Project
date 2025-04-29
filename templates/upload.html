@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Interests - ResearchMatch{% endblock %}
+
+{% block content %}
+<div class="py-5 text-center">
+    <h2 class="display-6 fw-bold text-dark mb-4">Upload Your Research Interests</h2>
+
+    <div class="container">
+        <form action="/upload" method="POST" class="mb-5">
+            <div class="mb-3">
+                <label for="keywords" class="form-label">Enter Keywords</label>
+                <input type="text" id="keywords" name="keywords" class="form-control" placeholder="e.g., AI, Robotics, Health">
+            </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+
+        <hr>
+
+        <h3 class="fw-bold mb-4">Your Matched Projects</h3>
+
+        <ul class="list-group">
+            {% for project in matched_projects %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ project.title }}</strong> - {{ project.supervisor }}
+                </div>
+                <a href="{{ project.link }}" class="btn btn-sm btn-primary">More Info</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
