@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 400px; margin-top: 80px;">
+    <h2 style="text-align: center; margin-bottom: 30px;">Create Account</h2>
+
+    <form action="{{ url_for('signup') }}" method="POST">
+        <label for="username">Username</label>
+        <input type="text" name="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email">
+
+        <label for="faculty">Faculty (optional)</label>
+        <input type="text" name="faculty">
+
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px;">
+        Already have an account?
+        <a href="{{ url_for('signin') }}">Sign in here</a>
+    </p>
+</div>
+{% endblock %}

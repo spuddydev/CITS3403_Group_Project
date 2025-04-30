@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 400px; margin-top: 80px;">
+    <h2 style="text-align: center; margin-bottom: 30px;">Sign In</h2>
+
+    {% if error %}
+    <div style="color: red; text-align: center; margin-bottom: 20px;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form action="{{ url_for('signin') }}" method="POST">
+        <label for="username">Username</label>
+        <input type="text" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" class="btn" style="width: 100%;">Sign In</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px;">
+        Don't have an account?
+        <a href="{{ url_for('signup') }}">Create one here</a>
+    </p>
+</div>
+{% endblock %}
