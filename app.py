@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from database.schema import db, User
 from dotenv import load_dotenv
 import os
+from forms import RegisterForm, LoginForm
 
 # Initialise environment
 load_dotenv()
@@ -10,10 +11,15 @@ load_dotenv()
 # Initialise flask app
 app = Flask(__name__)
 
-# Configure app and initialise
-app.secret_key = 'your_secret_key'  # Required to use sessions
-session["username"] = "<session_default>" # DEV ONLY: sessions default values
+# Security
+app.secret_key = os.getenv("SECRET_KEY", "dev_key")  # Required to use sessions
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,  # Disallow access to cookie from JavaScript
+    SESSION_COOKIE_SECURE=True,    # Use secure cookies over HTTPS
+    SESSION_COOKIE_SAMESITE='Lax'  # Prevent cross-site request forgery (CSRF)
+)
 
+# Configure app and initialise
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///site.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "False").lower() in ("true", "1")
 db.init_app(app)
@@ -89,46 +95,42 @@ def settings():
 # Register Page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        password_confirm = request.form.get('confirm_password')
+    form = RegisterForm()  # Instantiate the form
+    if form.validate_on_submit():  # This checks if the form is submitted and valid
+        username = form.username.data
+        password = form.password.data
+        password_confirm = form.confirm_password.data
 
-        # Check if passwords match
-        if password != password_confirm:
-             return render_template('register.html', error="passwords do not match")
-        
         # Check if username already exists
         user_exists = User.query.filter_by(username=username).first()
         if user_exists:
-            return render_template('register.html', error="username already exists") 
-        
+            flash("Username already exists.", "danger")
+            return render_template('register.html', form=form)
+
         # Create a new user and hash the password
         new_user = User(username=username)
         new_user.set_password(password)
-        
+
         # Add the user to the database
         db.session.add(new_user)
         db.session.commit()
-        
+
+        flash("Account created successfully! You can now log in.", "success")
         return redirect(url_for('login'))  # Redirect to login page after successful registration
-    return render_template('register.html')
+    
+    return render_template('register.html', form=form)
 
 # Sign In Page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()  # Instantiate the form
     if 'attempts' not in session:
         session['attempts'] = 0
 
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+    if form.validate_on_submit():  # Check if the form is valid when submitted
+        username = form.username.data
+        password = form.password.data
 
-        # Check if both username and password were provided
-        if not username or not password:
-            return render_template('login.html', error="Invalid username or password.")
-
-        
         # Find the user in the database by username
         user = User.query.filter_by(username=username).first()
 
@@ -143,8 +145,10 @@ def login():
         else:
             # Invalid credentials
             session['attempts'] += 1
-            return render_template('login.html', error="Invalid username or password. Attempts: " + str(session['attempts']))
-    return render_template('login.html')
+            flash("Invalid username or password.", "danger")
+            return redirect(url_for('login'))
+    
+    return render_template('login.html', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)
