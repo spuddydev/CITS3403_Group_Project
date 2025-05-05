@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from database.schema import db, User
 from dotenv import load_dotenv
 import os
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm,Settings_ProfileForm
 
 # Initialise environment
 load_dotenv()
@@ -77,20 +77,20 @@ def social():
 # Settings Page
 @app.route('/settings')
 def settings():
-    # Mock data for demonstration purposes
-    user = {
-        'username': 'ashane',
-        'email': 'ashane@example.com',
-        'faculty': 'Computer Science'
-    }
-    
-    preferences = {
-        'new_matches': True,
-        'connection_requests': True,
-        'trending_updates': False
-    }
-    
-    return render_template('settings.html', user=user, preferences=preferences)
+    user = User.query.get(session['user_id'])  # or however you're getting the current user
+    form = Settings_ProfileForm(obj=user)  # pre-populate with user data
+
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.faculty = form.faculty.data
+        db.session.commit()
+        flash("Profile updated successfully.", "success")
+        return redirect(url_for('settings'))
+
+    return render_template('settings.html', form=form, user=user)
+
 
 # Register Page
 @app.route('/register', methods=['GET', 'POST'])
@@ -99,18 +99,21 @@ def register():
     if form.validate_on_submit():  # This checks if the form is submitted and valid
         username = form.username.data
         password = form.password.data
-        password_confirm = form.confirm_password.data
-
+        email = form.email.data
         # Check if username already exists
         user_exists = User.query.filter_by(username=username).first()
         if user_exists:
-            flash("Username already exists.", "danger")
+            form.username.errors.append("Username already exists.")
             return render_template('register.html', form=form)
+        email_exists = User.query.filter_by(email=email).first()
+        if email_exists:
+            form.email.errors.append("Email already exists.") 
+            return render_template('register.html', form=form)
+        
 
         # Create a new user and hash the password
-        new_user = User(username=username)
+        new_user = User(username=username, email=email)
         new_user.set_password(password)
-
         # Add the user to the database
         db.session.add(new_user)
         db.session.commit()
@@ -140,12 +143,12 @@ def login():
             # Parse credentials to session object
             session['user_id'] = user.id
             session['username'] = user.username
-            session['password_hash'] = user.password_hash
+            session['email'] = user.email
             return redirect(url_for('dashboard'))
         else:
             # Invalid credentials
             session['attempts'] += 1
-            flash("Invalid username or password.", "danger")
+            form.password.errors.append("Invalid credentials") 
             return redirect(url_for('login'))
     
     return render_template('login.html', form=form)

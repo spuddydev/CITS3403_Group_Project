@@ -53,17 +53,17 @@
         <h3>Notification Preferences</h3>
         <form action="/settings/notifications" method="POST">
             <div style="margin-bottom: 15px;">
-                <input type="checkbox" id="new_matches" name="new_matches" {% if preferences.new_matches %}checked{% endif %}>
+                <input type="checkbox" id="new_matches" name="new_matches" >
                 <label for="new_matches">Email me when new research matches are found</label>
             </div>
             
             <div style="margin-bottom: 15px;">
-                <input type="checkbox" id="connection_requests" name="connection_requests" {% if preferences.connection_requests %}checked{% endif %}>
+                <input type="checkbox" id="connection_requests" name="connection_requests">
                 <label for="connection_requests">Email me for new connection requests</label>
             </div>
             
             <div style="margin-bottom: 15px;">
-                <input type="checkbox" id="trending_updates" name="trending_updates" {% if preferences.trending_updates %}checked{% endif %}>
+                <input type="checkbox" id="trending_updates" name="trending_updates" >
                 <label for="trending_updates">Weekly trending research updates</label>
             </div>
             
