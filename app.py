@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from database.schema import db, User
 from dotenv import load_dotenv
@@ -11,6 +11,8 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configure app and initialise
+app.secret_key = 'your_secret_key'  # Required to use sessions
+session["username"] = "<session_default>" # DEV ONLY: sessions default values
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///site.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "False").lower() in ("true", "1")
@@ -33,8 +35,7 @@ def home():
 # Dashboard Page
 @app.route('/dashboard')
 def dashboard():
-    username = "ashane"  # Example user name
-    return render_template('dashboard.html', user_name=username)
+    return render_template('dashboard.html', username=session['username'])
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
@@ -91,19 +92,19 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        password_confirm = request.form.get('password_confirm')
-        
+        password_confirm = request.form.get('confirm_password')
+
         # Check if passwords match
         if password != password_confirm:
-            return "Passwords do not match!"
+             return render_template('register.html', error="passwords do not match")
         
         # Check if username already exists
-        user_exists = db.User.query.filter_by(username=username).first()
+        user_exists = User.query.filter_by(username=username).first()
         if user_exists:
-            return "Username already exists!"
+            return render_template('register.html', error="username already exists") 
         
         # Create a new user and hash the password
-        new_user = db.User(username=username)
+        new_user = User(username=username)
         new_user.set_password(password)
         
         # Add the user to the database
@@ -111,30 +112,38 @@ def register():
         db.session.commit()
         
         return redirect(url_for('login'))  # Redirect to login page after successful registration
-    
     return render_template('register.html')
 
 # Sign In Page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'attempts' not in session:
+        session['attempts'] = 0
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
 
         # Check if both username and password were provided
         if not username or not password:
-            return "Please enter both username and password."
+            return render_template('login.html', error="Invalid username or password.")
+
         
         # Find the user in the database by username
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
             # Successful login: redirect to home page or dashboard
-            return redirect(url_for('home'))
+            session['attempts'] = 0  # Reset attempts on success
+            # Parse credentials to session object
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['password_hash'] = user.password_hash
+            return redirect(url_for('dashboard'))
         else:
             # Invalid credentials
-            return "Invalid username or password."
-
+            session['attempts'] += 1
+            return render_template('login.html', error="Invalid username or password. Attempts: " + str(session['attempts']))
     return render_template('login.html')
 
 if __name__ == '__main__':
