@@ -6,38 +6,68 @@
 <div class="register-container">
     <h1>Create Your Account</h1>
     
-    <form method="POST" action="/register">
+    <!-- Use form object to render form fields -->
+    <form method="POST" action="{{ url_for('register') }}">
+        {{ form.hidden_tag() }}  <!-- CSRF Token -->
 
-        
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+            {{ form.username(class="form-control") }}
+            {% if form.username.errors %}
+                <ul>
+                    {% for error in form.username.errors %}
+                        <li style="color: red;">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
-        
+
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+            {{ form.email(class="form-control") }}
+            {% if form.email.errors %}
+                <ul>
+                    {% for error in form.email.errors %}
+                        <li style="color: red;">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
-        
+
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            {{ form.password(class="form-control") }}
+            {% if form.password.errors %}
+                <ul>
+                    {% for error in form.password.errors %}
+                        <li style="color: red;">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
-        
+
         <div class="form-group">
             <label for="confirm_password">Confirm Password</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+            {{ form.confirm_password(class="form-control") }}
+            {% if form.confirm_password.errors %}
+                <ul>
+                    {% for error in form.confirm_password.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
-        
+
         <button type="submit" class="submit-btn">Register</button>
+
         {% if error %}
         <div class="alert alert-danger" role="alert" style="color: red; font-weight: bold; margin-bottom: 15px;">
             {{ error }}
         </div>
         {% endif %}
-    
     </form>
-    <p>Already have an account? <a href="/login">Log in</a></p>
+
+    <p>Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
 </div>
 
 <style>
