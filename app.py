@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from database.schema import db
+from database.schema import db, User
 from dotenv import load_dotenv
 import os
 
@@ -85,6 +85,57 @@ def settings():
     
     return render_template('settings.html', user=user, preferences=preferences)
 
-# Run the app
+# Register Page
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+        
+        # Check if passwords match
+        if password != password_confirm:
+            return "Passwords do not match!"
+        
+        # Check if username already exists
+        user_exists = db.User.query.filter_by(username=username).first()
+        if user_exists:
+            return "Username already exists!"
+        
+        # Create a new user and hash the password
+        new_user = db.User(username=username)
+        new_user.set_password(password)
+        
+        # Add the user to the database
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return redirect(url_for('login'))  # Redirect to login page after successful registration
+    
+    return render_template('register.html')
+
+# Sign In Page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Check if both username and password were provided
+        if not username or not password:
+            return "Please enter both username and password."
+        
+        # Find the user in the database by username
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            # Successful login: redirect to home page or dashboard
+            return redirect(url_for('home'))
+        else:
+            # Invalid credentials
+            return "Invalid username or password."
+
+    return render_template('login.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
