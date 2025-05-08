@@ -83,7 +83,6 @@ def settings():
     if form.validate_on_submit():
         user.username = form.username.data
         user.email = form.email.data
-        user.faculty = form.faculty.data
         db.session.commit()
         flash("Profile updated successfully.", "success")
         return redirect(url_for('settings'))
@@ -148,7 +147,7 @@ def login():
             # Invalid credentials
             session['attempts'] += 1
             form.password.errors.append("Invalid credentials") 
-            return redirect(url_for('login'))
+            return render_template('login.html', form=form)
     
     return render_template('login.html', form=form)
 
