@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from database.schema import db
+from database.schema import db, User
 from dotenv import load_dotenv
 import os
+from forms import RegisterForm, LoginForm,Settings_ProfileForm
 
 # Initialise environment
 load_dotenv()
@@ -10,8 +11,14 @@ load_dotenv()
 # Initialise flask app
 app = Flask(__name__)
 
-# Configure app and initialise
+# Security
+app.secret_key = os.getenv("SECRET_KEY", "dev_key")
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,  
+    SESSION_COOKIE_SAMESITE='Lax'  
+)
 
+# Configure app and initialise
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///site.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "False").lower() in ("true", "1")
 db.init_app(app)
@@ -33,8 +40,7 @@ def home():
 # Dashboard Page
 @app.route('/dashboard')
 def dashboard():
-    username = "ashane"  # Example user name
-    return render_template('dashboard.html', user_name=username)
+    return render_template('dashboard.html', username=session['username'])
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
@@ -70,21 +76,81 @@ def social():
 # Settings Page
 @app.route('/settings')
 def settings():
-    # Mock data for demonstration purposes
-    user = {
-        'username': 'ashane',
-        'email': 'ashane@example.com',
-        'faculty': 'Computer Science'
-    }
-    
-    preferences = {
-        'new_matches': True,
-        'connection_requests': True,
-        'trending_updates': False
-    }
-    
-    return render_template('settings.html', user=user, preferences=preferences)
+    user = User.query.get(session['user_id'])  # or however you're getting the current user
+    form = Settings_ProfileForm(obj=user)  # pre-populate with user data
 
-# Run the app
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.faculty = form.faculty.data
+        db.session.commit()
+        flash("Profile updated successfully.", "success")
+        return redirect(url_for('settings'))
+
+    return render_template('settings.html', form=form, user=user)
+
+
+# Register Page
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()  # Instantiate the form
+    if form.validate_on_submit():  # This checks if the form is submitted and valid
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        # Check if username already exists
+        user_exists = User.query.filter_by(username=username).first()
+        if user_exists:
+            form.username.errors.append("Username already exists.")
+            return render_template('register.html', form=form)
+        email_exists = User.query.filter_by(email=email).first()
+        if email_exists:
+            form.email.errors.append("Email already exists.") 
+            return render_template('register.html', form=form)
+        
+
+        # Create a new user and hash the password
+        new_user = User(username=username, email=email)
+        new_user.set_password(password)
+        # Add the user to the database
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Account created successfully! You can now log in.", "success")
+        return redirect(url_for('login'))  # Redirect to login page after successful registration
+    
+    return render_template('register.html', form=form)
+
+# Sign In Page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()  # Instantiate the form
+    if 'attempts' not in session:
+        session['attempts'] = 0
+
+    if form.validate_on_submit():  # Check if the form is valid when submitted
+        username = form.username.data
+        password = form.password.data
+
+        # Find the user in the database by username
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            # Successful login: redirect to home page or dashboard
+            session['attempts'] = 0  # Reset attempts on success
+            # Parse credentials to session object
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['email'] = user.email
+            return redirect(url_for('dashboard'))
+        else:
+            # Invalid credentials
+            session['attempts'] += 1
+            form.password.errors.append("Invalid credentials") 
+            return redirect(url_for('login'))
+    
+    return render_template('login.html', form=form)
+
 if __name__ == '__main__':
     app.run(debug=True)
