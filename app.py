@@ -12,11 +12,10 @@ load_dotenv()
 app = Flask(__name__)
 
 # Security
-app.secret_key = os.getenv("SECRET_KEY", "dev_key")  # Required to use sessions
+app.secret_key = os.getenv("SECRET_KEY", "dev_key")
 app.config.update(
-    SESSION_COOKIE_HTTPONLY=True,  # Disallow access to cookie from JavaScript
-    SESSION_COOKIE_SECURE=True,    # Use secure cookies over HTTPS
-    SESSION_COOKIE_SAMESITE='Lax'  # Prevent cross-site request forgery (CSRF)
+    SESSION_COOKIE_HTTPONLY=True,  
+    SESSION_COOKIE_SAMESITE='Lax'  
 )
 
 # Configure app and initialise
