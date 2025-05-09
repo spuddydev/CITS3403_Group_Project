@@ -3,12 +3,36 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
+# Association Tables
+user_interest = db.Table('user_interest',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
+)
+
+project_interest = db.Table('project_interest',
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
+    db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
+)
+
+project_supervisor = db.Table('project_supervisor',
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
+    db.Column('supervisor_id', db.Integer, db.ForeignKey('supervisor.id'), primary_key=True)
+)
+
+user_saved_projects = db.Table('user_saved_projects',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True)
+)
+
+# Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    password_hash = db.Column(db.String(200), nullable=False)
-    faculty = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(100), nullable=False)
+    
+    faculty = db.Column(db.String(100))
+    interests = db.relationship('Interest', secondary=user_interest, backref='users')
+    saved_projects = db.relationship('Project', secondary=user_saved_projects, backref='saved_by_users')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -19,3 +43,15 @@ class User(db.Model):
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     interest_name = db.Column(db.String(100), nullable=False)
+    interest_number = db.Column(db.Integer, nullable=False, default=0)
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    project_title = db.Column(db.String(100), nullable=False)
+
+    interests = db.relationship('Interest', secondary=project_interest, backref='projects')
+    supervisors = db.relationship('Supervisor', secondary=project_supervisor, backref='projects')
+
+class Supervisor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100), nullable=False)
