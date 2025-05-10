@@ -1,9 +1,9 @@
 import feedparser
 from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
-from fake_useragent import UserAgent
-
-ua = UserAgent()
+try:
+    from database.scrape import get_site_content
+except ModuleNotFoundError:
+    from scrape import get_site_content
 
 def get_extra_details(repository_url: str) -> tuple[list, list]:
 
@@ -11,23 +11,7 @@ def get_extra_details(repository_url: str) -> tuple[list, list]:
     # Note that as according to the UWA robots.txt I am allowed to 
     # scrape site information as I am not using it for disallowed topics
 
-    html = ""
-    with sync_playwright() as p:
-
-        # Launch a new browser with a fake user agent
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(user_agent=ua.random)
-
-        # Go to the url
-        page = context.new_page()
-        page.goto(repository_url, timeout=6000)
-        
-        # Wait for the content to appear
-        page.wait_for_selector("body", timeout=6000)
-        
-        # Save the HTML content
-        html = page.content()
-        browser.close()
+    html = get_site_content(repository_url)
 
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -40,7 +24,10 @@ def get_extra_details(repository_url: str) -> tuple[list, list]:
         # If there's an a tag, get text from span inside it
         a_tag = li.find('a')
         if a_tag:
-            authors.append(a_tag.get_text(strip=True))
+            name = a_tag.get_text(strip=True)
+            # Put the name in order firstname lastname and add an email address when they are staff at uwa
+            name = ' '.join(name.split(', ')[::-1])
+            authors.append((name, ".".join(name.split(" ")) + "@uwa.edu.au"))
         else:
             # Else, get the text from the li directly, excluding the dimmed span
             full_text = li.get_text(separator=' ', strip=True)
@@ -83,14 +70,16 @@ def parse_rss_page_info(feed_url: str) -> list[dict]:
 
             # Ensure the page has rendered properly. Do not always have faculties
             if authors and title and published: 
-                results.append({
+                entry = {
                     "title": title,
                     "link": link,
                     "published": published, 
                     "authors": authors,
                     "faculties": faculties
-                })
-
+                }
+                print(entry)
+                results.append(entry)
+    
     return results
 
 
