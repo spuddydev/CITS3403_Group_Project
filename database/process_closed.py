@@ -1,4 +1,5 @@
 import feedparser
+from datetime import datetime
 from bs4 import BeautifulSoup
 try:
     from database.scrape import get_site_content
@@ -19,15 +20,19 @@ def get_extra_details(repository_url: str) -> tuple[list, list]:
     ul = soup.find('ul', class_='relations persons')
 
     # Loop through all li tags in the ul
-    authors = []
+    supervisors = []
     for li in ul.find_all('li'):
         # If there's an a tag, get text from span inside it
         a_tag = li.find('a')
         if a_tag:
             name = a_tag.get_text(strip=True)
             # Put the name in order firstname lastname and add an email address when they are staff at uwa
-            name = ' '.join(name.split(', ')[::-1])
-            authors.append((name, ".".join(name.split(" ")) + "@uwa.edu.au"))
+            name = name.split(', ')[::-1]
+            first_name = name[0]
+            last_name = name[1]
+            supervisors.append({"first_name": first_name,
+                                "last_name": last_name,
+                                "email": ".".join(name) + "@uwa.edu.au"})
         else:
             # Else, get the text from the li directly, excluding the dimmed span
             full_text = li.get_text(separator=' ', strip=True)
@@ -35,9 +40,13 @@ def get_extra_details(repository_url: str) -> tuple[list, list]:
             if dimmed:
                 dimmed_text = dimmed.get_text(strip=True)
                 full_text = full_text.replace(dimmed_text, '').strip()
-            authors.append(full_text)
+            name = full_text.split(', ')[::-1]
+            first_name = name[0]
+            last_name = name[1]
+            supervisors.append({"first_name": first_name,
+                                "last_name": last_name})
 
-    faculties = []
+    research_areas = []
 
     # Find all relations organisations elements (faculties)
     ul_orgs = soup.find('ul', class_='relations organisations')
@@ -45,9 +54,9 @@ def get_extra_details(repository_url: str) -> tuple[list, list]:
         for li in ul_orgs.find_all('li'):
             a_tag = li.find('a')
             if a_tag:
-                faculties.append(a_tag.get_text(strip=True))
+                research_areas.append(a_tag.get_text(strip=True))
     
-    return authors, faculties
+    return supervisors, research_areas
 
 
 def parse_rss_page_info(feed_url: str) -> list[dict]:
@@ -66,18 +75,18 @@ def parse_rss_page_info(feed_url: str) -> list[dict]:
         
         if link:
             # grab the authors and faculty/faculties from the HTML
-            authors, faculties = get_extra_details(link)
+            supervisors, research_areas = get_extra_details(link)
 
             # Ensure the page has rendered properly. Do not always have faculties
-            if authors and title and published: 
+            if supervisors and title and published: 
                 entry = {
+                    "is_open": False,
                     "title": title,
                     "link": link,
-                    "published": published, 
-                    "authors": authors,
-                    "faculties": faculties
+                    "publication_date": datetime.strptime(published, "%a, %d %b %Y %H:%M:%S %Z"), 
+                    "supervisors": supervisors,
+                    "research_areas": research_areas
                 }
-                print(entry)
                 results.append(entry)
     
     return results
