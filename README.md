@@ -9,3 +9,6 @@
 - Create sitemap
 - Fix spacing in lookup on upload route
 - Create autocomplete for upload route
+
+# Remember
+- when writing readme include installing playwright
