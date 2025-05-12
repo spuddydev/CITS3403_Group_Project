@@ -13,95 +13,75 @@
                 <h1>Welcome back, <span class="user-name">{{ username }}</span></h1>
                 <p class="date-info">Monday, April 27 • <span class="status online">Online</span></p>
             </div>
-            <div class="actions-container">
-                <button class="action-button primary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    <span>Add New Interest</span>
-                </button>
-                <button class="action-button secondary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                    </svg>
-                    <span>Filter Results</span>
-                </button>
+        </div>
+    </div>
+    {% if not user_interests %}
+    <div class="alert alert-info" role="alert" style="text-align: left; line-height: 2;">
+        <h4 class="alert-heading">Hi there!</h4>
+        <p>You’re logged in, but you don’t have any research interests yet.</p>
+        <p><strong>Head over to the <a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg" style="text-decoration: none; padding: 3px 20px; font-size: 16px;">Upload</a> page to add your interests and get started!</strong></p>
+         <p>After adding your interests, come back to the dashboard to see your display, trends, statistics, or even connect with researchers!</p>
+    </div>
+
+    {% else %}
+
+
+    <!-- Stats Overview -->
+    <div class="stats-overview">
+        <div class="stat-card research-card">
+            <div class="stat-icon research-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <h3>{{ user_interests|length }}</h3>
+                <p>Research Interests</p>
+            </div>
+            <div class="stat-action">
+                <a href="/upload">Manage</a>
             </div>
         </div>
-
-        <!-- Stats Overview -->
-        <div class="stats-overview">
-            <div class="stat-card research-card">
-                <div class="stat-icon research-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <h3>3</h3>
-                    <p>Research Interests</p>
-                </div>
-                <div class="stat-action">
-                    <a href="/upload">Manage</a>
-                </div>
+        
+        <div class="stat-card matches-card">
+            <div class="stat-icon matches-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="18" y1="8" x2="23" y2="13"></line>
+                    <line x1="23" y1="8" x2="18" y2="13"></line>
+                </svg>
             </div>
-            
-            <div class="stat-card matches-card">
-                <div class="stat-icon matches-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle>
-                        <line x1="18" y1="8" x2="23" y2="13"></line>
-                        <line x1="23" y1="8" x2="18" y2="13"></line>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <h3>5</h3>
-                    <p>Project Matches</p>
-                </div>
-                <div class="stat-action">
-                    <a href="#matches">View All</a>
-                </div>
+            <div class="stat-content">
+                <h3>5</h3>
+                <p>Project Matches</p>
             </div>
-            
-            <div class="stat-card connections-card">
-                <div class="stat-icon connections-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <h3>2</h3>
-                    <p>Academic Connections</p>
-                </div>
-                <div class="stat-action">
-                    <a href="/social">Connect</a>
-                </div>
+            <div class="stat-action">
+                <a href="#matches">View All</a>
             </div>
-            
-            <div class="stat-card profile-card">
-                <div class="stat-icon profile-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <h3>85%</h3>
-                    <p>Profile Completion</p>
-                </div>
-                <div class="stat-action">
-                    <a href="#profile">Complete</a>
-                </div>
+        </div>
+        
+        <div class="stat-card connections-card">
+            <div class="stat-icon connections-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <h3>2</h3>
+                <p>Academic Connections</p>
+            </div>
+            <div class="stat-action">
+                <a href="/social">Connect</a>
             </div>
         </div>
     </div>
+
     
     <!-- Dashboard Main Content -->
     <div class="dashboard-content">
@@ -333,6 +313,7 @@
             </section>
         </div>
     </div>
+    {% endif %}
 </div>
 
 <script>
