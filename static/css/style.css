@@ -1993,3 +1993,21 @@ blockquote {
         font-size: 20px;
     }
 }
+
+.interest-tag {
+    display: inline-block;
+    background-color: #e0f0ff;
+    color: #007bff;
+    padding: 6px 12px;
+    margin: 4px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid #007bff;
+    transition: background-color 0.3s;
+}
+
+.interest-tag:hover {
+    background-color: #cce5ff;
+    cursor: pointer;
+}
