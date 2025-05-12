@@ -2,7 +2,6 @@ from database.process_closed import parse_rss_page_info
 from database.process_open import get_all_open_projects
 from database.schema import *
 from app import app
-from sqlalchemy import exists
 
 def supervisor_exists(first_name: str, last_name: str) -> bool:
     return db.session.query(Supervisor).filter(

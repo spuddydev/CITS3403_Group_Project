@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, current_app, make_response
 from flask_sqlalchemy import SQLAlchemy
 from database.schema import db, User, Project, Interest
 from dotenv import load_dotenv
+from functools import wraps
 import os
+import jwt
+import datetime
 from forms import RegisterForm, LoginForm,Settings_ProfileForm
 
 # Initialise environment
@@ -28,6 +31,35 @@ with app.app_context():
     if not os.path.exists('site.db'):
         db.create_all()
 
+
+def back_to_login():
+    response = make_response(redirect('/login'))
+    response.set_cookie('jwt_token', '', max_age=0)
+    return response
+
+def token_required(func):
+    """
+    A wrapper that checks the JWT stored in a cookie and verifies it
+    before allowing the route to execute.
+    """
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        token = request.cookies.get('jwt_token', None)
+
+        if not token:
+            return back_to_login()
+
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            request.user = data  # optionally attach user info to request
+        except jwt.ExpiredSignatureError:
+            return back_to_login()
+        except jwt.InvalidTokenError:
+            return back_to_login()
+
+        return func(*args, **kwargs)
+    return decorated
+
 # Home Page
 @app.route('/')
 def default():
@@ -37,8 +69,70 @@ def default():
 def home():
     return render_template('home.html')
 
+# Sign In Page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # look for token in headers (americans spell authorisation wrong)
+    token = request.cookies.get('jwt_token', None)
+
+    if not token:
+        form = LoginForm()  # Instantiate the form
+        if 'attempts' not in session:
+            session['attempts'] = 0
+
+        if form.validate_on_submit():  # Check if the form is valid when submitted
+            username = form.username.data
+            password = form.password.data
+
+            # Find the user in the database by username
+            user = User.query.filter_by(username=username).first()
+
+            if user and user.check_password(password):
+                # Successful login: redirect to home page or dashboard
+                session['attempts'] = 0  # Reset attempts on success
+                # Parse credentials to session object
+                session['user_id'] = user.id
+                session['username'] = user.username
+                session['email'] = user.email
+                token_payload = {
+                    'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+                }
+
+                token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm="HS256")
+                response = make_response(redirect('/dashboard'))
+
+                # Set cookie to persist for 1 hour
+                response.set_cookie(
+                    'jwt_token', token,
+                    httponly=True,
+                    samesite='Lax',
+                    max_age=3600  # 1 hour in seconds
+                )
+
+                return response
+
+            else:
+                # Invalid credentials
+                session['attempts'] += 1
+                form.password.errors.append("Invalid credentials") 
+                return redirect(url_for('login'))
+        
+        return render_template('login.html', form=form)
+    else:
+        # Redirect straight to dashboard if jwt already issued
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            request.user = data  # optionally attach user info to request
+        except jwt.ExpiredSignatureError:
+            return back_to_login()
+        except jwt.InvalidTokenError as e:
+            return back_to_login()
+        
+        return redirect('/dashboard')
+
 # Dashboard Page
 @app.route('/dashboard')
+@token_required
 def dashboard():
     if not session.get('user_id'): # Check login status
         return redirect(url_for('login'))
@@ -47,6 +141,7 @@ def dashboard():
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
+@token_required
 def upload():
     if request.method == 'POST':
         user = db.session.query(User).get(session['user_id'])  
@@ -55,7 +150,7 @@ def upload():
             keywords = request.form.get('keywords')
             if keywords:
                 # Add new interest to db
-                new_interest = Interest(interest_name=keywords, interest_number=1)
+                new_interest = Interest(interest_name=keywords)
                 db.session.add(new_interest)
                 user.interests.append(new_interest)  
                 db.session.commit()
@@ -86,6 +181,7 @@ def upload():
 
 # Trends Page
 @app.route('/trends')
+@token_required
 def trends():
     if not session.get('user_id'): # Check login status
             return redirect(url_for('login'))
@@ -95,6 +191,7 @@ def trends():
 
 # Social Hub Page
 @app.route('/social')
+@token_required
 def social():
     if not session.get('user_id'): # Check login status
         return redirect(url_for('login'))
@@ -106,6 +203,7 @@ def social():
 
 # Settings Page
 @app.route('/settings')
+@token_required
 def settings():
     if not session.get('user_id'): # Check login status
         return redirect(url_for('login'))
@@ -154,36 +252,6 @@ def register():
         return redirect(url_for('login'))  # Redirect to login page after successful registration
     
     return render_template('register.html', form=form)
-
-# Sign In Page
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()  # Instantiate the form
-    if 'attempts' not in session:
-        session['attempts'] = 0
-
-    if form.validate_on_submit():  # Check if the form is valid when submitted
-        username = form.username.data
-        password = form.password.data
-
-        # Find the user in the database by username
-        user = User.query.filter_by(username=username).first()
-
-        if user and user.check_password(password):
-            # Successful login: redirect to home page or dashboard
-            session['attempts'] = 0  # Reset attempts on success
-            # Parse credentials to session object
-            session['user_id'] = user.id
-            session['username'] = user.username
-            session['email'] = user.email
-            return redirect(url_for('dashboard'))
-        else:
-            # Invalid credentials
-            session['attempts'] += 1
-            form.password.errors.append("Invalid credentials") 
-            return redirect(url_for('login'))
-    
-    return render_template('login.html', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)
