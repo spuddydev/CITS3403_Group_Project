@@ -52,8 +52,7 @@ class User(db.Model):
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     interest_name = db.Column(db.String(100), nullable=False)
-    interest_number = db.Column(db.Integer, nullable=False, default=0)
-
+    
 class ResearchArea(db.Model):
     __tablename__ = "research_area"
     id = db.Column(db.Integer, primary_key=True)
