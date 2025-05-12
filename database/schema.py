@@ -35,6 +35,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
 
     research_area_id = db.Column(db.Integer, db.ForeignKey('research_area.id'))
     faculty = db.relationship('ResearchArea', backref='users')

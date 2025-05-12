@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from database.schema import db, User
+from database.schema import db, User, Project, Interest
 from dotenv import load_dotenv
 import os
 from forms import RegisterForm, LoginForm,Settings_ProfileForm
@@ -40,26 +40,55 @@ def home():
 # Dashboard Page
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', username=session['username'])
+    if not session.get('user_id'): # Check login status
+        return redirect(url_for('login'))
+    
+    return render_template('dashboard.html', username=session['username'],var="hello")
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
-        keywords = request.form.get('keywords')
-        # Example: Pretend to match projects based on keywords
-        matched_projects = [
-            {'title': 'AI in Healthcare', 'supervisor': 'Dr. Smith', 'link': '#'},
-            {'title': 'Robotics in Mining', 'supervisor': 'Dr. Lee', 'link': '#'}
-        ]
-        return render_template('upload.html', matched_projects=matched_projects)
-    else:
-        matched_projects = []  # No results on GET
-        return render_template('upload.html', matched_projects=matched_projects)
+        user = db.session.query(User).get(session['user_id'])  
+        action = request.form.get('action')
+        if action == 'submit':
+            keywords = request.form.get('keywords')
+            if keywords:
+                # Add new interest to db
+                new_interest = Interest(interest_name=keywords, interest_number=1)
+                db.session.add(new_interest)
+                user.interests.append(new_interest)  
+                db.session.commit()
+
+        elif action == 'refresh': # Remove all associations in the association table
+            user.interests = []
+            db.session.commit()
+
+        user = db.session.query(User).filter_by(id=session['user_id']).first()
+        if user.interests:
+            user_interests = user.interests  # This will give you the list of interests
+        else:
+            user_interests = None
+        matched_projects = []
+        return render_template('upload.html', matched_projects=matched_projects,user_interests=user_interests)
+    else: #GET
+        if not session.get('user_id'): # Check login status
+            return redirect(url_for('login'))
+        
+        user = db.session.query(User).filter_by(id=session['user_id']).first()
+        if user.interests:
+            user_interests = user.interests  # This will give you the list of interests
+        else:
+            user_interests = ["empty"]
+
+
+        return render_template('upload.html', matched_projects=[], user_interests=user_interests)
 
 # Trends Page
 @app.route('/trends')
 def trends():
+    if not session.get('user_id'): # Check login status
+            return redirect(url_for('login'))
     trend_labels = ["AI", "Health", "Climate", "Mining", "Neuroscience"]
     trend_data = [12, 19, 7, 5, 8]
     return render_template('trends.html', trend_labels=trend_labels, trend_data=trend_data)
@@ -67,6 +96,8 @@ def trends():
 # Social Hub Page
 @app.route('/social')
 def social():
+    if not session.get('user_id'): # Check login status
+        return redirect(url_for('login'))
     similar_users = [
         {'name': 'John Doe', 'interests': 'AI, Robotics'},
         {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
@@ -76,6 +107,8 @@ def social():
 # Settings Page
 @app.route('/settings')
 def settings():
+    if not session.get('user_id'): # Check login status
+        return redirect(url_for('login'))
     user = User.query.get(session['user_id'])  # or however you're getting the current user
     form = Settings_ProfileForm(obj=user)  # pre-populate with user data
 
