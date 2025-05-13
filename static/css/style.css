@@ -2041,3 +2041,41 @@ blockquote {
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }
+
+.connection-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.connection-avatar {
+    background-color: #0071e3;
+    color: #fff;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1rem;
+}
+
+.connection-info {
+    flex: 1;
+}
+
+.connect-button.primary {
+    background-color: #0071e3;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}

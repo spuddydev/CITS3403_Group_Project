@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Connections - ResearchMatch{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <div class="dashboard-content">
+    <div class="content-column main-column">
+      <section class="dashboard-section connections-section">
+        <div class="section-header">
+          <h2>Your Connections</h2>
+        </div>
+
+        {% if similar_users %}
+        <div class="connections-container">
+          {% for user in similar_users %}
+          <div class="connection-card">
+            <div class="connection-avatar">
+              {{ user.name[0] }}{{ user.name.split(' ')[1][0] if user.name.split(' ')|length > 1 else '' }}
+            </div>
+            <div class="connection-info">
+              <h4>{{ user.name }}</h4>
+              <p>{{ user.interests }}</p>
+            </div>
+            <button class="connect-button primary">Connect</button>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No suggested connections found. Add interests to get matched.</p>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
