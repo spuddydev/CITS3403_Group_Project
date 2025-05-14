@@ -137,7 +137,22 @@ def dashboard():
     if not session.get('user_id'): # Check login status
         return redirect(url_for('login'))
     
-    return render_template('dashboard.html', username=session['username'],var="hello")
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+    if user.interests:
+        user_interests = user.interests  # This will give you the list of interests
+    else:
+        user_interests = None
+    
+    all_projects = db.session.query(Project).all() # DEVELOPEMENT----getting example projects for now
+    project_matches = [all_projects[0],all_projects[1],all_projects[2]]
+
+    connections = ["person1", "person2"]
+
+    return render_template('dashboard.html',
+                            username=           session['username'],
+                            user_interests=     user_interests,
+                            project_matches=    project_matches,
+                            connections=        connections)
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
@@ -174,7 +189,7 @@ def upload():
         if user.interests:
             user_interests = user.interests  # This will give you the list of interests
         else:
-            user_interests = ["empty"]
+            user_interests = None
 
 
         return render_template('upload.html', matched_projects=[], user_interests=user_interests)
