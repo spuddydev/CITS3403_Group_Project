@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, current_app, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text  #for raw SQL execution
 from database.schema import db, User, Project, Interest
 from dotenv import load_dotenv
 from functools import wraps
@@ -190,16 +191,38 @@ def trends():
     return render_template('trends.html', trend_labels=trend_labels, trend_data=trend_data)
 
 # Social Hub Page
-@app.route('/social')
+@app.route("/social")
 @token_required
 def social():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
-    similar_users = [
-        {'name': 'John Doe', 'interests': 'AI, Robotics'},
-        {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
-    ]
-    return render_template('social.html', similar_users=similar_users)
+    current_user_id = session.get("user_id")
+    if not current_user_id:
+        return redirect(url_for("login"))
+
+    # Get current user's interest IDs
+    interest_ids = db.session.execute(
+        text("SELECT interest_id FROM user_interest WHERE user_id = :uid"),
+        {"uid": current_user_id}
+    ).fetchall()
+    interest_ids = [row[0] for row in interest_ids]
+
+    # Find users with shared interests
+    if interest_ids:
+        result = db.session.execute(
+            text("""
+                SELECT DISTINCT u.id, u.name
+                FROM user u
+                JOIN user_interest ui ON u.id = ui.user_id
+                WHERE ui.interest_id IN :ids
+                AND u.id != :uid
+            """),
+            {"ids": tuple(interest_ids), "uid": current_user_id}
+        )
+    else:
+        result = []
+
+    # Format result for template
+    similar_users = [{"name": row[1], "interests": "Shared interests"} for row in result]
+    return render_template("social.html", similar_users=similar_users)
 
 # Settings Page
 @app.route('/settings')
@@ -252,6 +275,12 @@ def register():
         return redirect(url_for('login'))  # Redirect to login page after successful registration
     
     return render_template('register.html', form=form)
+
+#logout
+@app.route("/logout", methods=["POST"])
+def logout():
+    return back_to_login()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

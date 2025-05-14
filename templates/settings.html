@@ -49,28 +49,6 @@
         </form>
     </div>
     
-    <div class="glass-card" style="margin-top: 30px;">
-        <h3>Notification Preferences</h3>
-        <form action="/settings/notifications" method="POST">
-            <div style="margin-bottom: 15px;">
-                <input type="checkbox" id="new_matches" name="new_matches" >
-                <label for="new_matches">Email me when new research matches are found</label>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <input type="checkbox" id="connection_requests" name="connection_requests">
-                <label for="connection_requests">Email me for new connection requests</label>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <input type="checkbox" id="trending_updates" name="trending_updates" >
-                <label for="trending_updates">Weekly trending research updates</label>
-            </div>
-            
-            <button type="submit" class="btn">Save Notification Settings</button>
-        </form>
-    </div>
-    
     <div class="glass-card" style="margin-top: 30px; background-color: rgba(255, 235, 235, 0.7);">
         <h3>Data Management</h3>
         <p>These actions cannot be undone.</p>
@@ -81,4 +59,26 @@
             <button class="btn" style="background-color: #ff3b30;" onclick="if(confirm('Are you sure you want to delete your account? This action cannot be undone.')) window.location.href='/settings/delete-account'">Delete Account</button>
         </div>
     </div>
+
+    <div class="glass-card" style="margin-top: 30px;">
+        <h3>Privacy Settings</h3>
+        <form action="/settings/privacy" method="POST">
+            <div style="margin-bottom: 20px;">
+                <label for="privacy">Profile Visibility</label>
+                <select id="privacy" name="privacy">
+                    <option value="public" {% if user.privacy == 'public' %}selected{% endif %}>Public</option>
+                    <option value="private" {% if user.privacy == 'private' %}selected{% endif %}>Private</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn">Save Privacy Settings</button>
+        </form>
+    
+    <!-- logout -->
+    <div class="glass-card" style="margin-top: 30px; text-align: center;">
+        <form action="/logout" method="POST">
+            <button type="submit" class="btn" style="background-color: #ff3b30;">Log Out</button>
+        </form>
+    </div>
+
 {% endblock %}

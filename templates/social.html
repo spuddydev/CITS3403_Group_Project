@@ -1,16 +1,36 @@
 {% extends 'base.html' %}
 
-{% block title %}Social Hub - ResearchMatch{% endblock %}
+{% block title %}Connections - ResearchMatch{% endblock %}
 
 {% block content %}
-    <h2>Social Hub</h2>
-    <p>Connect with others who share your research interests.</p>
-    <ul class="list-group">
-        {% for user in similar_users %}
-        <li class="list-group-item">
-            <strong>{{ user.name }}</strong> - Interested in {{ user.interests }}
-            <button class="btn btn-sm">Connect</button>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="dashboard-container">
+  <div class="dashboard-content">
+    <div class="content-column main-column">
+      <section class="dashboard-section connections-section">
+        <div class="section-header">
+          <h2>Your Connections</h2>
+        </div>
+
+        {% if similar_users %}
+        <div class="connections-container">
+          {% for user in similar_users %}
+          <div class="connection-card">
+            <div class="connection-avatar">
+              {{ user.name[0] }}{{ user.name.split(' ')[1][0] if user.name.split(' ')|length > 1 else '' }}
+            </div>
+            <div class="connection-info">
+              <h4>{{ user.name }}</h4>
+              <p>{{ user.interests }}</p>
+            </div>
+            <button class="connect-button primary">Connect</button>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No suggested connections found. Add interests to get matched.</p>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+</div>
 {% endblock %}

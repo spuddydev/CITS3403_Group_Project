@@ -38,7 +38,8 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--background-light);
     color: var(--text-primary);
-    line-height: 1.5;
+    line-height: 1.6;
+    letter-spacing: 0.2px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -76,6 +77,7 @@ button {
 /* Headings */
 h1, h2, h3 {
     font-weight: 600;
+    line-height: 1.3;
     letter-spacing: -0.5px;
     margin-bottom: 20px;
     color: var(--text-primary);
@@ -1120,6 +1122,9 @@ blockquote {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
 .stat-action a:hover {
@@ -1159,6 +1164,10 @@ blockquote {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+}
+
+.trends-section .section-header {
+    margin-bottom: 10px;
 }
 
 .view-all {
@@ -1663,10 +1672,11 @@ blockquote {
 .list-group-item {
     position: relative;
     display: block;
-    padding: 0.75rem 1.25rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 12px;
+    border-radius: 10px;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.125);
-    margin-bottom: -1px;
     color: #333;
 }
 
@@ -2010,4 +2020,85 @@ blockquote {
 .interest-tag:hover {
     background-color: #cce5ff;
     cursor: pointer;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.card.trends-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.trend-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.trends-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.trends-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.connection-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.connection-avatar {
+    background-color: #0071e3;
+    color: #fff;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1rem;
+}
+
+.connection-info {
+    flex: 1;
+}
+
+.connect-button.primary {
+    background-color: #0071e3;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.navbar-user {
+  font-size: 0.95rem;
+  color: #333;
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.username-label {
+  background-color: #f2f2f2;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
 }

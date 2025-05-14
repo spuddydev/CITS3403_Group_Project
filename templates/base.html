@@ -45,7 +45,9 @@
                         </div>
                     </div>
                 {% else %}
-                    <a href="/login" class="btn-sign-in">Sign In</a>
+                    {% if not session.get('user_id') %}
+                        <a href="/login" class="btn">Sign In</a>
+                    s{% endif %}
                 {% endif %}
             </div>
         </header>
