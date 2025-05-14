@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ResearchMatch{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="{% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}with-sidebar{% else %}full-page{% endif %}">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="{% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}/dashboard{% else %}/{% endif %}" class="header-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span class="header-logo-text" style="margin-left: 10px;">ResearchMatch</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}
+                    <div class="nav-action-item">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="nav-action-item">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="nav-action-item">
+                            <a href="/settings">
+                              <i class="fas fa-cog"></i>
+                            </a>
+                        </div>
+                        <div class="user-avatar">
+                            {{ user_name[0].upper() if user_name else 'U' }}
+                        </div>
+                    </div>
+                {% else %}
+                    {% if not session.get('user_id') %}
+                        <a href="/login" class="btn">Sign In</a>
+                    s{% endif %}
+                {% endif %}
+            </div>
+        </header>
+        
+        <!-- Sidebar (only for logged-in users) -->
+        {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-header">Main</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a href="/dashboard" class="sidebar-link {% if '/dashboard' in request.path %}active{% endif %}">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-home"></i>
+                            </span>
+                            <span class="sidebar-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/upload" class="sidebar-link {% if '/upload' in request.path %}active{% endif %}">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="sidebar-text">Research Interests</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/trends" class="sidebar-link {% if '/trends' in request.path %}active{% endif %}">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </span>
+                            <span class="sidebar-text">Trends</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/social" class="sidebar-link {% if '/social' in request.path %}active{% endif %}">
+                            <span class="sidebar-icon">
+                                <i class="fas fa-users"></i>
+                            </span>
+                            <span class="sidebar-text">Connections</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-header">Research</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-pink);">
+                                <i class="fas fa-file-alt"></i>
+                            </span>
+                            <span class="sidebar-text">Projects</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-orange);">
+                                <i class="fas fa-bookmark"></i>
+                            </span>
+                            <span class="sidebar-text">Saved</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-indigo);">
+                                <i class="fas fa-graduation-cap"></i>
+                            </span>
+                            <span class="sidebar-text">Supervisors</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-header">Settings</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-red);">
+                                <i class="fas fa-user-circle"></i>
+                            </span>
+                            <span class="sidebar-text">Profile</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/settings" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-yellow);">
+                                <i class="fas fa-cog"></i>
+                            </span>
+                            <span class="sidebar-text">Preferences</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-green);">
+                                <i class="fas fa-question-circle"></i>
+                            </span>
+                            <span class="sidebar-text">Help & Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </aside>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <main class="main-content {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}with-sidebar{% endif %}" id="mainContent">
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+            
+            <footer class="app-footer">
+                <p>Lorem ipsum. Footer information.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.classList.remove('with-sidebar');
+                    mainContent.classList.add('with-collapsed-sidebar');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                } else {
+                    mainContent.classList.add('with-sidebar');
+                    mainContent.classList.remove('with-collapsed-sidebar');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                }
+            });
+        }
+        
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-visible');
+            });
+        }
+        
+        // Check if sidebar was previously collapsed
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            
+            if (sidebar && sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.remove('with-sidebar');
+                mainContent.classList.add('with-collapsed-sidebar');
+            }
+            
+            // Close sidebar when clicking outside of it on mobile
+            document.addEventListener('click', function(event) {
+                const isMobile = window.innerWidth <= 992;
+                const isClickInsideSidebar = sidebar && sidebar.contains(event.target);
+                const isClickOnMenuToggle = mobileMenuToggle && mobileMenuToggle.contains(event.target);
+                
+                if (isMobile && sidebar && sidebar.classList.contains('mobile-visible') && !isClickInsideSidebar && !isClickOnMenuToggle) {
+                    sidebar.classList.remove('mobile-visible');
+                }
+            });
+            
+            // Add some animation effects to sidebar links
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    link.style.transform = 'translateX(5px)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    link.style.transform = 'translateX(0)';
+                });
+            });
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992 && sidebar) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+    </script>
+</body>
+</html>

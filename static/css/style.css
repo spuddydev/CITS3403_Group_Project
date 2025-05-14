@@ -2079,3 +2079,16 @@ blockquote {
     border-radius: 6px;
     cursor: pointer;
 }
+
+.navbar-user {
+  font-size: 0.95rem;
+  color: #333;
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.username-label {
+  background-color: #f2f2f2;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+}

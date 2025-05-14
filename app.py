@@ -276,5 +276,11 @@ def register():
     
     return render_template('register.html', form=form)
 
+#logout
+@app.route("/logout", methods=["POST"])
+def logout():
+    return back_to_login()
+
+
 if __name__ == '__main__':
     app.run(debug=True)
