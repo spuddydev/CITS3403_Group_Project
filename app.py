@@ -49,7 +49,16 @@ def dashboard():
     else:
         user_interests = None
     
-    return render_template('dashboard.html', username=session['username'],user_interests=user_interests)
+    all_projects = db.session.query(Project).all() # DEVELOPEMENT----getting example projects for now
+    project_matches = [all_projects[0],all_projects[1],all_projects[2]]
+
+    connections = ["person1", "person2"]
+
+    return render_template('dashboard.html',
+                            username=           session['username'],
+                            user_interests=     user_interests,
+                            project_matches=    project_matches,
+                            connections=        connections)
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])

@@ -55,7 +55,7 @@
                 </svg>
             </div>
             <div class="stat-content">
-                <h3>5</h3>
+                <h3>{{ project_matches|length }}</h3>
                 <p>Project Matches</p>
             </div>
             <div class="stat-action">
@@ -73,7 +73,7 @@
                 </svg>
             </div>
             <div class="stat-content">
-                <h3>2</h3>
+                <h3>{{ connections|length }}</h3>
                 <p>Academic Connections</p>
             </div>
             <div class="stat-action">
@@ -92,23 +92,22 @@
                     <h2>Research Matches</h2>
                     <a href="#" class="view-all">View All</a>
                 </div>
-                
+                {% for project in project_matches %}
                 <div class="matches-grid">
                     <div class="match-card ai-match">
                         <div class="match-header">
-                            <div class="match-category">Artificial Intelligence</div>
-                            <div class="match-score">95% Match</div>
+                            <div class="match-category">{% for interest in project.interests%}{{interest.interest_name}}{% if not loop.last %}, {% endif %}{% endfor %}</div>
                         </div>
-                        <h3 class="match-title">AI Applications in Healthcare</h3>
-                        <p class="match-description">Research focusing on machine learning algorithms to improve diagnostic accuracy in medical imaging analysis.</p>
+                        <h3 class="match-title">{{project.title}}</h3>
+                        <p class="match-description">{% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}</p>
                         <div class="match-meta">
                             <div class="supervisor">
                                 <span class="meta-label">Supervisor:</span>
-                                <span class="meta-value">Dr. Sarah Smith</span>
+                                <span class="meta-value">{% for supervisor in project.supervisors %}{{supervisor.first_name}} {{supervisor.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                             </div>
                             <div class="department">
                                 <span class="meta-label">Department:</span>
-                                <span class="meta-value">Computer Science</span>
+                                <span class="meta-value">{% for research in project.research_area%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                             </div>
                         </div>
                         <div class="match-footer">
@@ -116,71 +115,27 @@
                             <button class="match-action secondary">Save</button>
                         </div>
                     </div>
-                    
-                    <div class="match-card robotics-match">
-                        <div class="match-header">
-                            <div class="match-category">Robotics</div>
-                            <div class="match-score">87% Match</div>
-                        </div>
-                        <h3 class="match-title">Advanced Robotics in Mining</h3>
-                        <p class="match-description">Developing autonomous robotic systems for hazardous mining environments to improve safety and efficiency.</p>
-                        <div class="match-meta">
-                            <div class="supervisor">
-                                <span class="meta-label">Supervisor:</span>
-                                <span class="meta-value">Dr. Michael Lee</span>
-                            </div>
-                            <div class="department">
-                                <span class="meta-label">Department:</span>
-                                <span class="meta-value">Mechanical Engineering</span>
-                            </div>
-                        </div>
-                        <div class="match-footer">
-                            <button class="match-action primary">View Details</button>
-                            <button class="match-action secondary">Save</button>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </section>
             
             <section class="dashboard-section">
                 <div class="section-header">
                     <h2>Your Research Interests</h2>
-                    <a href="/upload" class="view-all">Manage</a>
                 </div>
                 
                 <div class="interests-container">
+                    {% for interest in user_interests%}
                     <div class="interest-tag ai-tag">
-                        <span>Artificial Intelligence</span>
+                        <span>{{interest.interest_name}}</span>
                         <button class="remove-interest" aria-label="Remove interest">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
                         </button>
                     </div>
-                    <div class="interest-tag ml-tag">
-                        <span>Machine Learning</span>
-                        <button class="remove-interest" aria-label="Remove interest">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="interest-tag robotics-tag">
-                        <span>Robotics</span>
-                        <button class="remove-interest" aria-label="Remove interest">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    <button class="add-interest">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
+                    {% endfor %}
+
+                    <button class="add-interest" onclick="window.location.href='{{ url_for('upload') }}'">
+                        <svg width="16" height="16" ...>...</svg>
                         <span>Add Interest</span>
                     </button>
                 </div>
