@@ -91,7 +91,6 @@ def fetch_research_repo_urls(num_of_sitemaps: int, starting_number: int = 0):
     headers = {
         "User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
     }
-    print(headers)
     for i in range(starting_number, num_of_sitemaps):
  
         response = requests.get(f"https://research-repository.uwa.edu.au/sitemap/publications.xml?n={i+1}", headers=headers)
@@ -112,9 +111,9 @@ def fetch_closed_research(num_of_sitemaps: int = 1, starting_number: int = 0):
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(user_agent=ua.random)
         page = context.new_page()
-        for url in fetch_research_repo_urls(num_of_sitemaps):
+        for url in fetch_research_repo_urls(num_of_sitemaps, starting_number):
             entry = get_closed_site_details(page, url)
-            print(entry)
+            #print(entry) #DEBUG
             yield entry
         browser.close()
             

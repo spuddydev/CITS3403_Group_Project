@@ -2,35 +2,56 @@ from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
 from database.schema import db, Project, Interest
 from umap import UMAP
+import re
 from hdbscan import HDBSCAN
 from app import app
+from collections import defaultdict
 from bertopic.representation import KeyBERTInspired
 from bertopic.representation import MaximalMarginalRelevance
-from collections import defaultdict
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction import _stop_words
 
 NUMBER_OF_INTERESTS_FROM_TOPIC = 3
+STOPWORDS = _stop_words.ENGLISH_STOP_WORDS
+
+def clean_summary(text: str) -> str:
+    text = re.sub(r"[^\w\s]", "", text)  # removes punctuation
+    words = text.lower().split()
+    return " ".join([
+        w for w in words
+        if w not in STOPWORDS and len(w) > 2 and not w.isnumeric()
+    ])
 
 with app.app_context():
     # Get all the summaries to classify
     projects = Project.query.all()
-    summaries = [p.summary for p in projects]
+    summaries = [clean_summary(p.summary) for p in projects]
+
+    # Define Vectoriser Model
+    vectorizer_model = CountVectorizer(
+        stop_words="english",
+        ngram_range=(1, 2), 
+        min_df=3,
+        max_df=0.9               
+    )
 
     # Embed summaries
     embedding_model = SentenceTransformer('thenlper/gte-small')
     embeddings = embedding_model.encode(summaries, show_progress_bar=True)
     print(embeddings.shape)
 
-    # Reduce dimensionality of vectors (Like 2048 (i think??) to 5)
+    # Reduce dimensionality of vectors (Like 348 (i think??) to 13)
     umap_model = UMAP(
-        n_components=5, min_dist=0.0, metric='cosine', random_state=42
+        n_components=13, min_dist=0.0, metric='cosine', random_state=42
     )
 
     # Define the clustering model
     hdbscan_model = HDBSCAN(
-        min_cluster_size=50,
+        min_cluster_size=5,
+        min_samples=3,
         metric='euclidean',
         cluster_selection_method='eom',
-        prediction_data=True 
+        prediction_data=True,
     )
 
     # Now training topic representation model 
@@ -40,37 +61,44 @@ with app.app_context():
         embedding_model=embedding_model,
         umap_model=umap_model,
         hdbscan_model=hdbscan_model,
+        vectorizer_model=vectorizer_model,
         verbose=True
     ).fit(summaries, embeddings)
-    topic_model.reduce_outliers(summaries, embeddings, threshold=0.0)
 
+    
     print("First topics:")
     print(topic_model.get_topic_info())
 
-    # Now we are honing (fine-tuning) the topics
-    representation_model = KeyBERTInspired()
-    topic_model.update_topics(summaries, representation_model=representation_model)
 
+    # Now we are honing (fine-tuning) the topics
+    topic_model.update_topics(summaries, representation_model=KeyBERTInspired())
     # And then running a diversification algorithm to ensure that there are fewer,
     # More relevant topics for each cluster
-    representation_model = MaximalMarginalRelevance(diversity=0.5)
-    topic_model.update_topics(summaries, representation_model=representation_model)
+    topic_model.update_topics(summaries, representation_model=MaximalMarginalRelevance(diversity=0.5))
+
+
     print("Final topics:")
     print(topic_model.get_topic_info())
 
-    # Save model
-    topic_model.save("models/interest_model_v1")
+    # Get raw topic assignments and probabilities
+    tmp_topics, probs = topic_model.transform(summaries, embeddings=embeddings)
 
-    # Assign topics to projects
-    topics, _ = topic_model.transform(summaries)
+    # Apply reduce_outliers to remove -1s
+    print(f"[DEBUG] Running reduce_outliers on {len(tmp_topics)} topics")
+    topics = topic_model.reduce_outliers(
+        documents=summaries,
+        topics=tmp_topics,
+        probabilities=probs,
+        embeddings=embeddings,
+        threshold=0.0
+    )
+    topic_model.update_topics(summaries,topics=topics)
+
+    topic_model.save("models/interest_model_v1")
 
     # Extract top N keywords per topic
     topic_keywords = defaultdict(list)
     for topic_id in set(topics):
-        # There should be no outliers, but -1 is an outlier
-        # So skip if there are
-        if topic_id == -1:
-            continue
         top_words = topic_model.get_topic(topic_id)[:NUMBER_OF_INTERESTS_FROM_TOPIC]
         for word, _ in top_words:
             topic_keywords[topic_id].append(word)
