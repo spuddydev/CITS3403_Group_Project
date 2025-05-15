@@ -6,7 +6,9 @@ from functools import wraps
 import os
 import jwt
 import datetime
-from forms import RegisterForm, LoginForm,Settings_ProfileForm
+from forms import RegisterForm, LoginForm, Settings_ProfileForm
+
+
 
 # Initialise environment
 load_dotenv()
@@ -32,6 +34,8 @@ with app.app_context():
         db.create_all()
 
 
+
+# Routing functions
 def back_to_login():
     response = make_response(redirect('/login'))
     response.set_cookie('jwt_token', '', max_age=0)
@@ -60,6 +64,9 @@ def token_required(func):
         return func(*args, **kwargs)
     return decorated
 
+
+
+# Unprotected pages
 # Home Page
 @app.route('/')
 def default():
@@ -95,6 +102,7 @@ def login():
                 session['username'] = user.username
                 session['email'] = user.email
                 token_payload = {
+                    'user_id': user.id,
                     'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
                 }
 
@@ -130,98 +138,6 @@ def login():
         
         return redirect('/dashboard')
 
-# Dashboard Page
-@app.route('/dashboard')
-@token_required
-def dashboard():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
-    
-    return render_template('dashboard.html', username=session['username'],var="hello")
-
-# Upload Page (GET and POST for form)
-@app.route('/upload', methods=['GET', 'POST'])
-@token_required
-def upload():
-    if request.method == 'POST':
-        user = db.session.query(User).get(session['user_id'])  
-        action = request.form.get('action')
-        if action == 'submit':
-            keywords = request.form.get('keywords')
-            if keywords:
-                # Add new interest to db
-                new_interest = Interest(interest_name=keywords)
-                db.session.add(new_interest)
-                user.interests.append(new_interest)  
-                db.session.commit()
-
-        elif action == 'refresh': # Remove all associations in the association table
-            user.interests = []
-            db.session.commit()
-
-        user = db.session.query(User).filter_by(id=session['user_id']).first()
-        if user.interests:
-            user_interests = user.interests  # This will give you the list of interests
-        else:
-            user_interests = None
-        matched_projects = []
-        return render_template('upload.html', matched_projects=matched_projects,user_interests=user_interests)
-    else: #GET
-        if not session.get('user_id'): # Check login status
-            return redirect(url_for('login'))
-        
-        user = db.session.query(User).filter_by(id=session['user_id']).first()
-        if user.interests:
-            user_interests = user.interests  # This will give you the list of interests
-        else:
-            user_interests = ["empty"]
-
-
-        return render_template('upload.html', matched_projects=[], user_interests=user_interests)
-
-# Trends Page
-@app.route('/trends')
-@token_required
-def trends():
-    if not session.get('user_id'): # Check login status
-            return redirect(url_for('login'))
-    trend_labels = ["AI", "Health", "Climate", "Mining", "Neuroscience"]
-    trend_data = [12, 19, 7, 5, 8]
-    return render_template('trends.html', trend_labels=trend_labels, trend_data=trend_data)
-
-# Social Hub Page
-@app.route('/social')
-@token_required
-def social():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
-    similar_users = [
-        {'name': 'John Doe', 'interests': 'AI, Robotics'},
-        {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
-    ]
-    return render_template('social.html', similar_users=similar_users)
-
-# Settings Page
-@app.route('/settings')
-@token_required
-def settings():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])  # or however you're getting the current user
-    form = Settings_ProfileForm(obj=user)  # pre-populate with user data
-
-
-    if form.validate_on_submit():
-        user.username = form.username.data
-        user.email = form.email.data
-        user.faculty = form.faculty.data
-        db.session.commit()
-        flash("Profile updated successfully.", "success")
-        return redirect(url_for('settings'))
-
-    return render_template('settings.html', form=form, user=user)
-
-
 # Register Page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -252,6 +168,90 @@ def register():
         return redirect(url_for('login'))  # Redirect to login page after successful registration
     
     return render_template('register.html', form=form)
+
+
+
+# Protected pages
+# Dashboard Page
+@app.route('/dashboard')
+@token_required
+def dashboard():
+    return render_template('dashboard.html', username=session['username'],var="hello")
+
+# Upload Page (GET and POST for form)
+@app.route('/upload', methods=['GET', 'POST'])
+@token_required
+def upload():
+    if request.method == 'POST':
+        user = db.session.query(User).get(session['user_id'])  
+        action = request.form.get('action')
+        if action == 'submit':
+            keywords = request.form.get('keywords')
+            if keywords:
+                # Add new interest to db
+                new_interest = Interest(interest_name=keywords)
+                db.session.add(new_interest)
+                user.interests.append(new_interest)  
+                db.session.commit()
+
+        # Remove all associations in the association table
+        elif action == 'refresh': 
+            user.interests = []
+            db.session.commit()
+
+        user = db.session.query(User).filter_by(id=session['user_id']).first()
+        if user.interests:
+            user_interests = user.interests 
+        else:
+            user_interests = None
+        matched_projects = []
+        return render_template('upload.html', matched_projects=matched_projects,user_interests=user_interests)
+    else: #GET
+        user = db.session.query(User).filter_by(id=session['user_id']).first()
+        if user.interests:
+            user_interests = user.interests 
+        else:
+            user_interests = ["empty"]
+
+        return render_template('upload.html', matched_projects=[], user_interests=user_interests)
+
+# Trends Page
+@app.route('/trends')
+@token_required
+def trends():
+    trend_labels = ["AI", "Health", "Climate", "Mining", "Neuroscience"]
+    trend_data = [12, 19, 7, 5, 8]
+    return render_template('trends.html', trend_labels=trend_labels, trend_data=trend_data)
+
+# Social Hub Page
+@app.route('/social')
+@token_required
+def social():
+    similar_users = [
+        {'name': 'John Doe', 'interests': 'AI, Robotics'},
+        {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
+    ]
+    return render_template('social.html', similar_users=similar_users)
+
+# Settings Page
+@app.route('/settings')
+@token_required
+def settings():
+    user = User.query.get(session['user_id'])  # or however you're getting the current user
+    form = Settings_ProfileForm(obj=user)  # pre-populate with user data
+
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.faculty = form.faculty.data
+        db.session.commit()
+        flash("Profile updated successfully.", "success")
+        return redirect(url_for('settings'))
+
+    return render_template('settings.html', form=form, user=user)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
