@@ -33,6 +33,13 @@ with app.app_context():
     if not os.path.exists('site.db'):
         db.create_all()
 
+# Helper functions
+def add_mutual_friend(user_a: User, user_b: User) -> None:
+    if user_b not in user_a.connections:
+        user_a.connections.append(user_b)
+    if user_a not in user_b.connections:
+        user_b.connections.append(user_a)
+    db.session.commit()
 
 
 # Routing functions
@@ -188,10 +195,10 @@ def dashboard():
     connections = ["person1", "person2"]
 
     return render_template('dashboard.html',
-                            username=           session['username'],
-                            user_interests=     user_interests,
-                            project_matches=    project_matches,
-                            connections=        connections)
+                            username= session['username'],
+                            user_interests= user_interests,
+                            project_matches =project_matches,
+                            connections = connections)
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
