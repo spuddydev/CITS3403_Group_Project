@@ -1,24 +1,33 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
+from playwright.sync_api import sync_playwright, Page
+import time
+import random
+from fake_useragent import UserAgent
 
-try:
-    from database.scrape import get_site_content
-except ModuleNotFoundError:
-    from scrape import get_site_content
+ua = UserAgent()
 
-def get_all_open_links(link: str) -> list[str]:
-    html = get_site_content(link)
+def get_all_open_links(page: Page, url: str) -> list[str]:
+    time.sleep(random.uniform(1.2, 4))
+    page.goto(url)
+    page.wait_for_selector("body", timeout=6000)
+    html = page.content()
+
     soup = BeautifulSoup(html, 'html.parser')
 
     hrefs = []
     for media_div in soup.find_all('div', class_='media my-4'):
         a_tag = media_div.find('a', href=True)
         if a_tag:
-            hrefs.append('/'.join(link.split('/')[:3]) + a_tag['href'])
+            hrefs.append('/'.join(url.split('/')[:3]) + a_tag['href'])
     return hrefs
 
-def get_project_info(link: str) -> dict:
-    html = get_site_content(link)
+def get_project_info(page, url: str) -> dict:
+    time.sleep(random.uniform(1.2, 4))
+    page.goto(url)
+    page.wait_for_selector("body", timeout=6000)
+    html = page.content()
+
     soup = BeautifulSoup(html, 'html.parser')
 
     # Define a mapping of the labels to extract
@@ -45,13 +54,15 @@ def get_project_info(link: str) -> dict:
             value = td.get_text(separator=' ', strip=True)
             data.setdefault(current_field, []).append(value)
         
-    supervisors = []
-    for supervisor in data.get("Supervisor", []):
-        supervisor = supervisor.split(' ')
-        supervisors.append({"first_name": supervisor[1], 
-                            "last_name": supervisor[2],
-                            "email": '.'.join(supervisor[1:]) + "@uwa.edu.au"
-        })
+    researchers = []
+    for researcher in data.get("Supervisor", []):
+        researcher = researcher.split(' ')
+        researcher_entry = {"first_name": researcher[1], 
+                            "last_name": researcher[2],
+        }
+        email = ('.'.join(researcher[1:]) + "@uwa.edu.au").replace("'", "").replace(" ", "")
+        researcher_entry["email"] = email
+        researchers.append(researcher_entry)
 
     date = data.get('Close date', [None])[0]
     if date: 
@@ -61,23 +72,27 @@ def get_project_info(link: str) -> dict:
     result = {
         'is_open': True,
         'title': data.get('Title', [None])[0],
-        'link': link,
+        'link': url,
         'close_date': date,
-        'supervisors':  supervisors,
+        'researcher':  researchers,
         'research_areas': data.get('Research area', []),
         'summary': ' '.join(data.get('Project description', []))
     }
 
     return result
 
-def get_all_open_projects(project_directory_link: str) -> list[dict]:
-    projects = []
-    for link in get_all_open_links(project_directory_link):
-        info = get_project_info(link)
-        if info.get("title") is not None:
-            projects.append(info)
-    return projects
+def fetch_all_open_projects(project_directory_url: str):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(user_agent=ua.random)
+        page = context.new_page()
+        for link in get_all_open_links(page, project_directory_url):
+            info = get_project_info(page, link)
+            if info.get("title") is not None and info.get("close_date") is not None:
+                print(info) #DEBUG
+                yield info
+        browser.close()
 
 if __name__ == "__main__":
-    for project in get_all_open_projects("https://researchdegrees.uwa.edu.au/projects"):
+    for project in fetch_all_open_projects("https://researchdegrees.uwa.edu.au/projects"):
         print(project)

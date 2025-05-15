@@ -20,9 +20,9 @@ project_interest = db.Table('project_interest',
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
 )
 
-project_supervisor = db.Table('project_supervisor',
+project_researcher = db.Table('project_researcher',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
-    db.Column('supervisor_id', db.Integer, db.ForeignKey('supervisor.id'), primary_key=True)
+    db.Column('researcher_id', db.Integer, db.ForeignKey('researcher.id'), primary_key=True)
 )
 
 user_saved_projects = db.Table('user_saved_projects',
@@ -58,7 +58,7 @@ class ResearchArea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     area = db.Column(db.String(100), nullable=False)
 
-class Supervisor(db.Model):
+class Researcher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
@@ -69,14 +69,11 @@ class Project(db.Model):
     title = db.Column(db.String(100), nullable=False)
     link = db.Column(db.String(100), nullable=False)
     is_open = db.Column(db.Boolean, nullable=False)
+    summary = db.Column(db.Text, nullable=False)
 
-    # Open project fields
-    summary = db.Column(db.Text, nullable=True)
+    # Only for open projects
     close_date = db.Column(db.Date, nullable=True)
 
-    # Closed project fields
-    publication_date = db.Column(db.Date, nullable=True)
-
-    research_area = db.relationship('ResearchArea', secondary=project_research_area, backref='projects')
+    research_areas = db.relationship('ResearchArea', secondary=project_research_area, backref='projects')
     interests = db.relationship('Interest', secondary=project_interest, backref='projects')
-    supervisors = db.relationship('Supervisor', secondary=project_supervisor, backref='projects')
+    researchers = db.relationship('Researcher', secondary=project_researcher, backref='projects')
