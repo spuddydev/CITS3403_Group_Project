@@ -8,14 +8,12 @@ __pycache__/
 
 # Database files
 data/
-*.db
-*.sqlite
 
 # Flask Tracking 
-instance/
+hidden/
 
 # Model Tracking
-model/
+models/
 
 # Environment Setup
 .env

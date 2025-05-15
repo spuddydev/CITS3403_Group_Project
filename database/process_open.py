@@ -74,7 +74,7 @@ def get_project_info(page, url: str) -> dict:
         'title': data.get('Title', [None])[0],
         'link': url,
         'close_date': date,
-        'researchers':  researchers,
+        'researcher':  researchers,
         'research_areas': data.get('Research area', []),
         'summary': ' '.join(data.get('Project description', []))
     }
@@ -89,6 +89,7 @@ def fetch_all_open_projects(project_directory_url: str):
         for link in get_all_open_links(page, project_directory_url):
             info = get_project_info(page, link)
             if info.get("title") is not None and info.get("close_date") is not None:
+                print(info) #DEBUG
                 yield info
         browser.close()
 
