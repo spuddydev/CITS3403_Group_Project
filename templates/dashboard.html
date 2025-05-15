@@ -103,11 +103,11 @@
                         <div class="match-meta">
                             <div class="supervisor">
                                 <span class="meta-label">Supervisor:</span>
-                                <span class="meta-value">{% for supervisor in project.supervisors %}{{supervisor.first_name}} {{supervisor.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                                <span class="meta-value">{% for supervisor in project.researchers %}{{supervisor.first_name}} {{supervisor.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                             </div>
                             <div class="department">
                                 <span class="meta-label">Department:</span>
-                                <span class="meta-value">{% for research in project.research_area%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                                <span class="meta-value">{% for research in project.research_areas%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                             </div>
                         </div>
                         <div class="match-footer">
