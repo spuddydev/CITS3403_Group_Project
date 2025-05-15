@@ -6,7 +6,9 @@ from functools import wraps
 import os
 import jwt
 import datetime
-from forms import RegisterForm, LoginForm,Settings_ProfileForm
+from forms import RegisterForm, LoginForm, Settings_ProfileForm
+
+
 
 # Initialise environment
 load_dotenv()
@@ -32,6 +34,8 @@ with app.app_context():
         db.create_all()
 
 
+
+# Routing functions
 def back_to_login():
     response = make_response(redirect('/login'))
     response.set_cookie('jwt_token', '', max_age=0)
@@ -60,6 +64,9 @@ def token_required(func):
         return func(*args, **kwargs)
     return decorated
 
+
+
+# Unprotected pages
 # Home Page
 @app.route('/')
 def default():
@@ -95,6 +102,7 @@ def login():
                 session['username'] = user.username
                 session['email'] = user.email
                 token_payload = {
+                    'user_id': user.id,
                     'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
                 }
 
@@ -130,13 +138,44 @@ def login():
         
         return redirect('/dashboard')
 
+# Register Page
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()  # Instantiate the form
+    if form.validate_on_submit():  # This checks if the form is submitted and valid
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        # Check if username already exists
+        user_exists = User.query.filter_by(username=username).first()
+        if user_exists:
+            form.username.errors.append("Username already exists.")
+            return render_template('register.html', form=form)
+        email_exists = User.query.filter_by(email=email).first()
+        if email_exists:
+            form.email.errors.append("Email already exists.") 
+            return render_template('register.html', form=form)
+        
+
+        # Create a new user and hash the password
+        new_user = User(username=username, email=email)
+        new_user.set_password(password)
+        # Add the user to the database
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Account created successfully! You can now log in.", "success")
+        return redirect(url_for('login'))  # Redirect to login page after successful registration
+    
+    return render_template('register.html', form=form)
+
+
+
+# Protected pages
 # Dashboard Page
 @app.route('/dashboard')
 @token_required
 def dashboard():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
-    
     user = db.session.query(User).filter_by(id=session['user_id']).first()
     if user.interests:
         user_interests = user.interests  # This will give you the list of interests
@@ -170,27 +209,24 @@ def upload():
                 user.interests.append(new_interest)  
                 db.session.commit()
 
-        elif action == 'refresh': # Remove all associations in the association table
+        # Remove all associations in the association table
+        elif action == 'refresh': 
             user.interests = []
             db.session.commit()
 
         user = db.session.query(User).filter_by(id=session['user_id']).first()
         if user.interests:
-            user_interests = user.interests  # This will give you the list of interests
+            user_interests = user.interests 
         else:
             user_interests = None
         matched_projects = []
         return render_template('upload.html', matched_projects=matched_projects,user_interests=user_interests)
     else: #GET
-        if not session.get('user_id'): # Check login status
-            return redirect(url_for('login'))
-        
         user = db.session.query(User).filter_by(id=session['user_id']).first()
         if user.interests:
-            user_interests = user.interests  # This will give you the list of interests
+            user_interests = user.interests 
         else:
             user_interests = None
-
 
         return render_template('upload.html', matched_projects=[], user_interests=user_interests)
 
@@ -198,8 +234,6 @@ def upload():
 @app.route('/trends')
 @token_required
 def trends():
-    if not session.get('user_id'): # Check login status
-            return redirect(url_for('login'))
     trend_labels = ["AI", "Health", "Climate", "Mining", "Neuroscience"]
     trend_data = [12, 19, 7, 5, 8]
     return render_template('trends.html', trend_labels=trend_labels, trend_data=trend_data)
@@ -208,8 +242,6 @@ def trends():
 @app.route('/social')
 @token_required
 def social():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
     similar_users = [
         {'name': 'John Doe', 'interests': 'AI, Robotics'},
         {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
@@ -220,8 +252,6 @@ def social():
 @app.route('/settings')
 @token_required
 def settings():
-    if not session.get('user_id'): # Check login status
-        return redirect(url_for('login'))
     user = User.query.get(session['user_id'])  # or however you're getting the current user
     form = Settings_ProfileForm(obj=user)  # pre-populate with user data
 
@@ -237,36 +267,6 @@ def settings():
     return render_template('settings.html', form=form, user=user)
 
 
-# Register Page
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()  # Instantiate the form
-    if form.validate_on_submit():  # This checks if the form is submitted and valid
-        username = form.username.data
-        password = form.password.data
-        email = form.email.data
-        # Check if username already exists
-        user_exists = User.query.filter_by(username=username).first()
-        if user_exists:
-            form.username.errors.append("Username already exists.")
-            return render_template('register.html', form=form)
-        email_exists = User.query.filter_by(email=email).first()
-        if email_exists:
-            form.email.errors.append("Email already exists.") 
-            return render_template('register.html', form=form)
-        
-
-        # Create a new user and hash the password
-        new_user = User(username=username, email=email)
-        new_user.set_password(password)
-        # Add the user to the database
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash("Account created successfully! You can now log in.", "success")
-        return redirect(url_for('login'))  # Redirect to login page after successful registration
-    
-    return render_template('register.html', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)
