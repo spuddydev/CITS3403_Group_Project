@@ -71,6 +71,14 @@ def token_required(func):
         return func(*args, **kwargs)
     return decorated
 
+@app.route('/autocomplete_interests')
+def autocomplete_interests():
+    q = request.args.get('q', '')
+    if not q:
+        return jsonify([])
+    interests = Interest.query.filter(Interest.interest_name.ilike(f'%{q}%')).limit(10).all()
+    return jsonify([{"id": i.id, "name": i.interest_name} for i in interests])
+
 
 
 # Unprotected pages
@@ -204,38 +212,35 @@ def dashboard():
 @app.route('/upload', methods=['GET', 'POST'])
 @token_required
 def upload():
-    if request.method == 'POST':
-        user = db.session.query(User).get(session['user_id'])  
-        action = request.form.get('action')
-        if action == 'submit':
-            keywords = request.form.get('keywords')
-            if keywords:
-                # Add new interest to db
-                new_interest = Interest(interest_name=keywords)
-                db.session.add(new_interest)
-                user.interests.append(new_interest)  
-                db.session.commit()
+    user = db.session.query(User).get(session['user_id'])
 
-        # Remove all associations in the association table
-        elif action == 'refresh': 
-            user.interests = []
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        if action == 'submit':
+            interest_id = request.form.get('interest_id')
+            interest = Interest.query.get(interest_id)
+
+            if interest:
+                if interest not in user.interests:
+                    user.interests.append(interest)
+                    db.session.commit()
+            else:
+                pass
+                # Add an invalid interest notifier here
+
+        elif action == 'refresh':
+            user.interests.clear()
             db.session.commit()
 
-        user = db.session.query(User).filter_by(id=session['user_id']).first()
-        if user.interests:
-            user_interests = user.interests 
-        else:
-            user_interests = None
-        matched_projects = []
-        return render_template('upload.html', matched_projects=matched_projects,user_interests=user_interests)
-    else: #GET
-        user = db.session.query(User).filter_by(id=session['user_id']).first()
-        if user.interests:
-            user_interests = user.interests 
-        else:
-            user_interests = None
+        # Re-fetch after changes
+        user_interests = user.interests if user.interests else None
+        matched_projects = []  # You can plug in matching logic here
+        return render_template('upload.html', matched_projects=matched_projects, user_interests=user_interests)
 
-        return render_template('upload.html', matched_projects=[], user_interests=user_interests)
+    # GET method
+    user_interests = user.interests if user.interests else None
+    return render_template('upload.html', matched_projects=[], user_interests=user_interests)
 
 # Trends Page
 @app.route('/trends')
