@@ -4,12 +4,16 @@
 
 {% block content %}
 <div class="content-container">
-    <h2>Upload Your Research Interests</h2>
+    <h2> Upload Your Research Interests</h2>
 
     <!-- Flex container to align input, button, and tags -->
     <form action="/upload" method="POST" class="interest-form">
         <label for="keywords">Enter Keywords</label>
-        <input type="text" id="keywords" name="keywords" placeholder="e.g., AI, Robotics, Health">
+        <div class="autocomplete-wrapper">
+            <input type="text" id="keywords" name="keywords" placeholder="Start typing!" autocomplete="off">
+            <input type="hidden" id="interest_id" name="interest_id">
+            <div id="suggestions" class="autocomplete-dropdown"></div>
+        </div>
         <div class="button-group">
             <button type="submit" class="btn btn-primary" name="action" value="submit">Submit</button>
             <button type="submit" class="btn btn-secondary" name="action" value="refresh">Refresh</button>
@@ -100,4 +104,74 @@
         margin-top: 5px;
     }
 </style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("keywords");
+        const suggestionsBox = document.getElementById("suggestions");
+        let currentIndex = -1;
+    
+        async function fetchSuggestions(query) {
+            const res = await fetch(`/autocomplete_interests?q=${encodeURIComponent(query)}`);
+            return await res.json();
+        }
+    
+        input.addEventListener("input", async () => {
+            const query = input.value.trim();
+            if (query.length < 1) {
+                suggestionsBox.innerHTML = "";
+                suggestionsBox.style.display = "none";
+                return;
+            }
+    
+            const suggestions = await fetchSuggestions(query);
+            suggestionsBox.innerHTML = "";
+            currentIndex = -1;
+    
+            suggestions.forEach((s, i) => {
+                const item = document.createElement("div");
+                item.textContent = s.name;
+                item.classList.add("dropdown-item");
+                item.onclick = () => {
+                    input.value = s.name;
+                    document.getElementById("interest_id").value = s.id;
+                    suggestionsBox.innerHTML = "";
+                    suggestionsBox.style.display = "none";
+                };
+                suggestionsBox.appendChild(item);
+            });
+
+    
+            suggestionsBox.style.display = suggestions.length ? "block" : "none";
+        });
+    
+        input.addEventListener("keydown", (e) => {
+            const items = suggestionsBox.querySelectorAll(".dropdown-item");
+            if (!items.length) return;
+    
+            if (e.key === "ArrowDown") {
+                currentIndex = (currentIndex + 1) % items.length;
+            } else if (e.key === "ArrowUp") {
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (currentIndex >= 0 && items[currentIndex]) {
+                    input.value = items[currentIndex].textContent;
+                    suggestionsBox.innerHTML = "";
+                    suggestionsBox.style.display = "none";
+                }
+            }
+    
+            items.forEach((item, idx) => {
+                item.classList.toggle("highlighted", idx === currentIndex);
+            });
+        });
+    
+        document.addEventListener("click", (e) => {
+            if (!suggestionsBox.contains(e.target) && e.target !== input) {
+                suggestionsBox.innerHTML = "";
+                suggestionsBox.style.display = "none";
+            }
+        });
+    });
+</script>
 {% endblock %}
