@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block title %}Saved Projects - ResearchMatch{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>Saved Projects</h1>
+        <p class="text-muted">All your bookmarked research projects</p>
+    </div>
+
+    <div class="saved-projects-container">
+        {% if saved_projects %}
+            {% for project in saved_projects %}
+            <div class="project-card {% if project.is_open %}open-project{% else %}closed-project{% endif %}">
+                <div class="project-header">
+                    <div class="project-category">
+                        {% for interest in project.interests %}
+                        <span class="category-badge">{{ interest.interest_name }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="project-status">
+                        <span class="status-badge {% if project.is_open %}open{% else %}closed{% endif %}">
+                            {{ 'Open' if project.is_open else 'Closed' }}
+                        </span>
+                    </div>
+                </div>
+                
+                <h3 class="project-title">{{ project.title }}</h3>
+                
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Supervisor:</span>
+                        <span class="meta-value">
+                            {% for supervisor in project.supervisors %}
+                                {{ supervisor.first_name }} {{ supervisor.last_name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <span class="meta-label">Faculty:</span>
+                        <span class="meta-value">
+                            {% for area in project.research_area %}
+                                {{ area.area }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    
+                    {% if project.is_open and project.close_date %}
+                    <div class="meta-item">
+                        <span class="meta-label">Close Date:</span>
+                        <span class="meta-value">{{ project.close_date.strftime('%d %b %Y') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if not project.is_open and project.publication_date %}
+                    <div class="meta-item">
+                        <span class="meta-label">Published:</span>
+                        <span class="meta-value">{{ project.publication_date.strftime('%d %b %Y') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if project.summary %}
+                <div class="project-summary">
+                    <p>{{ project.summary|truncate(200) }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="project-actions">
+                    <a href="{{ project.link }}" target="_blank" class="btn primary">View Details</a>
+                    <button class="btn secondary remove-saved" data-project-id="{{ project.id }}">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-saved-projects">
+                <div class="empty-state">
+                    <i class="fas fa-bookmark empty-icon"></i>
+                    <h3>No Saved Projects</h3>
+                    <p>You haven't saved any research projects yet. Browse projects and use the "Save" button to bookmark them for later.</p>
+                    <a href="{{ url_for('projects') }}" class="btn primary">Browse Projects</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        margin-bottom: 30px;
+    }
+    
+    .text-muted {
+        color: var(--text-secondary);
+    }
+    
+    .saved-projects-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+    }
+    
+    .project-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        border-top: 5px solid;
+    }
+    
+    .open-project {
+        border-color: var(--accent-green);
+    }
+    
+    .closed-project {
+        border-color: var(--accent-purple);
+    }
+    
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    
+    .category-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+        background-color: rgba(0, 113, 227, 0.1);
+        color: var(--primary-color);
+        margin-right: 5px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .status-badge.open {
+        background-color: rgba(52, 199, 89, 0.1);
+        color: var(--accent-green);
+    }
+    
+    .status-badge.closed {
+        background-color: rgba(94, 92, 230, 0.1);
+        color: var(--accent-purple);
+    }
+    
+    .project-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .project-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .meta-item {
+        font-size: 14px;
+    }
+    
+    .meta-label {
+        font-weight: 500;
+        color: var(--text-tertiary);
+    }
+    
+    .meta-value {
+        color: var(--text-primary);
+    }
+    
+    .project-summary {
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .project-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+    }
+    
+    .btn.primary {
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+        color: white;
+    }
+    
+    .btn.secondary {
+        background-color: var(--background-medium);
+        color: var(--text-primary);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .no-saved-projects {
+        grid-column: 1 / -1;
+    }
+    
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 20px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        color: var(--accent-purple);
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+    
+    .empty-state h3 {
+        margin-bottom: 10px;
+        font-size: 24px;
+    }
+    
+    .empty-state p {
+        margin-bottom: 20px;
+        max-width: 500px;
+        color: var(--text-secondary);
+    }
+    
+    @media (max-width: 768px) {
+        .saved-projects-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Remove saved project functionality
+    const removeButtons = document.querySelectorAll('.remove-saved');
+    
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            const projectCard = this.closest('.project-card');
+            
+            fetch(`/save_project/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the card from the UI
+                    projectCard.style.opacity = '0';
+                    setTimeout(() => {
+                        projectCard.remove();
+                        
+                        // Check if we need to show the empty state
+                        const remainingCards = document.querySelectorAll('.project-card');
+                        if (remainingCards.length === 0) {
+                            const container = document.querySelector('.saved-projects-container');
+                            container.innerHTML = `
+                                <div class="no-saved-projects">
+                                    <div class="empty-state">
+                                        <i class="fas fa-bookmark empty-icon"></i>
+                                        <h3>No Saved Projects</h3>
+                                        <p>You haven't saved any research projects yet. Browse projects and use the "Save" button to bookmark them for later.</p>
+                                        <a href="/projects" class="btn primary">Browse Projects</a>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }, 300);
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

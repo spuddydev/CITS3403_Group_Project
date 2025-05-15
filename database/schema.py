@@ -63,7 +63,7 @@ class Supervisor(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=True)
-
+    projects = db.relationship('Project', secondary=project_supervisor)
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, current_app, make_response
 from flask_sqlalchemy import SQLAlchemy
-from database.schema import db, User, Project, Interest
+from database.schema import db, User, Project, Interest, Supervisor
 from dotenv import load_dotenv
 from functools import wraps
 import os
@@ -143,8 +143,12 @@ def dashboard():
     else:
         user_interests = None
     
-    all_projects = db.session.query(Project).all() # DEVELOPEMENT----getting example projects for now
-    project_matches = [all_projects[0],all_projects[1],all_projects[2]]
+    all_projects = db.session.query(Project).all()
+    
+    # Safely get available projects
+    project_matches = []
+    for i in range(min(3, len(all_projects))):
+        project_matches.append(all_projects[i])
 
     connections = ["person1", "person2"]
 
@@ -267,6 +271,98 @@ def register():
         return redirect(url_for('login'))  # Redirect to login page after successful registration
     
     return render_template('register.html', form=form)
+
+# Projects Page
+@app.route('/projects')
+@token_required
+def projects():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get all projects from database
+    all_projects = db.session.query(Project).all()
+    
+    return render_template('projects.html', 
+                          username=session['username'],
+                          projects=all_projects)
+
+# Saved Projects Page
+@app.route('/saved')
+@token_required
+def saved():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get the current user
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+    
+    # Get user's saved projects
+    saved_projects = user.saved_projects if user.saved_projects else []
+    
+    return render_template('saved.html', 
+                          username=session['username'],
+                          saved_projects=saved_projects)
+
+# Supervisors Page
+@app.route('/supervisors')
+@token_required
+def supervisors():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get all supervisors from database
+    all_supervisors = db.session.query(Supervisor).all()
+    
+    return render_template('supervisors.html', 
+                          username=session['username'],
+                          supervisors=all_supervisors)
+
+# User Profile Page
+@app.route('/profile')
+@token_required
+def profile():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get current user
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+    
+    # If user.faculty is an ID, let's get the actual ResearchArea object
+    if user.faculty is None and user.research_area_id is not None:
+        from database.schema import ResearchArea
+        user.faculty = db.session.query(ResearchArea).filter_by(id=user.research_area_id).first()
+    
+    return render_template('profile.html', 
+                          username=session['username'],
+                          user=user)
+
+# Save Project Route (for AJAX)
+@app.route('/save_project/<int:project_id>', methods=['POST'])
+@token_required
+def save_project(project_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        user = db.session.query(User).filter_by(id=session['user_id']).first()
+        project = db.session.query(Project).filter_by(id=project_id).first()
+        
+        if not project:
+            return jsonify({'success': False, 'message': 'Project not found'}), 404
+        
+        # Check if already saved
+        if project in user.saved_projects:
+            user.saved_projects.remove(project)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Project removed from saved', 'saved': False})
+        else:
+            user.saved_projects.append(project)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Project saved', 'saved': True})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
