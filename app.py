@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, current_app, make_response
 from flask_sqlalchemy import SQLAlchemy
-from database.schema import db, User, Project, Interest
+from sqlalchemy import func
+from database.schema import *
 from dotenv import load_dotenv
 from functools import wraps
 import os
@@ -246,9 +247,27 @@ def upload():
 @app.route('/trends')
 @token_required
 def trends():
-    trend_labels = ["AI", "Health", "Climate", "Mining", "Neuroscience"]
-    trend_data = [12, 19, 7, 5, 8]
-    return render_template('trends.html', trend_labels=trend_labels, trend_data=trend_data)
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+    if user.interests:
+        user_interests = user.interests  # This will give you the list of interests
+    else:
+        user_interests = None
+
+    interest_ids = [interest.id for interest in user_interests]
+    if user_interests:
+        results = db.session.query(
+            Interest.interest_name,
+            func.count(project_interest.c.project_id)
+        ).join(project_interest).filter(
+            Interest.id.in_(interest_ids)
+        ).group_by(Interest.id).all()
+
+        trend_labels = [name for name, count in results]
+        trend_data = [count for name, count in results]
+
+    return render_template("trends.html", trend_labels=trend_labels, trend_data=trend_data)
+
+
 
 # Social Hub Page
 @app.route('/social')
