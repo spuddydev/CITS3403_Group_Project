@@ -3,29 +3,145 @@
 {% block title %}Trends - ResearchMatch{% endblock %}
 
 {% block content %}
-    <h2>Trending Research at UWA</h2>
-    <canvas id="trendsChart" width="400" height="200"></canvas>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        var ctx = document.getElementById('trendsChart').getContext('2d');
-        var trendsChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: {{ trend_labels | tojson | safe }},
-                datasets: [{
-                    label: 'Interest Level',
-                    data: {{ trend_data | tojson | safe }},
-                    backgroundColor: '#0071e3'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>    
+<div class="dashboard-container">
+  <div class="dashboard-content">
+    <div class="content-column main-column">
+
+      <!--summary-->
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h2>Overview Summary</h2>
+        </div>
+        <div class="matches-grid">
+          <div class="match-card ai-match">
+            <h3 class="match-title">Top Field This Month</h3>
+            <p><strong>Artificial Intelligence</strong> remains the most selected research interest, with a +12% rise in preference this month.</p>
+          </div>
+          <div class="match-card health-match">
+            <h3 class="match-title">Rising Interest</h3>
+            <p><strong>Climate Science</strong> saw a steady 5% increase in student matches, trending upward for 3 consecutive months.</p>
+          </div>
+        </div>
+      </section>
+
+      <!--overall interest levels and distribution-->
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h2>Current Field Statistics</h2>
+        </div>
+        <div class="matches-grid">
+          <div class="match-card ai-match">
+            <h3 class="match-title">Current Interest Levels</h3>
+            <canvas id="trendsChart"></canvas>
+          </div>
+          <div class="match-card health-match">
+            <h3 class="match-title">Research Area Distribution</h3>
+            <canvas id="areaChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!--trends line chart-->
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h2>Monthly Trend Analysis</h2>
+        </div>
+        <div class="matches-grid">
+          <div class="match-card full-width" style="grid-column: span 2;">
+            <h3 class="match-title">Interest Over Time</h3>
+            <canvas id="trendOverTimeChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!--insights section-->
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h2>Insights & Highlights</h2>
+        </div>
+        <div class="matches-grid">
+          <div class="match-card climate-match">
+            <h3 class="match-title">Least Chosen Field</h3>
+            <p><strong>Mining Technology</strong> saw a 3% decline in engagement. Consider promoting related projects to students.</p>
+          </div>
+          <div class="match-card neuro-match">
+            <h3 class="match-title">Emerging Topics</h3>
+            <ul>
+              <li>AI in Agriculture</li>
+              <li>Neuro-AI Interfaces</li>
+              <li>Climate Resilience Research</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const trendLabels = JSON.parse('{{ trend_labels | tojson | safe }}');
+    const trendData = JSON.parse('{{ trend_data | tojson | safe }}');
+
+    new Chart(document.getElementById('trendsChart'), {
+      type: 'bar',
+      data: {
+        labels: trendLabels,
+        datasets: [{
+          label: 'Interest Level',
+          data: trendData,
+          backgroundColor: '#0071e3'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    new Chart(document.getElementById('areaChart'), {
+      type: 'doughnut',
+      data: {
+        labels: trendLabels,
+        datasets: [{
+          label: 'Distribution',
+          data: trendData,
+          backgroundColor: ['#0071e3', '#34a853', '#fbbc05', '#ea4335', '#9c27b0']
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
+    new Chart(document.getElementById('trendOverTimeChart'), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [
+          {
+            label: 'AI',
+            data: [3, 6, 9, 12, 14],
+            borderColor: '#0071e3',
+            fill: false,
+            tension: 0.3
+          },
+          {
+            label: 'Health',
+            data: [4, 7, 10, 11, 13],
+            borderColor: '#34a853',
+            fill: false,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  });
+</script>
 {% endblock %}

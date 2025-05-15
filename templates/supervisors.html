@@ -61,28 +61,11 @@
             </div>
         </div>
         {% else %}
-        <div class="no-data-message">
+        <div class="empty-state">
             <p>No supervisors found in the database.</p>
         </div>
         {% endfor %}
     </div>
-    <div class="supervisor-projects">
-    <h4>Research Projects</h4>
-    <ul class="projects-list">
-        {% if supervisor.projects %}
-            {% for project in supervisor.projects %}
-            <li class="project-item">
-                <a href="{{ project.link }}" target="_blank" class="project-link">{{ project.title }}</a>
-                <span class="project-status {{ 'open' if project.is_open else 'closed' }}">
-                    {{ 'Open' if project.is_open else 'Closed' }}
-                </span>
-            </li>
-            {% endfor %}
-        {% else %}
-            <li class="no-projects">No active projects found</li>
-        {% endif %}
-    </ul>
-</div>
 </div>
 
 <style>
@@ -285,7 +268,7 @@
         transform: translateY(-2px);
     }
     
-    .no-data-message {
+    .empty-state {
         grid-column: 1 / -1;
         text-align: center;
         padding: 40px;

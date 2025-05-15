@@ -3,14 +3,299 @@
 {% block title %}Social Hub - ResearchMatch{% endblock %}
 
 {% block content %}
-    <h2>Social Hub</h2>
-    <p>Connect with others who share your research interests.</p>
-    <ul class="list-group">
-        {% for user in similar_users %}
-        <li class="list-group-item">
-            <strong>{{ user.name }}</strong> - Interested in {{ user.interests }}
-            <button class="btn btn-sm">Connect</button>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="social-container">
+    <div class="page-header">
+        <h1>Social Hub</h1>
+        <p class="text-muted">Connect with other researchers who share your interests</p>
+    </div>
+    
+    <div class="connections-section">
+        <h2>Your Connections</h2>
+        
+        <div class="connections-container">
+            {% if connections %}
+                {% for connection in connections %}
+                <div class="connection-card" data-user-id="{{ connection.id }}">
+                    <div class="connection-avatar">
+                        {{ connection.username[0].upper() }}
+                    </div>
+                    <div class="connection-info">
+                        <h3 class="connection-name">{{ connection.username }}</h3>
+                        {% if connection.interests %}
+                        <div class="connection-interests">
+                            {% for interest in connection.interests %}
+                            <span class="interest-tag small">{{ interest.interest_name }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="no-interests">No research interests specified</p>
+                        {% endif %}
+                    </div>
+                    <div class="connection-actions">
+                        <button class="btn btn-message" data-username="{{ connection.username }}">
+                            <i class="fas fa-envelope"></i> Message
+                        </button>
+                        <button class="btn btn-disconnect" data-user-id="{{ connection.id }}" data-username="{{ connection.username }}">
+                            <i class="fas fa-user-minus"></i> Disconnect
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-users empty-icon"></i>
+                    <h3>No Connections Yet</h3>
+                    <p>Connect with other researchers to collaborate on projects and share ideas.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="suggestions-section">
+        <h2>Suggested Connections</h2>
+        
+        <div class="suggestions-container">
+            {% if suggested_users %}
+                {% for user in suggested_users %}
+                <div class="suggestion-card" data-user-id="{{ user.id }}">
+                    <div class="suggestion-avatar">
+                        {{ user.username[0].upper() }}
+                    </div>
+                    <div class="suggestion-info">
+                        <h3 class="suggestion-name">{{ user.username }}</h3>
+                        {% if user.interests %}
+                        <div class="suggestion-interests">
+                            {% for interest in user.interests %}
+                            <span class="interest-tag small">{{ interest.interest_name }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="no-interests">No research interests specified</p>
+                        {% endif %}
+                    </div>
+                    <div class="suggestion-actions">
+                        <button class="btn btn-connect" data-user-id="{{ user.id }}" data-username="{{ user.username }}">
+                            <i class="fas fa-user-plus"></i> Connect
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No more suggestions available at this time.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Connect button functionality
+    const connectButtons = document.querySelectorAll('.btn-connect');
+    
+    connectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const username = this.getAttribute('data-username');
+            const suggestionCard = this.closest('.suggestion-card');
+            
+            fetch(`/connect/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add visual feedback
+                    this.innerHTML = '<i class="fas fa-check"></i> Connected';
+                    this.disabled = true;
+                    
+                    // Remove the card after a delay
+                    setTimeout(() => {
+                        suggestionCard.style.opacity = '0';
+                        setTimeout(() => {
+                            suggestionCard.remove();
+                            
+                            // Check if we need to show empty state
+                            const remainingSuggestions = document.querySelectorAll('.suggestion-card');
+                            if (remainingSuggestions.length === 0) {
+                                const container = document.querySelector('.suggestions-container');
+                                container.innerHTML = `
+                                    <div class="empty-state">
+                                        <p>No more suggestions available at this time.</p>
+                                    </div>
+                                `;
+                            }
+                            
+                            // Add the user to connections section
+                            addToConnections(data);
+                        }, 300);
+                    }, 1000);
+                } else {
+                    console.error('Error:', data.message);
+                    alert('Could not connect with user: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    });
+    
+    // Disconnect button functionality
+    const disconnectButtons = document.querySelectorAll('.btn-disconnect');
+    
+    disconnectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const username = this.getAttribute('data-username');
+            const connectionCard = this.closest('.connection-card');
+            
+            if (confirm(`Are you sure you want to disconnect from ${username}?`)) {
+                fetch(`/disconnect/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the card
+                        connectionCard.style.opacity = '0';
+                        setTimeout(() => {
+                            connectionCard.remove();
+                            
+                            // Check if we need to show empty state
+                            const remainingConnections = document.querySelectorAll('.connection-card');
+                            if (remainingConnections.length === 0) {
+                                const container = document.querySelector('.connections-container');
+                                container.innerHTML = `
+                                    <div class="empty-state">
+                                        <i class="fas fa-users empty-icon"></i>
+                                        <h3>No Connections Yet</h3>
+                                        <p>Connect with other researchers to collaborate on projects and share ideas.</p>
+                                    </div>
+                                `;
+                            }
+                        }, 300);
+                    } else {
+                        console.error('Error:', data.message);
+                        alert('Could not disconnect: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        });
+    });
+    
+    // Message button functionality
+    const messageButtons = document.querySelectorAll('.btn-message');
+    
+    messageButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const username = this.getAttribute('data-username');
+            alert(`Messaging functionality will be implemented soon. You wanted to message ${username}.`);
+        });
+    });
+    
+    // Function to add newly connected user to connections
+    function addToConnections(userData) {
+        const connectionsContainer = document.querySelector('.connections-container');
+        const emptyState = connectionsContainer.querySelector('.empty-state');
+        
+        // If there's an empty state, remove it
+        if (emptyState) {
+            emptyState.remove();
+        }
+        
+        // Create new connection card
+        const newConnectionCard = document.createElement('div');
+        newConnectionCard.className = 'connection-card';
+        newConnectionCard.setAttribute('data-user-id', userData.user_id);
+        
+        newConnectionCard.innerHTML = `
+            <div class="connection-avatar">
+                ${userData.username[0].toUpperCase()}
+            </div>
+            <div class="connection-info">
+                <h3 class="connection-name">${userData.username}</h3>
+                <p class="no-interests">Interests will appear here</p>
+            </div>
+            <div class="connection-actions">
+                <button class="btn btn-message" data-username="${userData.username}">
+                    <i class="fas fa-envelope"></i> Message
+                </button>
+                <button class="btn btn-disconnect" data-user-id="${userData.user_id}" data-username="${userData.username}">
+                    <i class="fas fa-user-minus"></i> Disconnect
+                </button>
+            </div>
+        `;
+        
+        // Add to container
+        connectionsContainer.appendChild(newConnectionCard);
+        
+        // Add event listeners to new buttons
+        const newMessageBtn = newConnectionCard.querySelector('.btn-message');
+        newMessageBtn.addEventListener('click', function() {
+            const username = this.getAttribute('data-username');
+            alert(`Messaging functionality will be implemented soon. You wanted to message ${username}.`);
+        });
+        
+        const newDisconnectBtn = newConnectionCard.querySelector('.btn-disconnect');
+        newDisconnectBtn.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const username = this.getAttribute('data-username');
+            const connectionCard = this.closest('.connection-card');
+            
+            if (confirm(`Are you sure you want to disconnect from ${username}?`)) {
+                fetch(`/disconnect/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        connectionCard.style.opacity = '0';
+                        setTimeout(() => {
+                            connectionCard.remove();
+                            
+                            // Check if we need to show empty state
+                            const remainingConnections = document.querySelectorAll('.connection-card');
+                            if (remainingConnections.length === 0) {
+                                connectionsContainer.innerHTML = `
+                                    <div class="empty-state">
+                                        <i class="fas fa-users empty-icon"></i>
+                                        <h3>No Connections Yet</h3>
+                                        <p>Connect with other researchers to collaborate on projects and share ideas.</p>
+                                    </div>
+                                `;
+                            }
+                        }, 300);
+                    } else {
+                        console.error('Error:', data.message);
+                        alert('Could not disconnect: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

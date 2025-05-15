@@ -2011,3 +2011,382 @@ blockquote {
     background-color: #cce5ff;
     cursor: pointer;
 }
+/* All the existing CSS from style.css should remain */
+
+/* Add specific styles for connections and social features */
+
+/* Connection cards */
+.connection-card, .suggestion-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.connection-card:hover, .suggestion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.connection-avatar, .suggestion-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-purple));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.connection-info, .suggestion-info {
+    flex: 1;
+}
+
+.connection-name, .suggestion-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.connection-interests, .suggestion-interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.connect-button {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    white-space: nowrap;
+}
+
+.connect-button.connected {
+    background-color: transparent;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+}
+
+.connect-button.primary {
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+    color: white;
+}
+
+.connect-button:hover {
+    transform: translateY(-2px);
+}
+
+/* Social pages specific styles */
+.social-container, .profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.connections-section, .suggestions-section {
+    margin-bottom: 40px;
+}
+
+.connections-section h2, .suggestions-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.connections-container, .suggestions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.btn-message, .btn-disconnect {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-left: 5px;
+}
+
+.btn-message {
+    background-color: var(--background-medium);
+    color: var(--text-primary);
+}
+
+.btn-disconnect {
+    background-color: rgba(255, 59, 48, 0.1);
+    color: var(--accent-red);
+}
+
+.suggested-connections {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-light);
+}
+
+.suggested-connections h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 15px;
+}
+
+/* Small interest tags used in connections */
+.interest-tag.small {
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: rgba(0, 113, 227, 0.1);
+    color: var(--primary-color);
+    border-radius: 12px;
+}
+
+/* Empty states */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--background-light);
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    color: var(--accent-purple);
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.empty-state p {
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.view-more-link {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: var(--background-light);
+    border-radius: 8px;
+    color: var(--primary-color);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.view-more-link:hover {
+    background-color: var(--background-medium);
+}
+
+/* Responsive styles for connections */
+@media (max-width: 768px) {
+    .connections-container, .suggestions-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .connection-card, .suggestion-card {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: center;
+    }
+    
+    .connection-avatar, .suggestion-avatar {
+        margin: 0 auto 15px;
+    }
+    
+    .connection-actions, .suggestion-actions {
+        margin-top: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/* Supervisor page specific styles */
+.search-container {
+    margin-bottom: 30px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    padding: 12px 20px;
+    position: relative;
+}
+
+.search-icon {
+    color: var(--text-tertiary);
+    margin-right: 10px;
+}
+
+#supervisor-search {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+}
+
+.supervisors-container {
+    display: grid;
+    gap: 25px;
+}
+
+.supervisor-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border-left: 5px solid var(--accent-indigo);
+}
+
+.supervisor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.supervisor-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-indigo));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 24px;
+    margin-right: 25px;
+    flex-shrink: 0;
+}
+
+.supervisor-info {
+    flex: 1;
+}
+
+.supervisor-name {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.supervisor-contact {
+    margin-bottom: 15px;
+}
+
+.contact-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.contact-link i {
+    margin-right: 5px;
+}
+
+.contact-link:hover {
+    text-decoration: underline;
+}
+
+.supervisor-projects {
+    margin-bottom: 20px;
+}
+
+.supervisor-projects h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.projects-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.project-item:last-child {
+    border-bottom: none;
+}
+
+.project-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.project-link:hover {
+    color: var(--primary-color);
+}
+
+.project-status {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.project-status.open {
+    background-color: rgba(52, 199, 89, 0.1);
+    color: var(--accent-green);
+}
+
+.project-status.closed {
+    background-color: rgba(94, 92, 230, 0.1);
+    color: var(--accent-purple);
+}
+
+.no-projects {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    font-style: italic;
+}
+
+.supervisor-actions {
+    display: flex;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .supervisor-card {
+        flex-direction: column;
+    }
+    
+    .supervisor-avatar {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .supervisor-actions {
+        flex-direction: column;
+    }
+}

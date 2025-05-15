@@ -212,14 +212,23 @@ def trends():
 @app.route('/social')
 @token_required
 def social():
-    if not session.get('user_id'): # Check login status
+    if not session.get('user_id'):
         return redirect(url_for('login'))
-    similar_users = [
-        {'name': 'John Doe', 'interests': 'AI, Robotics'},
-        {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
-    ]
-    return render_template('social.html', similar_users=similar_users)
-
+    
+    # Get current user
+    user = User.query.get(session['user_id'])
+    
+    # Get all user's connections
+    connections = user.get_all_connections()
+    
+    # Get users that current user is not connected with (suggestions)
+    suggested_users = User.query.filter(User.id != user.id).all()
+    suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
+    
+    return render_template('social.html', 
+                          username=session['username'],
+                          connections=connections,
+                          suggested_users=suggested_users[:5])  # Limit to 5 suggestions
 # Settings Page
 @app.route('/settings')
 @token_required
@@ -363,6 +372,59 @@ def save_project(project_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+@app.route('/connect/<int:user_id>', methods=['POST'])
+@token_required
+def connect_user(user_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        current_user = User.query.get(session['user_id'])
+        other_user = User.query.get(user_id)
+        
+        if not other_user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+            
+        if current_user.connect_with(other_user):
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': f'Connected with {other_user.username}',
+                'username': other_user.username,
+                'user_id': other_user.id
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Already connected or invalid operation'}), 400
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
+@app.route('/disconnect/<int:user_id>', methods=['POST'])
+@token_required
+def disconnect_user(user_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        current_user = User.query.get(session['user_id'])
+        other_user = User.query.get(user_id)
+        
+        if not other_user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+            
+        if current_user.disconnect_from(other_user):
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': f'Disconnected from {other_user.username}',
+                'user_id': other_user.id
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Not connected or invalid operation'}), 400
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)
