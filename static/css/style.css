@@ -2270,7 +2270,8 @@ blockquote {
     margin-right: 10px;
 }
 
-#supervisor-search {
+#researcher-search {
+    transform: translateY(15%);
     flex: 1;
     border: none;
     outline: none;
@@ -2278,12 +2279,12 @@ blockquote {
     background: transparent;
 }
 
-.supervisors-container {
+.researchers-container {
     display: grid;
     gap: 25px;
 }
 
-.supervisor-card {
+.researcher-card {
     display: flex;
     background-color: white;
     border-radius: 12px;
@@ -2293,12 +2294,12 @@ blockquote {
     border-left: 5px solid var(--accent-indigo);
 }
 
-.supervisor-card:hover {
+.researcher-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
 }
 
-.supervisor-avatar {
+.researcher-avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -2313,16 +2314,16 @@ blockquote {
     flex-shrink: 0;
 }
 
-.supervisor-info {
+.researcher-info {
     flex: 1;
 }
 
-.supervisor-name {
+.researcher-name {
     font-size: 20px;
     margin-bottom: 5px;
 }
 
-.supervisor-contact {
+.researcher-contact {
     margin-bottom: 15px;
 }
 
@@ -2342,11 +2343,11 @@ blockquote {
     text-decoration: underline;
 }
 
-.supervisor-projects {
+.researcher-projects {
     margin-bottom: 20px;
 }
 
-.supervisor-projects h4 {
+.researcher-projects h4 {
     font-size: 16px;
     margin-bottom: 10px;
 }
@@ -2401,34 +2402,22 @@ blockquote {
     font-style: italic;
 }
 
-.supervisor-actions {
+.researcher-actions {
     display: flex;
     gap: 10px;
 }
 
 @media (max-width: 768px) {
-    .supervisor-card {
+    .researcher-card {
         flex-direction: column;
     }
     
-    .supervisor-avatar {
+    .researcher-avatar {
         margin-right: 0;
         margin-bottom: 15px;
     }
     
-    .supervisor-actions {
+    .researcher-actions {
         flex-direction: column;
     }
-}
-
-/* Add to your stylesheet or include in the style tags of social.html and dashboard.html */
-.user-profile-link {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.user-profile-link:hover {
-    color: var(--primary-color);
-    text-decoration: underline;
 }

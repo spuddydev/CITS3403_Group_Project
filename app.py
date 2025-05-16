@@ -208,9 +208,9 @@ def dashboard():
         project_matches.append(all_projects[i])
 
     # Get user's actual connections from database
-    connections = user.get_all_connections()  # This should return an AppenderQuery or a list
+    connections = user.get_all_connections()  
     
-    # Get suggested connections - don't filter out supervisors
+    # Get suggested connections - don't filter out researchers
     suggested_users = User.query.filter(User.id != user.id).limit(2).all()
     suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
 
@@ -404,7 +404,7 @@ def social():
     connections = user.get_all_connections()
     
     # Get users that current user is not connected with (suggestions)
-    # Don't exclude supervisors - show all potential connections
+    # Don't exclude researchers - show all potential connections
     suggested_users = User.query.filter(User.id != user.id).all()
     suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
     
@@ -444,14 +444,14 @@ def settings():
                           is_authenticated_page=True,  # Add this flag
                           user_name=session.get('username'))  # Add this for avatar
 
-@app.route('/supervisors')
+@app.route('/researchers')
 @token_required
-def supervisors():
-    supervisors = db.session.query(Researcher).all()
+def researchers():
+    researchers = db.session.query(Researcher).filter(Researcher.email != None).limit(30).all()
     
-    return render_template('supervisors.html',
+    return render_template('researchers.html',
                            username=session['username'],
-                           supervisors=supervisors,
+                           researchers=researchers,
                            is_authenticated_page=True,
                            user_name=session.get('username'))
 
@@ -709,8 +709,7 @@ def share_project(project_id):
                 shared_projects.insert().values(
                     project_id=project_id,
                     shared_by_id=current_user.id,
-                    shared_with_id=user_id,
-                    shared_date=datetime.datetime.utcnow()
+                    shared_with_id=user_id
                 )
             )
             shared_count += 1

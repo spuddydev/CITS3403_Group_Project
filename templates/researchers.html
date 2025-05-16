@@ -1,49 +1,49 @@
 {% extends 'base.html' %}
 
-{% block title %}Supervisors - ResearchMatch{% endblock %}
+{% block title %}Researchers - ResearchMatch{% endblock %}
 
 {% block content %}
 <div class="content-container">
     <div class="page-header">
-        <h1>Research Supervisors</h1>
+        <h1>Research Researchers</h1>
         <p class="text-muted">Connect with faculty members supervising research projects</p>
     </div>
 
     <div class="search-container">
         <div class="search-box">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" id="supervisor-search" placeholder="Search by name or research area...">
+            <input type="text" id="researcher-search" placeholder="Search by name!">
         </div>
     </div>
 
     <!-- Add this explanation at the top of the page -->
     <div class="info-banner">
         <i class="fas fa-info-circle"></i>
-        <span>Supervisors can be contacted directly via email for research opportunities.</span>
+        <span>Researchers can be contacted directly via email for research opportunities.</span>
     </div>
 
-    <div class="supervisors-container">
-        {% for supervisor in supervisors %}
-        <div class="supervisor-card" data-name="{{ supervisor.first_name|lower }} {{ supervisor.last_name|lower }}">
-            <div class="supervisor-avatar">
-                {{ supervisor.first_name[0] }}{{ supervisor.last_name[0] }}
+    <div class="researchers-container">
+        {% for researcher in researchers %}
+        <div class="researcher-card" data-name="{{ researcher.first_name|lower }} {{ researcher.last_name|lower }}">
+            <div class="researcher-avatar">
+                {{ researcher.first_name[0] }}{{ researcher.last_name[0] }}
             </div>
             
-            <div class="supervisor-info">
-                <h3 class="supervisor-name">{{ supervisor.first_name }} {{ supervisor.last_name }}</h3>
+            <div class="researcher-info">
+                <h3 class="researcher-name">{{ researcher.first_name }} {{ researcher.last_name }}</h3>
                 
-                <div class="supervisor-contact">
-                    {% if supervisor.email %}
-                    <a href="mailto:{{ supervisor.email }}" class="contact-link">
-                        <i class="fas fa-envelope"></i> {{ supervisor.email }}
+                <div class="researcher-contact">
+                    {% if researcher.email %}
+                    <a href="mailto:{{ researcher.email }}" class="contact-link">
+                        <i class="fas fa-envelope"></i> {{ researcher.email }}
                     </a>
                     {% endif %}
                 </div>
                 
-                <div class="supervisor-projects">
+                <div class="researcher-projects">
                     <h4>Research Projects</h4>
                     <ul class="projects-list">
-                        {% for project in supervisor.projects %}
+                        {% for project in researcher.projects %}
                         <li class="project-item">
                             <a href="{{ project.link }}" target="_blank" class="project-link">{{ project.title }}</a>
                             <span class="project-status {{ 'open' if project.is_open else 'closed' }}">
@@ -57,19 +57,16 @@
                 </div>
                 
                 <!-- Replace connect buttons with contact links -->
-                <div class="supervisor-actions">
-                    <a href="mailto:{{ supervisor.email }}" class="btn btn-contact">
+                <div class="researcher-actions">
+                    <a href="mailto:{{ researcher.email }}" class="btn btn-contact">
                         <i class="fas fa-envelope"></i> Contact
-                    </a>
-                    <a href="{{ supervisor.profile_link }}" class="btn btn-profile" target="_blank">
-                        <i class="fas fa-user"></i> View Profile
                     </a>
                 </div>
             </div>
         </div>
         {% else %}
         <div class="empty-state">
-            <p>No supervisors found in the database.</p>
+            <p>No researchers found in the database.</p>
         </div>
         {% endfor %}
     </div>
@@ -109,7 +106,7 @@
         margin-right: 10px;
     }
     
-    #supervisor-search {
+    #researcher-search {
         flex: 1;
         border: none;
         outline: none;
@@ -117,12 +114,12 @@
         background: transparent;
     }
     
-    .supervisors-container {
+    .researchers-container {
         display: grid;
         gap: 25px;
     }
     
-    .supervisor-card {
+    .researcher-card {
         display: flex;
         background-color: white;
         border-radius: 12px;
@@ -132,12 +129,12 @@
         border-left: 5px solid var(--accent-indigo);
     }
     
-    .supervisor-card:hover {
+    .researcher-card:hover {
         transform: translateY(-5px);
         box-shadow: var(--shadow-md);
     }
     
-    .supervisor-avatar {
+    .researcher-avatar {
         width: 80px;
         height: 80px;
         border-radius: 50%;
@@ -152,16 +149,16 @@
         flex-shrink: 0;
     }
     
-    .supervisor-info {
+    .researcher-info {
         flex: 1;
     }
     
-    .supervisor-name {
+    .researcher-name {
         font-size: 20px;
         margin-bottom: 5px;
     }
     
-    .supervisor-contact {
+    .researcher-contact {
         margin-bottom: 15px;
     }
     
@@ -181,11 +178,11 @@
         text-decoration: underline;
     }
     
-    .supervisor-projects {
+    .researcher-projects {
         margin-bottom: 20px;
     }
     
-    .supervisor-projects h4 {
+    .researcher-projects h4 {
         font-size: 16px;
         margin-bottom: 10px;
     }
@@ -240,7 +237,7 @@
         font-style: italic;
     }
     
-    .supervisor-actions {
+    .researcher-actions {
         display: flex;
         gap: 10px;
     }
@@ -328,16 +325,16 @@
     }
     
     @media (max-width: 768px) {
-        .supervisor-card {
+        .researcher-card {
             flex-direction: column;
         }
         
-        .supervisor-avatar {
+        .researcher-avatar {
             margin-right: 0;
             margin-bottom: 15px;
         }
         
-        .supervisor-actions {
+        .researcher-actions {
             flex-direction: column;
         }
     }
@@ -346,19 +343,19 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Search functionality
-    const searchInput = document.getElementById('supervisor-search');
-    const supervisorCards = document.querySelectorAll('.supervisor-card');
+    const searchInput = document.getElementById('researcher-search');
+    const researcherCards = document.querySelectorAll('.researcher-card');
     
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.trim().toLowerCase();
         
-        supervisorCards.forEach(card => {
-            const supervisorName = card.getAttribute('data-name');
+        researcherCards.forEach(card => {
+            const researcherName = card.getAttribute('data-name');
             const projectTitles = Array.from(card.querySelectorAll('.project-link'))
                 .map(link => link.textContent.toLowerCase())
                 .join(' ');
             
-            const isMatch = supervisorName.includes(searchTerm) || 
+            const isMatch = researcherName.includes(searchTerm) || 
                            projectTitles.includes(searchTerm);
             
             card.style.display = isMatch ? 'flex' : 'none';
@@ -370,19 +367,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     connectButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const supervisorCard = this.closest('.supervisor-card');
-            const supervisorName = supervisorCard.querySelector('.supervisor-name').textContent;
+            const researcherCard = this.closest('.researcher-card');
+            const researcherName = researcherCard.querySelector('.researcher-name').textContent;
             
             // Toggle connection status
             if (this.classList.contains('connected')) {
                 this.innerHTML = '<i class="fas fa-user-plus"></i> Connect';
                 this.classList.remove('connected');
-                alert(`You've disconnected from ${supervisorName}.`);
+                alert(`You've disconnected from ${researcherName}.`);
             } else {
                 this.innerHTML = '<i class="fas fa-check"></i> Connected';
                 this.classList.add('connected');
                 this.style.backgroundColor = 'var(--accent-green)';
-                alert(`You've connected with ${supervisorName}. They'll receive your connection request.`);
+                alert(`You've connected with ${researcherName}. They'll receive your connection request.`);
             }
         });
     });
@@ -392,10 +389,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     messageButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const supervisorCard = this.closest('.supervisor-card');
-            const supervisorName = supervisorCard.querySelector('.supervisor-name').textContent;
+            const researcherCard = this.closest('.researcher-card');
+            const researcherName = researcherCard.querySelector('.researcher-name').textContent;
             
-            alert(`A message window to ${supervisorName} would open here.`);
+            alert(`A message window to ${researcherName} would open here.`);
         });
     });
 });

@@ -36,7 +36,7 @@
     <div class="projects-container">
         {% for project in projects %}
         <div class="project-card {% if project.is_open %}open-project{% else %}closed-project{% endif %}" 
-             data-faculty="{% for area in project.research_area %}{{ area.area|lower }}{% if not loop.last %} {% endif %}{% endfor %}">
+             data-faculty="{% for area in project.research_areas %}{{ area.area|lower }}{% if not loop.last %} {% endif %}{% endfor %}">
             <div class="project-header">
                 <div class="project-category">
                     {% for interest in project.interests %}
@@ -54,10 +54,10 @@
             
             <div class="project-meta">
                 <div class="meta-item">
-                    <span class="meta-label">Supervisor:</span>
+                    <span class="meta-label">Researcher:</span>
                     <span class="meta-value">
-                        {% for supervisor in project.supervisors %}
-                            {{ supervisor.first_name }} {{ supervisor.last_name }}{% if not loop.last %}, {% endif %}
+                        {% for researcher in project.researchers %}
+                            {{ researcher.first_name }} {{ researcher.last_name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
                 </div>
@@ -65,7 +65,7 @@
                 <div class="meta-item">
                     <span class="meta-label">Faculty:</span>
                     <span class="meta-value">
-                        {% for area in project.research_area %}
+                        {% for area in project.research_areas %}
                             {{ area.area }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
@@ -423,6 +423,16 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .btn.tertiary {
+        background-color: var(--accent-teal);
+        color: white;
+    }
+
+    .btn.tertiary:hover {
+        transform: translateY(-2px);
+        background-color: #009688;
+    }
 </style>
 
 <script>
@@ -509,15 +519,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Add CSS for the new button type
-.btn.tertiary {
-    background-color: var(--accent-teal);
-    color: white;
-}
-
-.btn.tertiary:hover {
-    transform: translateY(-2px);
-    background-color: #009688;
-}
 </script>
 {% endblock %}

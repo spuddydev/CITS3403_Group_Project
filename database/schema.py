@@ -36,16 +36,10 @@ user_saved_projects = db.Table('user_saved_projects',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True)
 )
 
-project_supervisor = db.Table('project_supervisor',
-    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
-    db.Column('researcher_id', db.Integer, db.ForeignKey('researcher.id'), primary_key=True)
-)
-
 shared_projects = db.Table('shared_projects',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
     db.Column('shared_by_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('shared_with_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('shared_date', db.DateTime, default=datetime.datetime.utcnow)
 )
 
 
@@ -69,7 +63,7 @@ class User(db.Model):
         primaryjoin=id == user_connections.c.user_id,
         secondaryjoin=id == user_connections.c.connection_id,
         back_populates='connections_reverse',
-        lazy='dynamic'  # Add this line
+        lazy='dynamic'  
     )
 
     connections_reverse = db.relationship(
@@ -78,7 +72,7 @@ class User(db.Model):
         primaryjoin=id == user_connections.c.connection_id,
         secondaryjoin=id == user_connections.c.user_id,
         back_populates='connections',
-        lazy='dynamic'  # Add this line
+        lazy='dynamic'
     )
 
     def set_password(self, password):
@@ -102,11 +96,10 @@ class User(db.Model):
         return False
     
     def is_connected_to(self, user):
-        # Updated to work with InstrumentedList instead of using filter
         return user in self.connections
     
     def get_all_connections(self):
-        return self.connections  # Remove the .all() call
+        return self.connections
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -122,8 +115,6 @@ class Researcher(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=True)
-    # Change to different relationship names to avoid conflicts
-    supervised_projects = db.relationship('Project', secondary=project_supervisor, back_populates='supervisors')
     researcher_projects = db.relationship('Project', secondary=project_researcher, back_populates='researchers')
 
 class Project(db.Model):
@@ -139,4 +130,3 @@ class Project(db.Model):
     research_areas = db.relationship('ResearchArea', secondary=project_research_area, backref='projects')
     interests = db.relationship('Interest', secondary=project_interest, backref='projects')
     researchers = db.relationship('Researcher', secondary=project_researcher, back_populates='researcher_projects')
-    supervisors = db.relationship('Researcher', secondary=project_supervisor, back_populates='supervised_projects')
