@@ -15,13 +15,9 @@
                 <button class="menu-toggle" id="mobileMenuToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <a href="{% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}/dashboard{% else %}/{% endif %}" class="header-logo">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span class="header-logo-text" style="margin-left: 10px;">ResearchMatch</span>
+                <a href="{% if '/dashboard' in request.path %}/dashboard{% else %}/{% endif %}" class="header-logo">
+                    <!-- SVG icon -->
+                    <span class="header-logo-text" style="margin-left: 12px; font-size: 18px;">ResearchMatch</span>
                 </a>
             </div>
             
@@ -53,7 +49,7 @@
         <!-- Sidebar (only for logged-in users) -->
         {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-section">
+            <div class="sidebar-section" style="margin-bottom: 20px;">
                 <h3 class="sidebar-header">Main</h3>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
@@ -153,12 +149,12 @@
         
         <!-- Main Content -->
         <main class="main-content {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}with-sidebar{% endif %}" id="mainContent">
-            <div class="content-area">
+            <div class="content-area" style="padding: 30px;">
                 {% block content %}{% endblock %}
             </div>
             
             <footer class="app-footer">
-                <p>Lorem ipsum. Footer information.</p>
+                <p style="margin-top: 40px;">Lorem ipsum. Footer information.</p>
             </footer>
         </main>
     </div>
