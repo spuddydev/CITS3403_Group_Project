@@ -745,10 +745,7 @@ def share_project(project_id):
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
-def create_app(config_class):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
-    return app
+# needed for test.py
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
