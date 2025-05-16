@@ -29,19 +29,16 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const project_interest_labels = JSON.parse('{{ project_interest_labels | tojson | safe }}');
-    const project_interest_data = JSON.parse('{{ project_interest_data | tojson | safe }}');
-    const user_interest_labels = JSON.parse('{{ user_interest_labels | tojson | safe }}');
-    const user_interest_data = JSON.parse('{{ user_interest_data | tojson | safe }}');
-
+    const trend_labels = JSON.parse('{{ trend_labels | tojson | safe }}');
+    const trend_data = JSON.parse('{{ trend_data | tojson | safe }}');
 
     new Chart(document.getElementById('trendsChart'), {
       type: 'bar',
       data: {
-        labels: user_interest_labels,
+        labels: trend_labels,
         datasets: [{
           label: 'Interest Level',
-          data: user_interest_data,
+          data: trend_data,
           backgroundColor: '#0071e3'
         }]
       },
@@ -54,10 +51,10 @@
     new Chart(document.getElementById('areaChart'), {
       type: 'doughnut',
       data: {
-        labels: project_interest_labels,
+        labels: trend_labels,
         datasets: [{
           label: 'Distribution',
-          data: project_interest_data,
+          data: trend_data,
           backgroundColor: ['#0071e3', '#34a853', '#fbbc05', '#ea4335', '#9c27b0']
         }]
       },
