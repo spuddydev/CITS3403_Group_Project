@@ -3,28 +3,16 @@
 {% block title %}Trends - ResearchMatch{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-  <div class="dashboard-content">
-    <div class="content-column main-column">
-      <!--overall interest levels and distribution-->
-      <section class="dashboard-section">
-        <div class="section-header">
-          <h2>Interests</h2>
-        </div>
-        <div class="matches-grid">
-          <div class="match-card ai-match">
-            <h3 class="match-title">Current Interests of Other Users</h3>
-            <canvas id="trendsChart"></canvas>
-          </div>
-          <div class="match-card health-match">
-            <h3 class="match-title">Project Interest Distribution</h3>
-            <canvas id="areaChart"></canvas>
-          </div>
-        </div>
-      </section>
-    </div>
+
+<div class="matches-grid">
+  <div class="match-card ai-match">
+    <h3 class="match-title">Current Interests of Other Users</h3>
+    <canvas id="trendsChart"></canvas>
   </div>
-</div>
+  <div class="match-card health-match">
+    <h3 class="match-title">Project Interest Distribution</h3>
+    <canvas id="areaChart"></canvas>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

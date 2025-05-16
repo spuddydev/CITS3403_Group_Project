@@ -7,7 +7,7 @@ from functools import wraps
 import os
 import jwt
 import datetime
-from forms import RegisterForm, LoginForm, Settings_ProfileForm
+from forms import RegisterForm, LoginForm
 
 
 
@@ -202,32 +202,45 @@ def register():
 def dashboard():
     user = db.session.query(User).filter_by(id=session['user_id']).first()
     if user.interests:
-        user_interests = user.interests
+        user_interests = user.interests  
+        user_connections = user.connections
     else:
         user_interests = None
-    
-    all_projects = db.session.query(Project).all()
-    
-    # Safely get available projects
+        user_connections = None
+        
+    # Safely get project_matches
     project_matches = []
-    for i in range(min(3, len(all_projects))):
-        project_matches.append(all_projects[i])
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
 
-    # Get user's actual connections from database
-    connections = user.get_all_connections()  
-    
-    # Get suggested connections - don't filter out researchers
-    suggested_users = User.query.filter(User.id != user.id).limit(2).all()
-    suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
+    # Initialize with empty data
+    trend_labels = []
+    trend_data = []
+
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        results = db.session.query(
+            Interest.interest_name,
+            func.count(project_interest.c.project_id)
+        ).join(project_interest).filter(
+            Interest.id.in_(interest_ids)
+        ).group_by(Interest.id).all()
+
+        trend_labels = [name for name, count in results]
+        trend_data = [count for name, count in results]
+
+    saved_user_projects = user.saved_projects if user.saved_projects else None
 
     return render_template('dashboard.html',
-                           username=session['username'],
-                           user_interests=user_interests,
-                           project_matches=project_matches,
-                           connections=connections,
-                           suggested_users=suggested_users,
-                           is_authenticated_page=True,
-                           user_name=session.get('username'))
+                            username= session['username'],
+                            user_interests= user_interests,
+                            project_matches =project_matches,
+                            saved_user_projects=saved_user_projects,
+                            connections = user_connections,
+                            trend_data=trend_data,
+                            trend_labels=trend_labels,
+                            user_name=session.get('username'))
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
@@ -266,19 +279,32 @@ def upload():
 
         # Re-fetch after changes
         user_interests = user.interests if user.interests else None
-        matched_projects = []  # You can plug in matching logic here
+        # Safely get project_matches
+        project_matches = []
+        if user_interests:
+            interest_ids = [interest.id for interest in user_interests]
+            project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
+
+        saved_user_projects = user.saved_projects if user.saved_projects else None
+
         return render_template('upload.html', 
-                              matched_projects=matched_projects, 
+                              project_matches=project_matches, 
                               user_interests=user_interests,
                               username=session['username'],
+                              saved_user_projects=saved_user_projects,
                               is_authenticated_page=True,
                               error=error,
                               user_name=session.get('username'))
 
     # GET method
     user_interests = user.interests if user.interests else None
+    # Safely get project_matches
+    project_matches = []
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
     return render_template('upload.html', 
-                          matched_projects=[], 
+                          project_matches=project_matches, 
                           user_interests=user_interests,
                           username=session['username'],
                           is_authenticated_page=True,
@@ -289,6 +315,8 @@ def upload():
 @token_required
 def projects():
     # Get page number and filters from request args
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+
     page = request.args.get('page', 1, type=int)
     faculty = request.args.get('faculty', '')
     status = request.args.get('status', '')
@@ -309,11 +337,17 @@ def projects():
     # Paginate the results
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     projects = pagination.items
-    
+
+    saved_user_projects = user.saved_projects if user.saved_projects else None
+
+    research_areas = ResearchArea.query.all()
+
     return render_template('projects.html', 
                           username=session['username'],
                           projects=projects,
                           pagination=pagination,
+                          research_areas=research_areas,
+                          saved_user_projects=saved_user_projects,
                           faculty=faculty,
                           status=status,
                           is_authenticated_page=True,
@@ -354,10 +388,13 @@ def saved():
             'is_saved': project in saved_projects
         })
     
+    saved_user_projects = user.saved_projects if user.saved_projects else None
+
     return render_template('saved.html', 
                           username=session['username'],
                           saved_projects=saved_projects,
                           shared_projects=shared_projects_data,
+                          saved_user_projects=saved_user_projects,
                           is_authenticated_page=True,
                           user_name=session.get('username'))
 
@@ -394,9 +431,6 @@ def trends():
                           is_authenticated_page=True,
                           user_name=session.get('username'))
 
-
-
-
 # Social Hub Page
 @app.route('/social')
 @token_required
@@ -412,8 +446,9 @@ def social():
     
     # Get users that current user is not connected with (suggestions)
     # Don't exclude researchers - show all potential connections
-    suggested_users = User.query.filter(User.id != user.id).all()
-    suggested_users = [u for u in suggested_users if not user in connections]
+    suggested_users = User.query.filter(User.id != user.id).distinct().all()
+    suggested_users = [u for u in suggested_users if u not in connections]
+
     
     return render_template('social.html',
                           username=session['username'],

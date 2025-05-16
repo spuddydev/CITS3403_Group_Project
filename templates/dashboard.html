@@ -59,7 +59,7 @@
                 <p>Project Matches</p>
             </div>
             <div class="stat-action">
-                <a href="#matches">View All</a>
+                <a href="/projects">View All</a>
             </div>
         </div>
         
@@ -111,7 +111,7 @@
             <section class="dashboard-section" id="matches">
                 <div class="section-header">
                     <h2>Research Matches</h2>
-                    <a href="#" class="view-all">View All</a>
+                    <a href="/projects" class="view-all">View All</a>
                 </div>
                 {% for project in project_matches[0:3] %}
                 <div class="matches-grid">
@@ -128,12 +128,22 @@
                             </div>
                             <div class="department">
                                 <span class="meta-label">Department:</span>
-                                <span class="meta-value">{% for research in project.research_areas%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                                <span class="meta-value">
+                                    {% if project.research_areas %}
+                                        {% for research in project.research_areas %}
+                                            {{ research.area }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        No Faculty
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
                         <div class="match-footer">
                             <button class="match-action primary">View Details</button>
-                            <button class="match-action secondary">Save</button>
+                            <button class="btn secondary save-project" data-project-id="{{ project.id }}">
+                                <i class="fas fa-bookmark"></i> {{ 'Saved' if project in saved_user_projects else 'Save' }}
+                            </button>
                         </div>
                     </div>
                     {% endfor %}
@@ -144,114 +154,50 @@
         </div>
         
         <!-- Right Column -->
-        <div class="content-column side-column">
-            <section class="dashboard-section trends-section">
-                <div class="section-header">
-                    <h2>Research Trends</h2>
-                    <a href="/trends" class="view-all">View Report</a>
-                </div>
-                
-                <div class="trends-container">
-                    <div class="trend-item">
-                        <div class="trend-rank ai-rank">1</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Artificial Intelligence</h4>
-                                <span class="trend-change positive">↑ 12%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress ai-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank health-rank">2</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Health Sciences</h4>
-                                <span class="trend-change positive">↑ 8%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress health-progress" style="width: 82%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank climate-rank">3</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Climate Science</h4>
-                                <span class="trend-change positive">↑ 5%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress climate-progress" style="width: 74%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank mining-rank">4</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Mining Technology</h4>
-                                <span class="trend-change negative">↓ 3%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress mining-progress" style="width: 65%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank neuro-rank">5</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Neuroscience</h4>
-                                <span class="trend-change positive">↑ 2%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress neuro-progress" style="width: 58%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    <div class="content-column side-column">
+        <section class="dashboard-section trends-section">
+            <div class="section-header">
+                <h2 style="font-size: 20pt; transform: translateY(20%);">Research Trends</h2>
+                <a href="/trends" class="view-all">View Report</a>
+            </div>
+            <div class="trends-container">
+                <canvas id="areaChart"></canvas>
+            </div>
+        </section>
             
-    <section class="dashboard-section connections-section">
-        <div class="section-header">
-            <h2>Academic Connections</h2>
-            <a href="/social" class="view-all">View All</a>
-        </div>
+        <section class="dashboard-section connections-section">
+            <div class="section-header">
+                <h2>Academic Connections</h2>
+                <a href="/social" class="view-all">View All</a>
+            </div>
 
-        <div class="connections-container">
-            {% if connections %}
-                {% for conn in connections %}
-                    <div class="connection-card">
-                        <div class="connection-avatar">
-                            {{ conn.username[:2]|upper }}
+            <div class="connections-container">
+                {% if connections %}
+                    {% for conn in connections %}
+                        <div class="connection-card">
+                            <div class="connection-avatar">
+                                {{ conn.username[:2]|upper }}
+                            </div>
+                            <div class="connection-info">
+                                <h4>{{ conn.username }}</h4>
+                                <p>
+                                    {% if conn.interests %}
+                                        {{ conn.interests | map(attribute='interest_name') | join(', ') }}
+                                    {% else %}
+                                        No interests listed
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <button class="connect-button connected">Connected</button>
                         </div>
-                        <div class="connection-info">
-                            <h4>{{ conn.username }}</h4>
-                            <p>
-                                {% if conn.interests %}
-                                    {{ conn.interests | map(attribute='interest_name') | join(', ') }}
-                                {% else %}
-                                    No interests listed
-                                {% endif %}
-                            </p>
-                        </div>
-                        <button class="connect-button connected">Connected</button>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>You have no academic connections yet.</p>
-            {% endif %}
-        </div>
-    </section>
+                    {% endfor %}
+                {% else %}
+                    <p>You have no academic connections yet.</p>
+                {% endif %}
+            </div>
+        </section>
 
-        </div>
+    </div>
     </div>
     {% endif %}
 </div>
@@ -299,5 +245,64 @@
     }
 
     updateDateInfo(); 
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const trend_labels = JSON.parse('{{ trend_labels | tojson | safe }}');
+        const trend_data = JSON.parse('{{ trend_data | tojson | safe }}');
+
+
+        new Chart(document.getElementById('areaChart'), {
+        type: 'doughnut',
+        data: {
+            labels: trend_labels,
+            datasets: [{
+            label: 'Distribution',
+            data: trend_data,
+            backgroundColor: ['#0071e3', '#34a853', '#fbbc05', '#ea4335', '#9c27b0']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+        });
+    });
+
+    // Save project functionality
+    const saveButtons = document.querySelectorAll('.save-project');
+
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            
+            fetch(`/save_project/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Toggle save/unsave status
+                    if (data.saved) {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                        this.classList.add('saved');
+                    } else {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Save';
+                        this.classList.remove('saved');
+                    }
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+    
 </script>
 {% endblock %}
