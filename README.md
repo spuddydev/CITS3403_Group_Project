@@ -1,70 +1,41 @@
-# To Do
-## Database
-- login verification for each page(not login/home)
-- login error attempts
+# Research match
+github: https://github.com/spuddydev/CITS3403_Group_Project
 
+## Authors 
+24264717  Zeel Vavliya Vavliya
+23883137	Ashaen Damunupola
+24270797	Harrison Lisle
+23103979	Joshua Patton
 
-# Remember
-- when writing readme include installing playwright
-pecific Implementation Gaps:
+## Description
+Research match is a applcation for researchers, supervisors and students for collaboration by providing a way to find new research projects and to connect with similar interested students, aswell as share project proposals.
 
-The saved.html template expects project filtering logic that might not be fully implemented in the backend.
-Several places in the HTML templates use hardcoded data (like connections and trends) instead of database information.
-There's no actual implementation of adding supervisors to user connections - only the UI elements exist.
-The profile page shows connections, but there's no database schema or logic to handle user-to-user connections.
-The sidebar in base.html has been updated with new links, but the template conditions might not correctly highlight the active page.
+## Installation
 
-# ResearchMatch - Recent Updates
+### 1. Install Dependencies
 
+Make sure you have Python installed. Then, install the required Python packages:
 
-## Navigation & UI Consistency
-- **Smart Navigation**: Logo/title now directs to dashboard for logged-in users and home page for guests
-- **Sidebar Navigation**: Ensured consistent sidebar display across all authenticated pages
-- **User Profile Elements**: User avatar with initials now appears consistently in header
-- **Mobile Responsiveness**: Added mobile menu toggle for responsive design
+```bash
+pip install -r requirements.txt
+```
 
-## Project Management Features
-- **Project Pagination**: Implemented pagination system for the projects page with configurable items per page
-- **Filter Integration**: Added filtering by faculty and project status with pagination support
-- **Save Projects**: Users can now save/unsave research projects via AJAX
-- **Project Details**: Enhanced project cards with comprehensive information display
+### 2. Install Playwright
 
-## Academic Connections
-- **Connection Management**: removed ability to connect with other researchers/users, replaced with view profile and contact them 
-- **Suggested Connections**: Algorithm suggests new connections not already in user's network
-- **Connection Interface**: Interactive UI for managing connections with real-time updates
-- **Dashboard Integration**: Academic connections now displayed on dashboard with interaction options
+Install Playwright and its browser dependencies:
 
-## Research Interest Management
-- **Interest Selection**: Users can add research interests to their profile
-- **Interest Management**: Users can view and manage their saved interests
-- **Interest-Based Matching**: System matches users with projects based on interests
+```bash
+pip install playwright
+playwright install
+```
 
+### 3. Run Flask
 
-## Bug Fixes
-- **Navigation Issues**: Fixed inconsistent navigation bar appearance on certain pages
-- **Session Handling**: Resolved issues with session persistence and logout functionality
-- **Connection Suggestions**: Fixed duplicate connection suggestions for users already connected
-- **AppenderQuery Error**: Resolved "object of type 'AppenderQuery' has no len()" error in connections display
-- **Error Handling**: Added comprehensive error handling for form submissions and API requests
+Run the Flask server:
 
-## Technical Improvements
-- **Code Organization**: Improved structure with proper separation of routes
-- **Template Consistency**: Standardized template inheritance across all pages
-- **Security Enhancements**: Added CSRF protection for all forms
+```bash
+export FLASK_APP=app.py
+flask run
+```
 
-# Database Schema changes
-- **Association Tables**:
-  - Implemented user connections table for tracking researcher connections
-  - Added saved projects association for bookmarking functionality
-  - Enhanced user interests table for better research matching
-
-- **Model Enhancements**:
-  - Extended User model with connection methods and saved projects relationship
-  - Improved Project model with advanced filtering and pagination support
-  - Optimized Interest model for trend analysis and project matching
-
-- **Query Optimization**:
-  - Implemented efficient pagination for large project collections
-  - Added relationship eager loading to reduce database queries
-  - Optimized connection queries for dashboard and social pages
+control + right click on the provided local host link to connect to website.
