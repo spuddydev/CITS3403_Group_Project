@@ -208,11 +208,11 @@ def dashboard():
     
     all_projects = db.session.query(Project).all()
     
-    # Safely get available projects
+    # Safely get project_matches
     project_matches = []
-    for i in range(min(3, len(all_projects))):
-        project_matches.append(all_projects[i])
-
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
 
     return render_template('dashboard.html',
                             username= session['username'],
@@ -247,12 +247,20 @@ def upload():
 
         # Re-fetch after changes
         user_interests = user.interests if user.interests else None
-        matched_projects = []  # You can plug in matching logic here
+        matched_projects = []
+        if user_interests:
+            interest_ids = [i.id for i in user_interests]
+            matched_projects = (Project.query.join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all())
+        
         return render_template('upload.html', matched_projects=matched_projects, user_interests=user_interests)
 
     # GET method
     user_interests = user.interests if user.interests else None
-    return render_template('upload.html', matched_projects=[], user_interests=user_interests)
+    matched_projects = []
+    if user_interests:
+        interest_ids = [i.id for i in user_interests]
+        matched_projects = (Project.query.join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all())
+    return render_template('upload.html', matched_projects=matched_projects, user_interests=user_interests)
 
 # Trends Page
 @app.route('/trends')
