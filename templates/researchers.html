@@ -12,8 +12,14 @@
     <div class="search-container">
         <div class="search-box">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" id="researcher-search" placeholder="Search by name or research area...">
+            <input type="text" id="researcher-search" placeholder="Search by name!">
         </div>
+    </div>
+
+    <!-- Add this explanation at the top of the page -->
+    <div class="info-banner">
+        <i class="fas fa-info-circle"></i>
+        <span>Researchers can be contacted directly via email for research opportunities.</span>
     </div>
 
     <div class="researchers-container">
@@ -50,13 +56,11 @@
                     </ul>
                 </div>
                 
+                <!-- Replace connect buttons with contact links -->
                 <div class="researcher-actions">
-                    <button class="btn primary connect-btn">
-                        <i class="fas fa-user-plus"></i> Connect
-                    </button>
-                    <button class="btn secondary message-btn">
-                        <i class="fas fa-envelope"></i> Message
-                    </button>
+                    <a href="mailto:{{ researcher.email }}" class="btn btn-contact">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
                 </div>
             </div>
         </div>
@@ -264,8 +268,35 @@
         color: var(--text-primary);
     }
     
-    .btn:hover {
-        transform: translateY(-2px);
+    .btn-contact, .btn-profile {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 8px 15px;
+        border-radius: 6px;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        font-size: 14px;
+        margin-right: 8px;
+    }
+    
+    .btn-contact {
+        background-color: #4caf50;
+    }
+    
+    .btn-contact:hover {
+        background-color: #388e3c;
+    }
+    
+    .btn-profile {
+        background-color: #9c27b0;
+    }
+    
+    .btn-profile:hover {
+        background-color: #7b1fa2;
     }
     
     .empty-state {
@@ -275,6 +306,22 @@
         background-color: white;
         border-radius: 12px;
         box-shadow: var(--shadow-sm);
+    }
+    
+    .info-banner {
+        background-color: #e8f4fd;
+        border-left: 4px solid #2196f3;
+        padding: 12px 15px;
+        margin-bottom: 25px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        color: #0d47a1;
+    }
+    
+    .info-banner i {
+        margin-right: 10px;
+        font-size: 18px;
     }
     
     @media (max-width: 768px) {

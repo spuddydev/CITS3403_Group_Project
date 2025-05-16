@@ -2271,6 +2271,7 @@ blockquote {
 }
 
 #researcher-search {
+    transform: translateY(15%);
     flex: 1;
     border: none;
     outline: none;

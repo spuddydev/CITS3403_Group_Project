@@ -101,7 +101,7 @@ def home():
 # Sign In Page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # look for token in headers (americans spell authorisation wrong)
+    # look for token in headers
     token = request.cookies.get('jwt_token', None)
 
     if not token:
@@ -144,8 +144,10 @@ def login():
             else:
                 # Invalid credentials
                 session['attempts'] += 1
-                form.password.errors.append("Invalid credentials") 
-                return redirect(url_for('login'))
+                error_message = "Invalid username or password. Please try again."
+                # Use flash message instead of adding to form errors
+                flash(error_message, "error")
+                return render_template('login.html', form=form, error=error_message)
         
         return render_template('login.html', form=form)
     else:
@@ -200,112 +202,198 @@ def register():
 def dashboard():
     user = db.session.query(User).filter_by(id=session['user_id']).first()
     if user.interests:
-        user_interests = user.interests  
-        user_connections = user.connections
+        user_interests = user.interests
     else:
         user_interests = None
-        user_connections = None
     
     all_projects = db.session.query(Project).all()
     
-    # Safely get project_matches
+    # Safely get available projects
     project_matches = []
-    if user_interests:
-        interest_ids = [interest.id for interest in user_interests]
-        project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
+    for i in range(min(3, len(all_projects))):
+        project_matches.append(all_projects[i])
+
+    # Get user's actual connections from database
+    connections = user.get_all_connections()  
+    
+    # Get suggested connections - don't filter out researchers
+    suggested_users = User.query.filter(User.id != user.id).limit(2).all()
+    suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
 
     return render_template('dashboard.html',
-                            username= session['username'],
-                            user_interests= user_interests,
-                            project_matches =project_matches,
-                            connections = user_connections)
+                           username=session['username'],
+                           user_interests=user_interests,
+                           project_matches=project_matches,
+                           connections=connections,
+                           suggested_users=suggested_users,
+                           is_authenticated_page=True,
+                           user_name=session.get('username'))
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
 @token_required
 def upload():
     user = db.session.query(User).get(session['user_id'])
+    error = None
 
     if request.method == 'POST':
         action = request.form.get('action')
 
         if action == 'submit':
             interest_id = request.form.get('interest_id')
-            interest = Interest.query.get(interest_id)
-
-            if interest:
-                if interest not in user.interests:
-                    user.interests.append(interest)
-                    db.session.commit()
+            keyword = request.form.get('keywords')
+            
+            # Validate the input
+            if not interest_id or not keyword:
+                error = "Please select a valid research interest from the suggestions."
             else:
-                pass
-                # Add an invalid interest notifier here
+                interest = Interest.query.get(interest_id)
+
+                if interest:
+                    if interest not in user.interests:
+                        user.interests.append(interest)
+                        db.session.commit()
+                        flash(f"Added '{interest.interest_name}' to your interests.", "success")
+                    else:
+                        error = f"'{interest.interest_name}' is already in your interests."
+                else:
+                    error = "The selected interest could not be found. Please try again."
 
         elif action == 'refresh':
             user.interests.clear()
             db.session.commit()
+            flash("Your interests have been cleared.", "success")
 
         # Re-fetch after changes
         user_interests = user.interests if user.interests else None
-        matched_projects = []
-        if user_interests:
-            interest_ids = [i.id for i in user_interests]
-            matched_projects = (Project.query.join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all())
-        
-        return render_template('upload.html', matched_projects=matched_projects, user_interests=user_interests)
+        matched_projects = []  # You can plug in matching logic here
+        return render_template('upload.html', 
+                              matched_projects=matched_projects, 
+                              user_interests=user_interests,
+                              username=session['username'],
+                              is_authenticated_page=True,
+                              error=error,
+                              user_name=session.get('username'))
 
     # GET method
     user_interests = user.interests if user.interests else None
-    matched_projects = []
-    if user_interests:
-        interest_ids = [i.id for i in user_interests]
-        matched_projects = (Project.query.join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all())
-    return render_template('upload.html', matched_projects=matched_projects, user_interests=user_interests)
+    return render_template('upload.html', 
+                          matched_projects=[], 
+                          user_interests=user_interests,
+                          username=session['username'],
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))
+
+# Projects Page
+@app.route('/projects')
+@token_required
+def projects():
+    # Get page number and filters from request args
+    page = request.args.get('page', 1, type=int)
+    faculty = request.args.get('faculty', '')
+    status = request.args.get('status', '')
+    per_page = 12  # Number of projects per page
+    
+    # Start with base query
+    query = Project.query
+    
+    # Apply filters if provided
+    if faculty:
+        query = query.join(Project.research_areas).filter(ResearchArea.area.ilike(f'%{faculty}%'))
+    
+    if status == 'open':
+        query = query.filter(Project.is_open == True)
+    elif status == 'closed':
+        query = query.filter(Project.is_open == False)
+    
+    # Paginate the results
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    projects = pagination.items
+    
+    return render_template('projects.html', 
+                          username=session['username'],
+                          projects=projects,
+                          pagination=pagination,
+                          faculty=faculty,
+                          status=status,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))  # Add this for avatar
+
+# Saved Projects Page
+@app.route('/saved')
+@token_required
+def saved():
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Get the current user
+    user = User.query.get(session['user_id'])
+    
+    # Get user's saved projects
+    saved_projects = user.saved_projects if user.saved_projects else []
+    
+    # Get projects shared with the user
+    shared_with_user = db.session.query(
+        Project, User
+    ).join(
+        shared_projects, 
+        shared_projects.c.project_id == Project.id
+    ).join(
+        User, 
+        User.id == shared_projects.c.shared_by_id
+    ).filter(
+        shared_projects.c.shared_with_id == user.id
+    ).all()
+    
+    # Format the shared projects data
+    shared_projects_data = []
+    for project, shared_by in shared_with_user:
+        shared_projects_data.append({
+            'project': project,
+            'shared_by': shared_by,
+            'is_saved': project in saved_projects
+        })
+    
+    return render_template('saved.html', 
+                          username=session['username'],
+                          saved_projects=saved_projects,
+                          shared_projects=shared_projects_data,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))
 
 # Trends Page
 @app.route('/trends')
 @token_required
 def trends():
     user = db.session.query(User).filter_by(id=session['user_id']).first()
+    if user.interests:
+        user_interests = user.interests  # This will give you the list of interests
+    else:
+        user_interests = None
 
-    if not user or not user.interests:
-        return render_template("trends.html",
-                               user_interest_labels=[],
-                               user_interest_data=[],
-                               project_interest_labels=[],
-                               project_interest_data=[])
+    # Initialize with empty data
+    trend_labels = []
+    trend_data = []
 
-    # Current user's interest IDs
-    interest_ids = [interest.id for interest in user.interests]
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        results = db.session.query(
+            Interest.interest_name,
+            func.count(project_interest.c.project_id)
+        ).join(project_interest).filter(
+            Interest.id.in_(interest_ids)
+        ).group_by(Interest.id).all()
 
-    # User-specific project interest counts
-    user_interest_results = db.session.query(
-        Interest.interest_name,
-        func.count(project_interest.c.project_id)
-    ).join(project_interest).filter(
-        Interest.id.in_(interest_ids)
-    ).group_by(Interest.id).all()
+        trend_labels = [name for name, count in results]
+        trend_data = [count for name, count in results]
 
-    project_interest_labels = [name for name, count in user_interest_results]
-    project_interest_data = [count for name, count in user_interest_results]
+    return render_template('trends.html',
+                          username=session['username'],
+                          trend_labels=trend_labels,
+                          trend_data=trend_data,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))
 
-    # Count how many *other* users share these interests
-    project_interest_results = db.session.query(
-        Interest.interest_name,
-        func.count(user_interest.c.user_id)
-    ).join(user_interest).filter(
-        Interest.id.in_(interest_ids),
-        user_interest.c.user_id != user.id
-    ).group_by(Interest.id).all()
-
-    user_interest_labels = [name for name, count in project_interest_results]
-    user_interest_data = [count for name, count in project_interest_results]
-
-    return render_template("trends.html", 
-                           user_interest_labels=user_interest_labels,
-                           user_interest_data=user_interest_data,
-                           project_interest_labels=project_interest_labels,
-                           project_interest_data=project_interest_data)
 
 
 
@@ -323,98 +411,56 @@ def social():
     connections = user.connections
     
     # Get users that current user is not connected with (suggestions)
+    # Don't exclude researchers - show all potential connections
     suggested_users = User.query.filter(User.id != user.id).all()
     suggested_users = [u for u in suggested_users if not user in connections]
     
-    return render_template('social.html', 
+    return render_template('social.html',
                           username=session['username'],
                           connections=connections,
-                          suggested_users=suggested_users[:5])  # Limit to 5 suggestions
+                          suggested_users=suggested_users,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))  # Add this for avatar
 
+
+# Profile Page
+@app.route('/profile')
+@token_required
+def profile():
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Get the current user with all related data
+    user = User.query.get(session['user_id'])
+    
+    return render_template('profile.html',
+                          username=session['username'],
+                          user=user,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))
 
 # Settings Page
 @app.route('/settings')
 @token_required
 def settings():
-    user = User.query.get(session['user_id'])  # or however you're getting the current user
-    form = Settings_ProfileForm(obj=user)  # pre-populate with user data
-
-
-    if form.validate_on_submit():
-        user.username = form.username.data
-        user.email = form.email.data
-        user.faculty = form.faculty.data
-        db.session.commit()
-        flash("Profile updated successfully.", "success")
-        return redirect(url_for('settings'))
-
-    return render_template('settings.html', form=form, user=user)
-
-
-
-# Projects Page
-@app.route('/projects')
-@token_required
-def projects():
-    if not session.get('user_id'):  # Check login status
-        return redirect(url_for('login'))
+    user = User.query.get(session['user_id'])
     
-    # Get all projects from database
-    all_projects = db.session.query(Project).all()
-    
-    return render_template('projects.html', 
+    return render_template('settings.html', 
                           username=session['username'],
-                          projects=all_projects)
+                          user=user,
+                          is_authenticated_page=True,  # Add this flag
+                          user_name=session.get('username'))  # Add this for avatar
 
-# Saved Projects Page
-@app.route('/saved')
-@token_required
-def saved():
-    if not session.get('user_id'):  # Check login status
-        return redirect(url_for('login'))
-    
-    # Get the current user
-    user = db.session.query(User).filter_by(id=session['user_id']).first()
-    
-    # Get user's saved projects
-    saved_projects = user.saved_projects if user.saved_projects else []
-    
-    return render_template('saved.html', 
-                          username=session['username'],
-                          saved_projects=saved_projects)
-
-# Reseachers Page
 @app.route('/researchers')
 @token_required
 def researchers():
-    if not session.get('user_id'):  # Check login status
-        return redirect(url_for('login'))
+    researchers = db.session.query(Researcher).filter(Researcher.email != None).limit(30).all()
     
-    # Get all researchers from database
-    all_researchers = db.session.query(Researcher).all()
-    
-    return render_template('researchers.html', 
-                          username=session['username'],
-                          researchers=all_researchers)
-
-# User Profile Page
-@app.route('/profile')
-@token_required
-def profile():
-    if not session.get('user_id'):  # Check login status
-        return redirect(url_for('login'))
-    
-    # Get current user
-    user = db.session.query(User).filter_by(id=session['user_id']).first()
-    
-    # If user.faculty is an ID, let's get the actual ResearchArea object
-    if user.faculty is None and user.research_area_id is not None:
-        from database.schema import ResearchArea
-        user.faculty = db.session.query(ResearchArea).filter_by(id=user.research_area_id).first()
-    
-    return render_template('profile.html', 
-                          username=session['username'],
-                          user=user)
+    return render_template('researchers.html',
+                           username=session['username'],
+                           researchers=researchers,
+                           is_authenticated_page=True,
+                           user_name=session.get('username'))
 
 # Save Project Route (for AJAX)
 @app.route('/save_project/<int:project_id>', methods=['POST'])
@@ -443,7 +489,7 @@ def save_project(project_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
-    
+# Modify the connect_user route to only allow connections between regular users
 @app.route('/connect/<int:user_id>', methods=['POST'])
 @token_required
 def connect_user(user_id):
@@ -497,6 +543,194 @@ def disconnect_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+@app.route('/api/projects')
+@token_required
+def get_projects():
+    if not session.get('user_id'):
+        return jsonify({'error': 'Unauthorized'}), 401
     
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+    offset = (page - 1) * per_page
+    
+    projects = db.session.query(Project).offset(offset).limit(per_page).all()
+    
+    # Convert projects to dictionaries for JSON serialization
+    project_list = []
+    for project in projects:
+        project_data = {
+            'id': project.id,
+            'title': project.title,
+            'link': project.link,
+            'is_open': project.is_open,
+            'summary': project.summary,
+            'close_date': project.close_date.isoformat() if project.close_date else None
+        }
+        project_list.append(project_data)
+    
+    return jsonify({
+        'projects': project_list,
+        'page': page,
+        'per_page': per_page,
+        'has_more': len(projects) == per_page
+    })
+@app.route('/logout')
+def logout():
+    # Clear the session
+    session.clear()
+    
+    # Create response and clear the JWT token cookie
+    response = make_response(redirect(url_for('home')))
+    response.set_cookie('jwt_token', '', max_age=0)
+    
+    flash("You have been successfully logged out.", "success")
+    return response
+
+@app.route('/user/<username>')
+@token_required
+def view_user_profile(username):
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Get current user and requested user
+    current_user = User.query.get(session['user_id'])
+    requested_user = User.query.filter_by(username=username).first()
+    
+    # Check if requested user exists
+    if not requested_user:
+        flash("User not found.", "error")
+        return redirect(url_for('social'))
+    
+    # If viewing own profile, redirect to regular profile page
+    if current_user.id == requested_user.id:
+        return redirect(url_for('profile'))
+    
+    # Check if users are connected
+    if not current_user.is_connected_to(requested_user):
+        flash("You must be connected with this user to view their profile.", "error")
+        return redirect(url_for('social'))
+    
+    # If connected, render the user's profile
+    return render_template('user_profile.html',
+                          username=session['username'],
+                          user=requested_user,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))
+
+@app.route('/share_projects', methods=['GET'])
+@token_required
+def share_projects_page():
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Get current user
+    user = User.query.get(session['user_id'])
+    
+    # Get user's saved projects
+    saved_projects = user.saved_projects if user.saved_projects else []
+    
+    # Check if a specific project was requested
+    pre_selected_project_id = request.args.get('project_id', None, type=int)
+    pre_selected_project = None
+    
+    if pre_selected_project_id:
+        # Find the project in user's saved projects
+        pre_selected_project = next((p for p in saved_projects if p.id == pre_selected_project_id), None)
+    
+    # Get user's connections for sharing with
+    connections = user.get_all_connections().all()
+    
+    # Get information about previously shared projects
+    shared_by_user = db.session.query(
+        Project.id, 
+        Project.title, 
+        func.count(shared_projects.c.shared_with_id).label('share_count')
+    ).join(
+        shared_projects, 
+        shared_projects.c.project_id == Project.id
+    ).filter(
+        shared_projects.c.shared_by_id == user.id
+    ).group_by(Project.id).all()
+    
+    # Convert to dict for easier lookup
+    sharing_stats = {p_id: count for p_id, _, count in shared_by_user}
+    
+    return render_template('share_projects.html',
+                          username=session['username'],
+                          user=user,
+                          saved_projects=saved_projects,
+                          connections=connections,
+                          sharing_stats=sharing_stats,
+                          pre_selected_project=pre_selected_project,
+                          is_authenticated_page=True,
+                          user_name=session.get('username'))
+
+@app.route('/share_project/<int:project_id>', methods=['POST'])
+@token_required
+def share_project(project_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        # Get the project and user
+        current_user = User.query.get(session['user_id'])
+        project = Project.query.get(project_id)
+        
+        if not project:
+            return jsonify({'success': False, 'message': 'Project not found'}), 404
+        
+        # Check if the project is saved by the user
+        if project not in current_user.saved_projects:
+            return jsonify({'success': False, 'message': 'You can only share projects you have saved'}), 403
+        
+        # Get the users to share with
+        data = request.get_json()
+        user_ids = data.get('user_ids', [])
+        
+        if not user_ids:
+            return jsonify({'success': False, 'message': 'No users selected'}), 400
+            
+        # Delete existing shares first (to handle unsharing)
+        db.session.execute(
+            shared_projects.delete().where(
+                (shared_projects.c.project_id == project_id) & 
+                (shared_projects.c.shared_by_id == current_user.id)
+            )
+        )
+        
+        # Add new shares
+        shared_count = 0
+        for user_id in user_ids:
+            # Skip if trying to share with self
+            if int(user_id) == current_user.id:
+                continue
+                
+            # Check if this is a valid connection
+            other_user = User.query.get(user_id)
+            if not other_user or not current_user.is_connected_to(other_user):
+                continue
+                
+            # Add the share record
+            db.session.execute(
+                shared_projects.insert().values(
+                    project_id=project_id,
+                    shared_by_id=current_user.id,
+                    shared_with_id=user_id
+                )
+            )
+            shared_count += 1
+            
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Project shared with {shared_count} connections',
+            'shared_count': shared_count
+        })
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)

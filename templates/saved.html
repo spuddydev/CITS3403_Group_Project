@@ -73,6 +73,9 @@
                     <button class="btn secondary remove-saved" data-project-id="{{ project.id }}">
                         <i class="fas fa-trash"></i> Remove
                     </button>
+                    <button class="btn tertiary share-saved" data-project-id="{{ project.id }}">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
                 </div>
             </div>
             {% endfor %}
@@ -84,6 +87,52 @@
                     <p>You haven't saved any research projects yet. Browse projects and use the "Save" button to bookmark them for later.</p>
                     <a href="{{ url_for('projects') }}" class="btn primary">Browse Projects</a>
                 </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="shared-projects-section">
+        <h2>Shared With You</h2>
+        
+        {% if shared_projects %}
+            <div class="shared-projects-list">
+                {% for shared in shared_projects %}
+                <div class="shared-project-card">
+                    <div class="project-info">
+                        <div class="shared-by">
+                            <div class="shared-avatar">{{ shared.shared_by.username[0].upper() }}</div>
+                            <span>Shared by <strong>{{ shared.shared_by.username }}</strong></span>
+                        </div>
+                        
+                        <h3 class="project-title">{{ shared.project.title }}</h3>
+                        <div class="project-tags">
+                            {% for interest in shared.project.interests %}
+                            <span class="project-tag">{{ interest.interest_name }}</span>
+                            {% endfor %}
+                        </div>
+                        <p class="project-summary">{{ shared.project.summary }}</p>
+                    </div>
+                    
+                    <div class="project-actions">
+                        <a href="{{ shared.project.link }}" target="_blank" class="btn-view-project">
+                            <i class="fas fa-external-link-alt"></i> View Project
+                        </a>
+                        {% if not shared.is_saved %}
+                        <button class="btn-save-project" onclick="saveProject({{ shared.project.id }}, this)">
+                            <i class="far fa-bookmark"></i> Save
+                        </button>
+                        {% else %}
+                        <button class="btn-save-project saved" onclick="saveProject({{ shared.project.id }}, this)">
+                            <i class="fas fa-bookmark"></i> Saved
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state small">
+                <p>No projects have been shared with you yet. Connect with more researchers to discover shared projects.</p>
             </div>
         {% endif %}
     </div>
@@ -261,6 +310,49 @@
         color: var(--text-secondary);
     }
     
+    .shared-projects-section {
+        margin-top: 40px;
+    }
+    
+    .shared-project-card {
+        position: relative;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-sm);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .shared-by {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: var(--text-tertiary);
+    }
+    
+    .shared-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        margin-right: 8px;
+        font-size: 12px;
+    }
+    
+    .empty-state.small {
+        padding: 20px;
+        text-align: center;
+        color: var(--text-tertiary);
+        background-color: var(--background-light);
+        border-radius: 10px;
+    }
+    
     @media (max-width: 768px) {
         .saved-projects-container {
             grid-template-columns: 1fr;
@@ -316,6 +408,16 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
             });
+        });
+    });
+    
+    // Share saved project functionality
+    const shareButtons = document.querySelectorAll('.share-saved');
+    
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            window.location.href = `/share_projects?project_id=${projectId}`;
         });
     });
 });
