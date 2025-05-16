@@ -87,12 +87,33 @@
     <div class="dashboard-content">
         <!-- Left Column -->
         <div class="content-column main-column">
+             <section class="dashboard-section">
+                <div class="section-header">
+                    <h2>Your Research Interests</h2>
+                </div>
+                
+                <div class="interests-container">
+                    {% for interest in user_interests%}
+                    <div class="interest-tag ai-tag">
+                        <span>{{interest.interest_name}}</span>
+                        <button class="remove-interest" aria-label="Remove interest">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                        </button>
+                    </div>
+                    {% endfor %}
+
+                    <button class="add-interest" onclick="window.location.href='{{ url_for('upload') }}'">
+                        <svg width="16" height="16" ...>...</svg>
+                        <span>Add Interest</span>
+                    </button>
+                </div>
+            </section>
             <section class="dashboard-section" id="matches">
                 <div class="section-header">
                     <h2>Research Matches</h2>
                     <a href="#" class="view-all">View All</a>
                 </div>
-                {% for project in project_matches %}
+                {% for project in project_matches[0:3] %}
                 <div class="matches-grid">
                     <div class="match-card ai-match">
                         <div class="match-header">
@@ -119,27 +140,7 @@
                 </div>
             </section>
             
-            <section class="dashboard-section">
-                <div class="section-header">
-                    <h2>Your Research Interests</h2>
-                </div>
-                
-                <div class="interests-container">
-                    {% for interest in user_interests%}
-                    <div class="interest-tag ai-tag">
-                        <span>{{interest.interest_name}}</span>
-                        <button class="remove-interest" aria-label="Remove interest">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
-                        </button>
-                    </div>
-                    {% endfor %}
-
-                    <button class="add-interest" onclick="window.location.href='{{ url_for('upload') }}'">
-                        <svg width="16" height="16" ...>...</svg>
-                        <span>Add Interest</span>
-                    </button>
-                </div>
-            </section>
+           
         </div>
         
         <!-- Right Column -->
@@ -218,54 +219,38 @@
                 </div>
             </section>
             
-            <section class="dashboard-section connections-section">
-                <div class="section-header">
-                    <h2>Academic Connections</h2>
-                    <a href="/social" class="view-all">View All</a>
-                </div>
-                
-                <div class="connections-container">
+    <section class="dashboard-section connections-section">
+        <div class="section-header">
+            <h2>Academic Connections</h2>
+            <a href="/social" class="view-all">View All</a>
+        </div>
+
+        <div class="connections-container">
+            {% if connections %}
+                {% for conn in connections %}
                     <div class="connection-card">
-                        <div class="connection-avatar">JD</div>
+                        <div class="connection-avatar">
+                            {{ conn.username[:2]|upper }}
+                        </div>
                         <div class="connection-info">
-                            <h4>John Doe</h4>
-                            <p>AI, Robotics</p>
+                            <h4>{{ conn.username }}</h4>
+                            <p>
+                                {% if conn.interests %}
+                                    {{ conn.interests | map(attribute='interest_name') | join(', ') }}
+                                {% else %}
+                                    No interests listed
+                                {% endif %}
+                            </p>
                         </div>
                         <button class="connect-button connected">Connected</button>
                     </div>
-                    
-                    <div class="connection-card">
-                        <div class="connection-avatar">JS</div>
-                        <div class="connection-info">
-                            <h4>Jane Smith</h4>
-                            <p>Health, Neuroscience</p>
-                        </div>
-                        <button class="connect-button connected">Connected</button>
-                    </div>
-                    
-                    <div class="suggested-connections">
-                        <h5>Suggested Connections</h5>
-                        
-                        <div class="connection-card suggested">
-                            <div class="connection-avatar">AS</div>
-                            <div class="connection-info">
-                                <h4>Alan Stein</h4>
-                                <p>Machine Learning</p>
-                            </div>
-                            <button class="connect-button primary">Connect</button>
-                        </div>
-                        
-                        <div class="connection-card suggested">
-                            <div class="connection-avatar">MR</div>
-                            <div class="connection-info">
-                                <h4>Maria Rodriguez</h4>
-                                <p>Data Science, AI</p>
-                            </div>
-                            <button class="connect-button primary">Connect</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                {% endfor %}
+            {% else %}
+                <p>You have no academic connections yet.</p>
+            {% endif %}
+        </div>
+    </section>
+
         </div>
     </div>
     {% endif %}

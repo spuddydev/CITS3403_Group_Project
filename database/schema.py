@@ -56,7 +56,7 @@ class User(db.Model):
         back_populates='connections_reverse'
     )
 
-    connections_reverse = db.relationship(
+    connections_reverse = db.relationship( 
         'User',
         secondary=user_connections,
         primaryjoin=id == user_connections.c.connection_id,

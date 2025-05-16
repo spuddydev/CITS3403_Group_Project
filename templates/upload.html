@@ -36,13 +36,36 @@
     <ul class="list-group">
         {% for project in matched_projects %}
         <li class="list-group-item">
-            <a href="{{ project.link }}" class="btn btn-sm">More Info</a>
+            <strong>{{ project.title }}</strong><br>
+            Researchers: 
+            {% if project.researchers %}
+                {{ project.researchers | map(attribute='first_name') | join(', ') }}
+                {{ project.researchers | map(attribute='last_name') | join(', ') }}
+            {% else %}
+                None listed
+            {% endif %}
+            <br>
+            <a href="{{ project.link }}" class="btn btn-sm btn-primary mt-2">More Info</a>
         </li>
         {% endfor %}
     </ul>
+
 </div>
 
 <style>
+    .list-group-item {
+        padding: 15px 20px;  /* add some padding inside each list item */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* align items to the left */
+        gap: 10px; /* vertical space between elements */
+    }
+
+    .list-group-item .btn {
+        align-self: flex-start; /* keep the button aligned left */
+        margin-top: 8px;        /* some space above the button */
+        padding: 8px 16px;      /* consistent padding */
+    }
     .button-group {
         display: flex;
         gap: 10px;
