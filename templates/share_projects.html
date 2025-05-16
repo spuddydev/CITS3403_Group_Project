@@ -20,7 +20,7 @@
                         <span class="project-tag">{{ interest.interest_name }}</span>
                         {% endfor %}
                     </div>
-                    <p class="project-summary">{{ project.summary }}</p>
+                    <p class="project-summary">{{ project.summary[0:400] }} {% if project.summary|length >400 %}...{% endif %}</p>
                 </div>
                 
                 <div class="share-actions">
