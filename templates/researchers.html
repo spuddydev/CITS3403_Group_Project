@@ -9,7 +9,7 @@
         <p class="text-muted">Connect with faculty members supervising research projects</p>
     </div>
 
-    <div class="search-container">
+    <div class="search-container" style="margin-bottom: 25px;">
         <div class="search-box">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="researcher-search" placeholder="Search by name or research area...">
@@ -18,27 +18,27 @@
 
     <div class="researchers-container">
         {% for researcher in researchers %}
-        <div class="researcher-card" data-name="{{ researcher.first_name|lower }} {{ researcher.last_name|lower }}">
+        <div class="researcher-card" data-name="{{ researcher.first_name|lower }} {{ researcher.last_name|lower }}" style="margin-bottom: 20px;">
             <div class="researcher-avatar">
                 {{ researcher.first_name[0] }}{{ researcher.last_name[0] }}
             </div>
-            
+
             <div class="researcher-info">
                 <h3 class="researcher-name">{{ researcher.first_name }} {{ researcher.last_name }}</h3>
-                
-                <div class="researcher-contact">
+
+                <div class="researcher-contact" style="margin-bottom: 10px;">
                     {% if researcher.email %}
                     <a href="mailto:{{ researcher.email }}" class="contact-link">
                         <i class="fas fa-envelope"></i> {{ researcher.email }}
                     </a>
                     {% endif %}
                 </div>
-                
-                <div class="researcher-projects">
-                    <h4>Research Projects</h4>
+
+                <div class="researcher-projects" style="margin-bottom: 15px;">
+                    <h4 style="margin-bottom: 10px;">Research Projects</h4>
                     <ul class="projects-list">
                         {% for project in researcher.projects %}
-                        <li class="project-item">
+                        <li class="project-item" style="margin-bottom: 8px;">
                             <a href="{{ project.link }}" target="_blank" class="project-link">{{ project.title }}</a>
                             <span class="project-status {{ 'open' if project.is_open else 'closed' }}">
                                 {{ 'Open' if project.is_open else 'Closed' }}
@@ -49,8 +49,8 @@
                         {% endfor %}
                     </ul>
                 </div>
-                
-                <div class="researcher-actions">
+
+                <div class="researcher-actions" style="margin-top: 15px;">
                     <button class="btn primary connect-btn">
                         <i class="fas fa-user-plus"></i> Connect
                     </button>
@@ -68,284 +68,21 @@
     </div>
 </div>
 
-<style>
-    .content-container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .page-header {
-        margin-bottom: 30px;
-    }
-    
-    .text-muted {
-        color: var(--text-secondary);
-    }
-    
-    .search-container {
-        margin-bottom: 30px;
-    }
-    
-    .search-box {
-        display: flex;
-        align-items: center;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: var(--shadow-sm);
-        padding: 12px 20px;
-        position: relative;
-    }
-    
-    .search-icon {
-        color: var(--text-tertiary);
-        margin-right: 10px;
-    }
-    
-    #researcher-search {
-        flex: 1;
-        border: none;
-        outline: none;
-        font-size: 16px;
-        background: transparent;
-    }
-    
-    .researchers-container {
-        display: grid;
-        gap: 25px;
-    }
-    
-    .researcher-card {
-        display: flex;
-        background-color: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: var(--shadow-sm);
-        transition: var(--transition);
-        border-left: 5px solid var(--accent-indigo);
-    }
-    
-    .researcher-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-md);
-    }
-    
-    .researcher-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-color), var(--accent-indigo));
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 24px;
-        margin-right: 25px;
-        flex-shrink: 0;
-    }
-    
-    .researcher-info {
-        flex: 1;
-    }
-    
-    .researcher-name {
-        font-size: 20px;
-        margin-bottom: 5px;
-    }
-    
-    .researcher-contact {
-        margin-bottom: 15px;
-    }
-    
-    .contact-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-size: 14px;
-        display: inline-flex;
-        align-items: center;
-    }
-    
-    .contact-link i {
-        margin-right: 5px;
-    }
-    
-    .contact-link:hover {
-        text-decoration: underline;
-    }
-    
-    .researcher-projects {
-        margin-bottom: 20px;
-    }
-    
-    .researcher-projects h4 {
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-    
-    .projects-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .project-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border-light);
-    }
-    
-    .project-item:last-child {
-        border-bottom: none;
-    }
-    
-    .project-link {
-        color: var(--text-primary);
-        text-decoration: none;
-        font-size: 14px;
-    }
-    
-    .project-link:hover {
-        color: var(--primary-color);
-    }
-    
-    .project-status {
-        font-size: 12px;
-        padding: 3px 8px;
-        border-radius: 10px;
-    }
-    
-    .project-status.open {
-        background-color: rgba(52, 199, 89, 0.1);
-        color: var(--accent-green);
-    }
-    
-    .project-status.closed {
-        background-color: rgba(94, 92, 230, 0.1);
-        color: var(--accent-purple);
-    }
-    
-    .no-projects {
-        font-size: 14px;
-        color: var(--text-tertiary);
-        font-style: italic;
-    }
-    
-    .researcher-actions {
-        display: flex;
-        gap: 10px;
-    }
-    
-    .btn {
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: var(--transition);
-        border: none;
-        display: flex;
-        align-items: center;
-    }
-    
-    .btn i {
-        margin-right: 5px;
-    }
-    
-    .btn.primary {
-        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
-        color: white;
-    }
-    
-    .btn.secondary {
-        background-color: var(--background-medium);
-        color: var(--text-primary);
-    }
-    
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-    
-    .empty-state {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 40px;
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: var(--shadow-sm);
-    }
-    
-    @media (max-width: 768px) {
-        .researcher-card {
-            flex-direction: column;
-        }
-        
-        .researcher-avatar {
-            margin-right: 0;
-            margin-bottom: 15px;
-        }
-        
-        .researcher-actions {
-            flex-direction: column;
-        }
-    }
-</style>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Search functionality
     const searchInput = document.getElementById('researcher-search');
     const researcherCards = document.querySelectorAll('.researcher-card');
-    
+
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.trim().toLowerCase();
-        
+
         researcherCards.forEach(card => {
-            const researcherName = card.getAttribute('data-name');
-            const projectTitles = Array.from(card.querySelectorAll('.project-link'))
-                .map(link => link.textContent.toLowerCase())
-                .join(' ');
-            
-            const isMatch = researcherName.includes(searchTerm) || 
-                           projectTitles.includes(searchTerm);
-            
-            card.style.display = isMatch ? 'flex' : 'none';
-        });
-    });
-    
-    // Connect button functionality
-    const connectButtons = document.querySelectorAll('.connect-btn');
-    
-    connectButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const researcherCard = this.closest('.researcher-card');
-            const researcherName = researcherCard.querySelector('.researcher-name').textContent;
-            
-            // Toggle connection status
-            if (this.classList.contains('connected')) {
-                this.innerHTML = '<i class="fas fa-user-plus"></i> Connect';
-                this.classList.remove('connected');
-                alert(`You've disconnected from ${researcherName}.`);
+            const name = card.getAttribute('data-name');
+            if (name.includes(searchTerm)) {
+                card.style.display = '';
             } else {
-                this.innerHTML = '<i class="fas fa-check"></i> Connected';
-                this.classList.add('connected');
-                this.style.backgroundColor = 'var(--accent-green)';
-                alert(`You've connected with ${researcherName}. They'll receive your connection request.`);
+                card.style.display = 'none';
             }
-        });
-    });
-    
-    // Message button functionality
-    const messageButtons = document.querySelectorAll('.message-btn');
-    
-    messageButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const researcherCard = this.closest('.researcher-card');
-            const researcherName = researcherCard.querySelector('.researcher-name').textContent;
-            
-            alert(`A message window to ${researcherName} would open here.`);
         });
     });
 });
