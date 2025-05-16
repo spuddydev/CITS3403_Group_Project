@@ -7,14 +7,17 @@ __pycache__/
 *.pyc
 
 # Database files
-*.db
-*.sqlite
+data/
 
 # Flask Tracking 
-instance/
+hidden/
+
+# Model Tracking
+models/
 
 # Environment Setup
 .env
 
 # Automatic files
 .DS_Store
+
