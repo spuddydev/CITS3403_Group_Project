@@ -3,60 +3,69 @@
 {% block title %}Settings - ResearchMatch{% endblock %}
 
 {% block content %}
-    <h1>Account Settings</h1>
-    
-    <div class="glass-card">
-        <h3>Profile Information</h3>
-        <form action="/settings/profile" method="POST">
-            <div style="margin-bottom: 20px;">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="{{ user.username }}" required>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label for="email">Email Address</label>
-                <input type="text" id="email" name="email" value="{{ user.email if user.email else '' }}" required>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label for="faculty">Faculty/Department</label>
-                <input type="text" id="faculty" name="faculty" value="{{ user.faculty if user.faculty else '' }}">
-            </div>
-            
-            <button type="submit" class="btn">Save Profile Changes</button>
-        </form>
-    </div>
-    
-    <div class="glass-card" style="margin-top: 30px;">
-        <h3>Change Password</h3>
-        <form action="/settings/password" method="POST">
-            <div style="margin-bottom: 20px;">
-                <label for="current_password">Current Password</label>
-                <input type="password" id="current_password" name="current_password" required>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label for="new_password">New Password</label>
-                <input type="password" id="new_password" name="new_password" required>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label for="confirm_password">Confirm New Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
-            </div>
-            
-            <button type="submit" class="btn">Update Password</button>
-        </form>
-    </div>
-    
-    <div class="glass-card" style="margin-top: 30px; background-color: rgba(255, 235, 235, 0.7);">
-        <h3>Data Management</h3>
-        <p>These actions cannot be undone.</p>
-        
-        <div style="margin-bottom: 20px; display: flex; gap: 20px;">
-            <button class="btn" style="background-color: #ff9500;" onclick="if(confirm('Are you sure you want to delete all your research interests?')) window.location.href='/settings/clear-interests'">Clear All Research Interests</button>
-            
-            <button class="btn" style="background-color: #ff3b30;" onclick="if(confirm('Are you sure you want to delete your account? This action cannot be undone.')) window.location.href='/settings/delete-account'">Delete Account</button>
+<h1 style="margin-bottom: 30px;">Account Settings</h1>
+
+<!-- Profile Info Section -->
+<div class="glass-card" style="margin-bottom: 30px; padding: 25px;">
+    <h3 style="margin-bottom: 20px;">Profile Information</h3>
+    <form action="/settings/profile" method="POST">
+        <div style="margin-bottom: 20px;">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
         </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="email">Email Address</label>
+            <input type="text" id="email" name="email" value="{{ user.email if user.email else '' }}" required>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="faculty">Faculty/Department</label>
+            <input type="text" id="faculty" name="faculty" value="{{ user.faculty if user.faculty else '' }}">
+        </div>
+
+        <button type="submit" class="btn">Save Profile Changes</button>
+    </form>
+</div>
+
+<!-- Password Change Section -->
+<div class="glass-card" style="margin-bottom: 30px; padding: 25px;">
+    <h3 style="margin-bottom: 20px;">Change Password</h3>
+    <form action="/settings/password" method="POST">
+        <div style="margin-bottom: 20px;">
+            <label for="current_password">Current Password</label>
+            <input type="password" id="current_password" name="current_password" required>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" required>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="confirm_password">Confirm New Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+        </div>
+
+        <button type="submit" class="btn">Update Password</button>
+    </form>
+</div>
+
+<!-- Data Management Section -->
+<div class="glass-card" style="margin-top: 30px; padding: 25px; background-color: rgba(255, 235, 235, 0.7);">
+    <h3 style="margin-bottom: 15px;">Data Management</h3>
+    <p style="margin-bottom: 20px;">These actions cannot be undone.</p>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <button class="btn" style="background-color: #ff9500;"
+            onclick="if(confirm('Are you sure you want to delete all your research interests?')) window.location.href='/settings/clear-interests'">
+            Clear All Research Interests
+        </button>
+
+        <button class="btn" style="background-color: #ff3b30;"
+            onclick="if(confirm('Are you sure you want to delete your account? This action cannot be undone.')) window.location.href='/settings/delete-account'">
+            Delete Account
+        </button>
     </div>
+</div>
 {% endblock %}
