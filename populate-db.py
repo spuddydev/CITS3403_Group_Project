@@ -4,6 +4,16 @@ from database.process_open import fetch_all_open_projects
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from app import app
+import string
+import random
+from faker import Faker
+from database.schema import db, User, Project, Interest, ResearchArea
+from werkzeug.security import generate_password_hash
+from app import app
+
+fake = Faker()
+
+NUM_USERS = 60
 
 # Helper functions
 
@@ -106,7 +116,62 @@ def insert_all_entries(generator, batch_size=100):
     session.close()
     print(f"[DONE] Total inserted: {count}")
 
+def random_string(length=8):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+def create_test_users():
+    # Load real objects from the DB
+    all_projects = Project.query.all()
+    all_interests = Interest.query.all()
+    all_research_areas = ResearchArea.query.all()
+
+    if not (all_projects and all_interests and all_research_areas):
+        print("Make sure Projects, Interests, and Research Areas are populated.")
+        return
+
+    users = []
+
+    for _ in range(NUM_USERS):
+        username = fake.user_name() + random_string(3)
+        email = fake.email()
+        pwd_string = random_string(10)
+        password = generate_password_hash(pwd_string)
+        print(f"{username}: {pwd_string}")
+
+        # Pick a real research area
+        research_area = random.choice(all_research_areas)
+
+        user = User(
+            username=username,
+            email=email,
+            password_hash=password,
+            faculty=research_area
+        )
+
+        # Assign 2–5 interests and 1–4 saved projects
+        user.interests = random.sample(all_interests, k=random.randint(2, min(5, len(all_interests))))
+        user.saved_projects = random.sample(all_projects, k=random.randint(1, min(4, len(all_projects))))
+
+        users.append(user)
+        db.session.add(user)
+
+    db.session.commit()
+
+    # Add random connections (after all users exist)
+    for user in users:
+        potential_connections = [u for u in users if u.id != user.id]
+        random.shuffle(potential_connections)
+        for connection in potential_connections[:random.randint(1, 3)]:
+            if connection not in user.connections:
+                user.connections.append(connection)
+
+    db.session.commit()
+    print(f"Inserted {len(users)} test users with connections.")
+
+
+
 if __name__ == "__main__":
     with app.app_context():
         #insert_all_entries(fetch_closed_research(22, 2), batch_size=100)
-        insert_all_entries(fetch_all_open_projects("https://researchdegrees.uwa.edu.au/projects"), batch_size=10)
+        #insert_all_entries(fetch_all_open_projects("https://researchdegrees.uwa.edu.au/projects"), batch_size=10)
+        create_test_users()
