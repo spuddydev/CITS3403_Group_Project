@@ -22,41 +22,6 @@
           </div>
         </div>
       </section>
-
-      <!--trends line chart-->
-      <section class="dashboard-section">
-        <div class="section-header">
-          <h2>Monthly Trend Analysis</h2>
-        </div>
-        <div class="matches-grid">
-          <div class="match-card full-width" style="grid-column: span 2;">
-            <h3 class="match-title">Interest Over Time</h3>
-            <canvas id="trendOverTimeChart"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <!--insights section-->
-      <section class="dashboard-section">
-        <div class="section-header">
-          <h2>Insights & Highlights</h2>
-        </div>
-        <div class="matches-grid">
-          <div class="match-card climate-match">
-            <h3 class="match-title">Least Chosen Field</h3>
-            <p><strong>Mining Technology</strong> saw a 3% decline in engagement. Consider promoting related projects to students.</p>
-          </div>
-          <div class="match-card neuro-match">
-            <h3 class="match-title">Emerging Topics</h3>
-            <ul>
-              <li>AI in Agriculture</li>
-              <li>Neuro-AI Interfaces</li>
-              <li>Climate Resilience Research</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
     </div>
   </div>
 </div>
@@ -101,32 +66,6 @@
       }
     });
 
-    new Chart(document.getElementById('trendOverTimeChart'), {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [
-          {
-            label: 'AI',
-            data: [3, 6, 9, 12, 14],
-            borderColor: '#0071e3',
-            fill: false,
-            tension: 0.3
-          },
-          {
-            label: 'Health',
-            data: [4, 7, 10, 11, 13],
-            borderColor: '#34a853',
-            fill: false,
-            tension: 0.3
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-      }
-    });
   });
 </script>
 {% endblock %}
