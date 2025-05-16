@@ -73,7 +73,7 @@
                 </svg>
             </div>
             <div class="stat-content">
-                <h3>{{ connections|length }}</h3>
+                <h3>{{ connections.count() }}</h3>  <!-- Use .count() instead of |length -->
                 <p>Academic Connections</p>
             </div>
             <div class="stat-action">
@@ -225,45 +225,69 @@
                 </div>
                 
                 <div class="connections-container">
-                    <div class="connection-card">
-                        <div class="connection-avatar">JD</div>
-                        <div class="connection-info">
-                            <h4>John Doe</h4>
-                            <p>AI, Robotics</p>
+                    {% if connections %}
+                        {% for connection in connections %}
+                        <div class="connection-card">
+                            <div class="connection-avatar">{{ connection.username[0] | upper }}</div>
+                            <div class="connection-info">
+                                <h4>{{ connection.username }}</h4>
+                                <p>
+                                    {% if connection.interests %}
+                                        {% for interest in connection.interests[:2] %}
+                                            {{ interest.interest_name }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                        {% if connection.interests|length > 2 %}
+                                            ...
+                                        {% endif %}
+                                    {% else %}
+                                        No interests specified
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <button class="connect-button connected" 
+                                    onclick="disconnectUser({{ connection.id }}, this)" 
+                                    data-user-id="{{ connection.id }}">
+                                Connected
+                            </button>
                         </div>
-                        <button class="connect-button connected">Connected</button>
-                    </div>
-                    
-                    <div class="connection-card">
-                        <div class="connection-avatar">JS</div>
-                        <div class="connection-info">
-                            <h4>Jane Smith</h4>
-                            <p>Health, Neuroscience</p>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-connections-message">
+                            <p>You haven't connected with anyone yet. Check out the suggestions below!</p>
                         </div>
-                        <button class="connect-button connected">Connected</button>
-                    </div>
+                    {% endif %}
                     
+                    {% if suggested_users %}
                     <div class="suggested-connections">
                         <h5>Suggested Connections</h5>
                         
+                        {% for user in suggested_users %}
                         <div class="connection-card suggested">
-                            <div class="connection-avatar">AS</div>
+                            <div class="connection-avatar">{{ user.username[0] | upper }}</div>
                             <div class="connection-info">
-                                <h4>Alan Stein</h4>
-                                <p>Machine Learning</p>
+                                <h4>{{ user.username }}</h4>
+                                <p>
+                                    {% if user.interests %}
+                                        {% for interest in user.interests[:2] %}
+                                            {{ interest.interest_name }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                        {% if user.interests|length > 2 %}
+                                            ...
+                                        {% endif %}
+                                    {% else %}
+                                        No interests specified
+                                    {% endif %}
+                                </p>
                             </div>
-                            <button class="connect-button primary">Connect</button>
+                            <button class="connect-button primary" 
+                                    onclick="connectUser({{ user.id }}, this)" 
+                                    data-user-id="{{ user.id }}">
+                                Connect
+                            </button>
                         </div>
-                        
-                        <div class="connection-card suggested">
-                            <div class="connection-avatar">MR</div>
-                            <div class="connection-info">
-                                <h4>Maria Rodriguez</h4>
-                                <p>Data Science, AI</p>
-                            </div>
-                            <button class="connect-button primary">Connect</button>
-                        </div>
+                        {% endfor %}
                     </div>
+                    {% endif %}
                 </div>
             </section>
         </div>
@@ -314,5 +338,51 @@
     }
 
     updateDateInfo(); 
+</script>
+<script>
+    // Add this to your existing script
+    function connectUser(userId, buttonElement) {
+        fetch(`/connect/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                buttonElement.textContent = 'Connected';
+                buttonElement.classList.remove('primary');
+                buttonElement.classList.add('connected');
+                buttonElement.setAttribute('onclick', `disconnectUser(${userId}, this)`);
+                
+                // You may want to reload the page to refresh all data
+                // window.location.reload();
+            }
+        })
+        .catch(error => console.error('Error connecting user:', error));
+    }
+    
+    function disconnectUser(userId, buttonElement) {
+        fetch(`/disconnect/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                buttonElement.textContent = 'Connect';
+                buttonElement.classList.remove('connected');
+                buttonElement.classList.add('primary');
+                buttonElement.setAttribute('onclick', `connectUser(${userId}, this)`);
+                
+                // You may want to reload the page to refresh all data
+                // window.location.reload();
+            }
+        })
+        .catch(error => console.error('Error disconnecting user:', error));
+    }
 </script>
 {% endblock %}

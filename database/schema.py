@@ -9,10 +9,10 @@ user_interest = db.Table('user_interest',
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
 )
 
-# Add this association table for user connections
-user_connections = db.Table('user_connections',
+# Fixed user connections table
+user_connections = db.Table('connection',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('friend_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    db.Column('connection_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
 )
 
 project_research_area = db.Table('project_research_area',
@@ -35,9 +35,9 @@ user_saved_projects = db.Table('user_saved_projects',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True)
 )
 
-user_connections = db.Table('connection',  # actual table name in the DB
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('connection_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+project_supervisor = db.Table('project_supervisor',
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
+    db.Column('researcher_id', db.Integer, db.ForeignKey('researcher.id'), primary_key=True)
 )
 
 
@@ -51,25 +51,17 @@ class User(db.Model):
     research_area_id = db.Column(db.Integer, db.ForeignKey('research_area.id'))
     faculty = db.relationship('ResearchArea', backref='users')
 
-    # Add this connections relationship
-    connections = db.relationship(
-        'User', 
-        secondary=user_connections,
-        primaryjoin=(id == user_connections.c.user_id),
-        secondaryjoin=(id == user_connections.c.friend_id),
-        backref=db.backref('connected_by', lazy='dynamic'),
-        lazy='dynamic'
-    )
-
     interests = db.relationship('Interest', secondary=user_interest, backref='users')
     saved_projects = db.relationship('Project', secondary=user_saved_projects, backref='saved_by_users')
         
+    # Keep only this connections relationship
     connections = db.relationship(
         'User',
         secondary=user_connections,
         primaryjoin=id == user_connections.c.user_id,
         secondaryjoin=id == user_connections.c.connection_id,
-        back_populates='connections_reverse'
+        back_populates='connections_reverse',
+        lazy='dynamic'  # Add this line
     )
 
     connections_reverse = db.relationship(
@@ -77,7 +69,8 @@ class User(db.Model):
         secondary=user_connections,
         primaryjoin=id == user_connections.c.connection_id,
         secondaryjoin=id == user_connections.c.user_id,
-        back_populates='connections'
+        back_populates='connections',
+        lazy='dynamic'  # Add this line
     )
 
     def set_password(self, password):
@@ -101,10 +94,11 @@ class User(db.Model):
         return False
     
     def is_connected_to(self, user):
-        return self.connections.filter(user_connections.c.friend_id == user.id).count() > 0
+        # Updated to work with InstrumentedList instead of using filter
+        return user in self.connections
     
     def get_all_connections(self):
-        return self.connections.all()
+        return self.connections  # Remove the .all() call
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -120,8 +114,9 @@ class Researcher(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=True)
-    # Remove the backref, use back_populates instead
-    projects = db.relationship('Project', secondary=project_supervisor, back_populates='supervisors')
+    # Change to different relationship names to avoid conflicts
+    supervised_projects = db.relationship('Project', secondary=project_supervisor, back_populates='supervisors')
+    researcher_projects = db.relationship('Project', secondary=project_researcher, back_populates='researchers')
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -135,4 +130,5 @@ class Project(db.Model):
 
     research_areas = db.relationship('ResearchArea', secondary=project_research_area, backref='projects')
     interests = db.relationship('Interest', secondary=project_interest, backref='projects')
-    researchers = db.relationship('Researcher', secondary=project_researcher, backref='projects')
+    researchers = db.relationship('Researcher', secondary=project_researcher, back_populates='researcher_projects')
+    supervisors = db.relationship('Researcher', secondary=project_supervisor, back_populates='supervised_projects')

@@ -105,6 +105,51 @@
         </div>
         {% endfor %}
     </div>
+
+    <div class="pagination-container">
+        {% if pagination.pages > 1 %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('projects', page=pagination.prev_num) }}" class="page-btn prev">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            {% else %}
+            <span class="page-btn prev disabled">
+                <i class="fas fa-chevron-left"></i> Previous
+            </span>
+            {% endif %}
+            
+            <div class="page-numbers">
+                {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == pagination.page %}
+                        <span class="page-num current">{{ page_num }}</span>
+                        {% else %}
+                        <a href="{{ url_for('projects', page=page_num) }}" class="page-num">{{ page_num }}</a>
+                        {% endif %}
+                    {% else %}
+                        <span class="page-ellipsis">…</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            {% if pagination.has_next %}
+            <a href="{{ url_for('projects', page=pagination.next_num) }}" class="page-btn next">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% else %}
+            <span class="page-btn next disabled">
+                Next <i class="fas fa-chevron-right"></i>
+            </span>
+            {% endif %}
+        </div>
+        <div class="page-info">
+            Showing <strong>{{ (pagination.page - 1) * pagination.per_page + 1 }}</strong> to 
+            <strong>{{ (pagination.page - 1) * pagination.per_page + projects|length }}</strong> of 
+            <strong>{{ pagination.total }}</strong> projects
+        </div>
+        {% endif %}
+    </div>
 </div>
 
 <style>
@@ -278,6 +323,93 @@
         box-shadow: var(--shadow-sm);
     }
     
+    .pagination-container {
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .page-btn {
+        padding: 8px 15px;
+        background-color: white;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        text-decoration: none;
+    }
+    
+    .page-btn:hover {
+        background-color: var(--background-medium);
+        transform: translateY(-2px);
+    }
+    
+    .page-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    .page-numbers {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .page-num {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+    
+    .page-num:hover {
+        background-color: var(--background-medium);
+    }
+    
+    .page-num.current {
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+        color: white;
+        cursor: default;
+    }
+    
+    .page-ellipsis {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: var(--text-tertiary);
+    }
+    
+    .page-info {
+        font-size: 14px;
+        color: var(--text-tertiary);
+    }
+    
     @media (max-width: 768px) {
         .projects-container {
             grid-template-columns: 1fr;
@@ -297,24 +429,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const facultyValue = facultyFilter.value.toLowerCase();
         const statusValue = statusFilter.value;
         
-        projects.forEach(project => {
-            let showProject = true;
-            
-            // Apply faculty filter
-            if (facultyValue && !project.getAttribute('data-faculty').includes(facultyValue)) {
-                showProject = false;
-            }
-            
-            // Apply status filter
-            if (statusValue === 'open' && !project.classList.contains('open-project')) {
-                showProject = false;
-            } else if (statusValue === 'closed' && !project.classList.contains('closed-project')) {
-                showProject = false;
-            }
-            
-            // Show or hide based on filters
-            project.style.display = showProject ? 'block' : 'none';
-        });
+        // Create URL with filter parameters
+        let url = new URL(window.location.href);
+        url.searchParams.delete('page'); // Reset to page 1 when filtering
+        
+        if (facultyValue) {
+            url.searchParams.set('faculty', facultyValue);
+        } else {
+            url.searchParams.delete('faculty');
+        }
+        
+        if (statusValue) {
+            url.searchParams.set('status', statusValue);
+        } else {
+            url.searchParams.delete('status');
+        }
+        
+        // Navigate to filtered URL
+        window.location.href = url.toString();
     });
     
     // Save project functionality
