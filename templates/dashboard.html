@@ -73,7 +73,7 @@
                 </svg>
             </div>
             <div class="stat-content">
-                <h3>{{ connections|length }}</h3>
+                <h3>{{ connections.count() if connections is defined and connections.count is callable else 0 }}</h3>
                 <p>Academic Connections</p>
             </div>
             <div class="stat-action">

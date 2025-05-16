@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="{% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}with-sidebar{% else %}full-page{% endif %}">
+<body class="{% if is_authenticated_page or '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path or '/settings' in request.path or '/projects' in request.path or '/saved' in request.path or '/researchers' in request.path or '/profile' in request.path %}with-sidebar{% else %}full-page{% endif %}">
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
@@ -15,34 +15,34 @@
                 <button class="menu-toggle" id="mobileMenuToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <a href="{% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}/dashboard{% else %}/{% endif %}" class="header-logo">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span class="header-logo-text" style="margin-left: 10px;">ResearchMatch</span>
+                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('home') }}" class="navbar-brand">
+                    ResearchMatch
                 </a>
             </div>
             
             <div class="nav-actions">
-                {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}
-                    <div class="nav-action-item">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="nav-action-item">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
+                {% if is_authenticated_page or '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path or '/settings' in request.path or '/projects' in request.path or '/saved' in request.path or '/researchers' in request.path or '/profile' in request.path %}
                     <div class="user-profile">
+                        <div class="nav-action-item">
+                            <a href="{{ url_for('saved') }}">
+                                <i class="fas fa-bell"></i>
+                            </a>
+                        </div>
                         <div class="nav-action-item">
                             <a href="/settings">
                               <i class="fas fa-cog"></i>
                             </a>
                         </div>
-                        <div class="user-avatar">
-                            {{ user_name[0].upper() if user_name else 'U' }}
+                        <div class="nav-action-item">
+                            <a href="{{ url_for('logout') }}" title="Logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </a>
                         </div>
+                        <a href="{{ url_for('profile') }}">
+                            <div class="user-avatar">
+                                {{ user_name[0].upper() if user_name else 'U' }}
+                            </div>
+                        </a>    
                     </div>
                 {% else %}
                     <a href="/login" class="btn-sign-in">Sign In</a>
@@ -51,7 +51,7 @@
         </header>
         
         <!-- Sidebar (only for logged-in users) -->
-        {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}
+        {% if is_authenticated_page or '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path or '/settings' in request.path or '/projects' in request.path or '/saved' in request.path or '/researchers' in request.path or '/profile' in request.path %}
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <h3 class="sidebar-header">Main</h3>
@@ -121,7 +121,21 @@
                     </li>
                 </ul>
             </div>
-            
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-header">Share</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a href="{{ url_for('share_projects_page') }}" class="sidebar-link {% if request.path == '/share_projects' %}active{% endif %}">
+                            <span class="sidebar-icon" style="color: var(--accent-teal);">
+                                <i class="fas fa-share-alt"></i>
+                            </span>
+                            <span class="sidebar-text">Share Projects</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <!-- Sidebar section for Settings -->
             <div class="sidebar-section">
                 <h3 class="sidebar-header">Settings</h3>
@@ -142,8 +156,17 @@
                             <span class="sidebar-text">Preferences</span>
                         </a>
                     </li>
+                    <li class="sidebar-menu-item">
+                        <a href="{{ url_for('logout') }}" class="sidebar-link">
+                            <span class="sidebar-icon" style="color: var(--accent-red);">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span class="sidebar-text">Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
+            
             
             <button class="sidebar-toggle" id="sidebarToggle">
                 <i class="fas fa-chevron-left"></i>
@@ -152,7 +175,7 @@
         {% endif %}
         
         <!-- Main Content -->
-        <main class="main-content {% if '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path %}with-sidebar{% endif %}" id="mainContent">
+        <main class="main-content {% if is_authenticated_page or '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path or '/settings' in request.path or '/projects' in request.path or '/saved' in request.path or '/researchers' in request.path or '/profile' in request.path %}with-sidebar{% endif %}" id="mainContent">
             <div class="content-area">
                 {% block content %}{% endblock %}
             </div>
@@ -161,7 +184,7 @@
                 <p>Lorem ipsum. Footer information.</p>
             </footer>
         </main>
-    </div>
+    </div>  <!-- Close app-container div here, outside of any conditional -->
 
     <script>
         // Sidebar toggle functionality

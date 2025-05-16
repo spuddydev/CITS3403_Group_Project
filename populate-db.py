@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app import app
 import string
 import random
+
 from faker import Faker
 from database.schema import db, User, Project, Interest, ResearchArea
 from werkzeug.security import generate_password_hash

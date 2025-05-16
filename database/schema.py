@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 db = SQLAlchemy()
 
@@ -7,6 +8,11 @@ db = SQLAlchemy()
 user_interest = db.Table('user_interest',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
+)
+
+user_connections = db.Table('connection',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('connection_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
 )
 
 project_research_area = db.Table('project_research_area',
@@ -29,9 +35,10 @@ user_saved_projects = db.Table('user_saved_projects',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True)
 )
 
-user_connections = db.Table('connection',  # actual table name in the DB
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('connection_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+shared_projects = db.Table('shared_projects',
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
+    db.Column('shared_by_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('shared_with_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
 )
 
 
@@ -48,12 +55,14 @@ class User(db.Model):
     interests = db.relationship('Interest', secondary=user_interest, backref='users')
     saved_projects = db.relationship('Project', secondary=user_saved_projects, backref='saved_by_users')
         
+    # Keep only this connections relationship
     connections = db.relationship(
         'User',
         secondary=user_connections,
         primaryjoin=id == user_connections.c.user_id,
         secondaryjoin=id == user_connections.c.connection_id,
-        back_populates='connections_reverse'
+        back_populates='connections_reverse',
+        lazy='dynamic'  
     )
 
     connections_reverse = db.relationship( 
@@ -61,7 +70,8 @@ class User(db.Model):
         secondary=user_connections,
         primaryjoin=id == user_connections.c.connection_id,
         secondaryjoin=id == user_connections.c.user_id,
-        back_populates='connections'
+        back_populates='connections',
+        lazy='dynamic'
     )
 
     def set_password(self, password):
@@ -69,6 +79,26 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def connect_with(self, user):
+        if user.id == self.id:
+            return False
+        if not self.is_connected_to(user):
+            self.connections.append(user)
+            return True
+        return False
+    
+    def disconnect_from(self, user):
+        if self.is_connected_to(user):
+            self.connections.remove(user)
+            return True
+        return False
+    
+    def is_connected_to(self, user):
+        return user in self.connections
+    
+    def get_all_connections(self):
+        return self.connections
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -84,6 +114,7 @@ class Researcher(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=True)
+    researcher_projects = db.relationship('Project', secondary=project_researcher, back_populates='researchers')
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -97,4 +128,4 @@ class Project(db.Model):
 
     research_areas = db.relationship('ResearchArea', secondary=project_research_area, backref='projects')
     interests = db.relationship('Interest', secondary=project_interest, backref='projects')
-    researchers = db.relationship('Researcher', secondary=project_researcher, backref='projects')
+    researchers = db.relationship('Researcher', secondary=project_researcher, back_populates='researcher_projects')
