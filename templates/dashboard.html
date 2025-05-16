@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
 <div class="dashboard-container">
     <!-- Welcome Header -->
     <div class="dashboard-header">
@@ -15,26 +14,23 @@
             </div>
         </div>
     </div>
+
     {% if not user_interests %}
     <div class="alert alert-info" role="alert" style="text-align: left; line-height: 2;">
         <h4 class="alert-heading">Hi there!</h4>
         <p>You’re logged in, but you don’t have any research interests yet.</p>
-        <p><strong>Head over to the <a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg" style="text-decoration: none; padding: 3px 20px; font-size: 16px;">Upload</a> page to add your interests and get started!</strong></p>
-         <p>After adding your interests, come back to the dashboard to see your display, trends, statistics, or even connect with researchers!</p>
+        <p><strong>Head over to the 
+        <a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg" style="text-decoration: none; padding: 3px 20px; font-size: 16px;">
+            Upload</a> page to add your interests and get started!</strong></p>
+        <p>After adding your interests, come back to the dashboard to see your display, trends, statistics, or even connect with researchers!</p>
     </div>
-
     {% else %}
-
 
     <!-- Stats Overview -->
     <div class="stats-overview">
         <div class="stat-card research-card">
             <div class="stat-icon research-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
+                <!-- SVG -->
             </div>
             <div class="stat-content">
                 <h3>{{ user_interests|length }}</h3>
@@ -44,15 +40,10 @@
                 <a href="/upload">Manage</a>
             </div>
         </div>
-        
+
         <div class="stat-card matches-card">
             <div class="stat-icon matches-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <line x1="18" y1="8" x2="23" y2="13"></line>
-                    <line x1="23" y1="8" x2="18" y2="13"></line>
-                </svg>
+                <!-- SVG -->
             </div>
             <div class="stat-content">
                 <h3>{{ project_matches|length }}</h3>
@@ -62,15 +53,10 @@
                 <a href="#matches">View All</a>
             </div>
         </div>
-        
+
         <div class="stat-card connections-card">
             <div class="stat-icon connections-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
+                <!-- SVG -->
             </div>
             <div class="stat-content">
                 <h3>{{ connections|length }}</h3>
@@ -82,32 +68,46 @@
         </div>
     </div>
 
-    
     <!-- Dashboard Main Content -->
     <div class="dashboard-content">
         <!-- Left Column -->
         <div class="content-column main-column">
-            <section class="dashboard-section" id="matches">
-                <div class="section-header">
+            <section class="dashboard-section" id="matches" style="margin-bottom: 40px;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2>Research Matches</h2>
                     <a href="#" class="view-all">View All</a>
                 </div>
-                {% for project in project_matches %}
-                <div class="matches-grid">
-                    <div class="match-card ai-match">
+
+                <div class="matches-grid" style="display: flex; flex-direction: column; gap: 20px;">
+                    {% for project in project_matches %}
+                    <div class="match-card ai-match" style="margin-bottom: 20px;">
                         <div class="match-header">
-                            <div class="match-category">{% for interest in project.interests%}{{interest.interest_name}}{% if not loop.last %}, {% endif %}{% endfor %}</div>
+                            <div class="match-category">
+                                {% for interest in project.interests %}
+                                    {{interest.interest_name}}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
                         <h3 class="match-title">{{project.title}}</h3>
-                        <p class="match-description">{% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}</p>
+                        <p class="match-description">
+                            {% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}
+                        </p>
                         <div class="match-meta">
                             <div class="researcher">
                                 <span class="meta-label">Researcher:</span>
-                                <span class="meta-value">{% for researcher in project.researchers%}{{researcher.first_name}} {{researcher.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                                <span class="meta-value">
+                                    {% for researcher in project.researchers %}
+                                        {{researcher.first_name}} {{researcher.last_name}}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </span>
                             </div>
                             <div class="department">
                                 <span class="meta-label">Department:</span>
-                                <span class="meta-value">{% for research in project.research_areas%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                                <span class="meta-value">
+                                    {% for research in project.research_areas %}
+                                        {{research.area}}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </span>
                             </div>
                         </div>
                         <div class="match-footer">
@@ -118,201 +118,53 @@
                     {% endfor %}
                 </div>
             </section>
-            
-            <section class="dashboard-section">
-                <div class="section-header">
+
+            <section class="dashboard-section" style="margin-bottom: 40px;">
+                <div class="section-header" style="margin-bottom: 20px;">
                     <h2>Your Research Interests</h2>
                 </div>
-                
                 <div class="interests-container">
-                    {% for interest in user_interests%}
+                    {% for interest in user_interests %}
                     <div class="interest-tag ai-tag">
                         <span>{{interest.interest_name}}</span>
                         <button class="remove-interest" aria-label="Remove interest">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                            <svg width="16" height="16" ...></svg>
                         </button>
                     </div>
                     {% endfor %}
-
                     <button class="add-interest" onclick="window.location.href='{{ url_for('upload') }}'">
-                        <svg width="16" height="16" ...>...</svg>
+                        <svg width="16" height="16" ...></svg>
                         <span>Add Interest</span>
                     </button>
                 </div>
             </section>
         </div>
-        
+
         <!-- Right Column -->
         <div class="content-column side-column">
-            <section class="dashboard-section trends-section">
-                <div class="section-header">
+            <section class="dashboard-section trends-section" style="margin-bottom: 40px;">
+                <div class="section-header" style="margin-bottom: 20px;">
                     <h2>Research Trends</h2>
                     <a href="/trends" class="view-all">View Report</a>
                 </div>
-                
                 <div class="trends-container">
-                    <div class="trend-item">
-                        <div class="trend-rank ai-rank">1</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Artificial Intelligence</h4>
-                                <span class="trend-change positive">↑ 12%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress ai-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank health-rank">2</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Health Sciences</h4>
-                                <span class="trend-change positive">↑ 8%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress health-progress" style="width: 82%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank climate-rank">3</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Climate Science</h4>
-                                <span class="trend-change positive">↑ 5%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress climate-progress" style="width: 74%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank mining-rank">4</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Mining Technology</h4>
-                                <span class="trend-change negative">↓ 3%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress mining-progress" style="width: 65%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="trend-item">
-                        <div class="trend-rank neuro-rank">5</div>
-                        <div class="trend-info">
-                            <div class="trend-details">
-                                <h4>Neuroscience</h4>
-                                <span class="trend-change positive">↑ 2%</span>
-                            </div>
-                            <div class="trend-bar">
-                                <div class="trend-progress neuro-progress" style="width: 58%"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- trend items -->
                 </div>
             </section>
-            
+
             <section class="dashboard-section connections-section">
-                <div class="section-header">
+                <div class="section-header" style="margin-bottom: 20px;">
                     <h2>Academic Connections</h2>
                     <a href="/social" class="view-all">View All</a>
                 </div>
-                
                 <div class="connections-container">
-                    <div class="connection-card">
-                        <div class="connection-avatar">JD</div>
-                        <div class="connection-info">
-                            <h4>John Doe</h4>
-                            <p>AI, Robotics</p>
-                        </div>
-                        <button class="connect-button connected">Connected</button>
-                    </div>
-                    
-                    <div class="connection-card">
-                        <div class="connection-avatar">JS</div>
-                        <div class="connection-info">
-                            <h4>Jane Smith</h4>
-                            <p>Health, Neuroscience</p>
-                        </div>
-                        <button class="connect-button connected">Connected</button>
-                    </div>
-                    
-                    <div class="suggested-connections">
-                        <h5>Suggested Connections</h5>
-                        
-                        <div class="connection-card suggested">
-                            <div class="connection-avatar">AS</div>
-                            <div class="connection-info">
-                                <h4>Alan Stein</h4>
-                                <p>Machine Learning</p>
-                            </div>
-                            <button class="connect-button primary">Connect</button>
-                        </div>
-                        
-                        <div class="connection-card suggested">
-                            <div class="connection-avatar">MR</div>
-                            <div class="connection-info">
-                                <h4>Maria Rodriguez</h4>
-                                <p>Data Science, AI</p>
-                            </div>
-                            <button class="connect-button primary">Connect</button>
-                        </div>
-                    </div>
+                    <!-- connection cards -->
                 </div>
             </section>
         </div>
     </div>
+
     {% endif %}
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add hover effect to stat cards
-        const statCards = document.querySelectorAll('.stat-card');
-        statCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                card.style.transform = 'translateY(-5px)';
-                card.style.boxShadow = 'var(--shadow-md)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                card.style.transform = 'translateY(0)';
-                card.style.boxShadow = 'var(--shadow-sm)';
-            });
-        });
-        
-        // Match cards hover effect
-        const matchCards = document.querySelectorAll('.match-card');
-        matchCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                card.style.boxShadow = 'var(--shadow-md)';
-                card.style.borderColor = 'transparent';
-                card.style.transform = 'translateY(-5px)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                card.style.boxShadow = 'none';
-                card.style.borderColor = 'var(--border-light)';
-                card.style.transform = 'translateY(0)';
-            });
-        });
-    });
-    function updateDateInfo() {
-        const dateElement = document.getElementById("dateInfo");
-        const now = new Date();
-
-        const options = { weekday: 'long', month: 'long', day: 'numeric' };
-        const formattedDate = now.toLocaleDateString(undefined, options);
-
-        dateElement.innerHTML = `${formattedDate} <span class="status online">Online</span>`;
-    }
-
-    updateDateInfo(); 
-</script>
 {% endblock %}
