@@ -202,32 +202,44 @@ def register():
 def dashboard():
     user = db.session.query(User).filter_by(id=session['user_id']).first()
     if user.interests:
-        user_interests = user.interests
+        user_interests = user.interests  
+        user_connections = user.connections
     else:
         user_interests = None
+        user_connections = None
     
     all_projects = db.session.query(Project).all()
     
-    # Safely get available projects
+    # Safely get project_matches
     project_matches = []
-    for i in range(min(3, len(all_projects))):
-        project_matches.append(all_projects[i])
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
 
-    # Get user's actual connections from database
-    connections = user.get_all_connections()  
-    
-    # Get suggested connections - don't filter out researchers
-    suggested_users = User.query.filter(User.id != user.id).limit(2).all()
-    suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
+    # Initialize with empty data
+    trend_labels = []
+    trend_data = []
+
+    if user_interests:
+        interest_ids = [interest.id for interest in user_interests]
+        results = db.session.query(
+            Interest.interest_name,
+            func.count(project_interest.c.project_id)
+        ).join(project_interest).filter(
+            Interest.id.in_(interest_ids)
+        ).group_by(Interest.id).all()
+
+        trend_labels = [name for name, count in results]
+        trend_data = [count for name, count in results]
+
 
     return render_template('dashboard.html',
-                           username=session['username'],
-                           user_interests=user_interests,
-                           project_matches=project_matches,
-                           connections=connections,
-                           suggested_users=suggested_users,
-                           is_authenticated_page=True,
-                           user_name=session.get('username'))
+                            username= session['username'],
+                            user_interests= user_interests,
+                            project_matches =project_matches,
+                            connections = user_connections,
+                            trend_data=trend_data,
+                            trend_labels=trend_labels)
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
@@ -412,8 +424,9 @@ def social():
     
     # Get users that current user is not connected with (suggestions)
     # Don't exclude researchers - show all potential connections
-    suggested_users = User.query.filter(User.id != user.id).all()
-    suggested_users = [u for u in suggested_users if not user in connections]
+    suggested_users = User.query.filter(User.id != user.id).distinct().all()
+    suggested_users = [u for u in suggested_users if u not in connections]
+
     
     return render_template('social.html',
                           username=session['username'],
