@@ -73,7 +73,7 @@
                 </svg>
             </div>
             <div class="stat-content">
-                <h3>{{ connections.count() }}</h3>  <!-- Use .count() instead of |length -->
+                <h3>{{ connections.count() if connections is defined and connections.count is callable else 0 }}</h3>
                 <p>Academic Connections</p>
             </div>
             <div class="stat-action">
@@ -87,39 +87,7 @@
     <div class="dashboard-content">
         <!-- Left Column -->
         <div class="content-column main-column">
-            <section class="dashboard-section" id="matches">
-                <div class="section-header">
-                    <h2>Research Matches</h2>
-                    <a href="#" class="view-all">View All</a>
-                </div>
-                {% for project in project_matches %}
-                <div class="matches-grid">
-                    <div class="match-card ai-match">
-                        <div class="match-header">
-                            <div class="match-category">{% for interest in project.interests%}{{interest.interest_name}}{% if not loop.last %}, {% endif %}{% endfor %}</div>
-                        </div>
-                        <h3 class="match-title">{{project.title}}</h3>
-                        <p class="match-description">{% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}</p>
-                        <div class="match-meta">
-                            <div class="supervisor">
-                                <span class="meta-label">Supervisor:</span>
-                                <span class="meta-value">{% for supervisor in project.researchers %}{{supervisor.first_name}} {{supervisor.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
-                            </div>
-                            <div class="department">
-                                <span class="meta-label">Department:</span>
-                                <span class="meta-value">{% for research in project.research_areas%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
-                            </div>
-                        </div>
-                        <div class="match-footer">
-                            <button class="match-action primary">View Details</button>
-                            <button class="match-action secondary">Save</button>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </section>
-            
-            <section class="dashboard-section">
+             <section class="dashboard-section">
                 <div class="section-header">
                     <h2>Your Research Interests</h2>
                 </div>
@@ -140,6 +108,39 @@
                     </button>
                 </div>
             </section>
+            <section class="dashboard-section" id="matches">
+                <div class="section-header">
+                    <h2>Research Matches</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                {% for project in project_matches[0:3] %}
+                <div class="matches-grid">
+                    <div class="match-card ai-match">
+                        <div class="match-header">
+                            <div class="match-category">{% for interest in project.interests%}{{interest.interest_name}}{% if not loop.last %}, {% endif %}{% endfor %}</div>
+                        </div>
+                        <h3 class="match-title">{{project.title}}</h3>
+                        <p class="match-description">{% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}</p>
+                        <div class="match-meta">
+                            <div class="researcher">
+                                <span class="meta-label">Researcher:</span>
+                                <span class="meta-value">{% for researcher in project.researchers%}{{researcher.first_name}} {{researcher.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                            </div>
+                            <div class="department">
+                                <span class="meta-label">Department:</span>
+                                <span class="meta-value">{% for research in project.research_areas%}{{research.area}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                            </div>
+                        </div>
+                        <div class="match-footer">
+                            <button class="match-action primary">View Details</button>
+                            <button class="match-action secondary">Save</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            
+           
         </div>
         
         <!-- Right Column -->
@@ -218,78 +219,38 @@
                 </div>
             </section>
             
-            <section class="dashboard-section connections-section">
-                <div class="section-header">
-                    <h2>Academic Connections</h2>
-                    <a href="/social" class="view-all">View All</a>
-                </div>
-                
-                <div class="connections-container">
-                    {% if connections %}
-                        {% for connection in connections %}
-                        <div class="connection-card">
-                            <div class="connection-avatar">{{ connection.username[0] | upper }}</div>
-                            <div class="connection-info">
-                                <h4>{{ connection.username }}</h4>
-                                <p>
-                                    {% if connection.interests %}
-                                        {% for interest in connection.interests[:2] %}
-                                            {{ interest.interest_name }}{% if not loop.last %}, {% endif %}
-                                        {% endfor %}
-                                        {% if connection.interests|length > 2 %}
-                                            ...
-                                        {% endif %}
-                                    {% else %}
-                                        No interests specified
-                                    {% endif %}
-                                </p>
-                            </div>
-                            <button class="connect-button connected" 
-                                    onclick="disconnectUser({{ connection.id }}, this)" 
-                                    data-user-id="{{ connection.id }}">
-                                Connected
-                            </button>
+    <section class="dashboard-section connections-section">
+        <div class="section-header">
+            <h2>Academic Connections</h2>
+            <a href="/social" class="view-all">View All</a>
+        </div>
+
+        <div class="connections-container">
+            {% if connections %}
+                {% for conn in connections %}
+                    <div class="connection-card">
+                        <div class="connection-avatar">
+                            {{ conn.username[:2]|upper }}
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="no-connections-message">
-                            <p>You haven't connected with anyone yet. Check out the suggestions below!</p>
+                        <div class="connection-info">
+                            <h4>{{ conn.username }}</h4>
+                            <p>
+                                {% if conn.interests %}
+                                    {{ conn.interests | map(attribute='interest_name') | join(', ') }}
+                                {% else %}
+                                    No interests listed
+                                {% endif %}
+                            </p>
                         </div>
-                    {% endif %}
-                    
-                    {% if suggested_users %}
-                    <div class="suggested-connections">
-                        <h5>Suggested Connections</h5>
-                        
-                        {% for user in suggested_users %}
-                        <div class="connection-card suggested">
-                            <div class="connection-avatar">{{ user.username[0] | upper }}</div>
-                            <div class="connection-info">
-                                <h4>{{ user.username }}</h4>
-                                <p>
-                                    {% if user.interests %}
-                                        {% for interest in user.interests[:2] %}
-                                            {{ interest.interest_name }}{% if not loop.last %}, {% endif %}
-                                        {% endfor %}
-                                        {% if user.interests|length > 2 %}
-                                            ...
-                                        {% endif %}
-                                    {% else %}
-                                        No interests specified
-                                    {% endif %}
-                                </p>
-                            </div>
-                            <button class="connect-button primary" 
-                                    onclick="connectUser({{ user.id }}, this)" 
-                                    data-user-id="{{ user.id }}">
-                                Connect
-                            </button>
-                        </div>
-                        {% endfor %}
+                        <button class="connect-button connected">Connected</button>
                     </div>
-                    {% endif %}
-                </div>
-            </section>
+                {% endfor %}
+            {% else %}
+                <p>You have no academic connections yet.</p>
+            {% endif %}
+        </div>
+    </section>
+
         </div>
     </div>
     {% endif %}
@@ -338,51 +299,5 @@
     }
 
     updateDateInfo(); 
-</script>
-<script>
-    // Add this to your existing script
-    function connectUser(userId, buttonElement) {
-        fetch(`/connect/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                buttonElement.textContent = 'Connected';
-                buttonElement.classList.remove('primary');
-                buttonElement.classList.add('connected');
-                buttonElement.setAttribute('onclick', `disconnectUser(${userId}, this)`);
-                
-                // You may want to reload the page to refresh all data
-                // window.location.reload();
-            }
-        })
-        .catch(error => console.error('Error connecting user:', error));
-    }
-    
-    function disconnectUser(userId, buttonElement) {
-        fetch(`/disconnect/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                buttonElement.textContent = 'Connect';
-                buttonElement.classList.remove('connected');
-                buttonElement.classList.add('primary');
-                buttonElement.setAttribute('onclick', `connectUser(${userId}, this)`);
-                
-                // You may want to reload the page to refresh all data
-                // window.location.reload();
-            }
-        })
-        .catch(error => console.error('Error disconnecting user:', error));
-    }
 </script>
 {% endblock %}

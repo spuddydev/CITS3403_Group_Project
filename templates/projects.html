@@ -97,6 +97,9 @@
                 <button class="btn secondary save-project" data-project-id="{{ project.id }}">
                     <i class="fas fa-bookmark"></i> Save
                 </button>
+                <button class="btn tertiary share-project" data-project-id="{{ project.id }}" data-project-title="{{ project.title }}">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
             </div>
         </div>
         {% else %}
@@ -310,6 +313,11 @@
         color: var(--text-primary);
     }
     
+    .btn.tertiary {
+        background-color: var(--accent-teal);
+        color: white;
+    }
+    
     .btn:hover {
         transform: translateY(-2px);
     }
@@ -483,6 +491,33 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+    
+    // Share project functionality
+    const shareButtons = document.querySelectorAll('.share-project');
+    
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            const projectTitle = this.getAttribute('data-project-title');
+            
+            // Option 1: Redirect to share page with project ID
+            window.location.href = `/share_projects?project_id=${projectId}`;
+            
+            // Option 2: If you prefer, show a modal instead
+            // showShareModal(projectId, projectTitle);
+        });
+    });
 });
+
+// Add CSS for the new button type
+.btn.tertiary {
+    background-color: var(--accent-teal);
+    color: white;
+}
+
+.btn.tertiary:hover {
+    transform: translateY(-2px);
+    background-color: #009688;
+}
 </script>
 {% endblock %}

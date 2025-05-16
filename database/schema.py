@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 db = SQLAlchemy()
 
@@ -38,6 +39,13 @@ user_saved_projects = db.Table('user_saved_projects',
 project_supervisor = db.Table('project_supervisor',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
     db.Column('researcher_id', db.Integer, db.ForeignKey('researcher.id'), primary_key=True)
+)
+
+shared_projects = db.Table('shared_projects',
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True),
+    db.Column('shared_by_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('shared_with_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('shared_date', db.DateTime, default=datetime.datetime.utcnow)
 )
 
 

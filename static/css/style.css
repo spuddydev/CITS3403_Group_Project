@@ -2420,3 +2420,15 @@ blockquote {
         flex-direction: column;
     }
 }
+
+/* Add to your stylesheet or include in the style tags of social.html and dashboard.html */
+.user-profile-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.user-profile-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}

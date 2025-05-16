@@ -1,0 +1,516 @@
+{% extends 'base.html' %}
+
+{% block title %}Share Research Projects - ResearchMatch{% endblock %}
+
+{% block content %}
+<div class="share-projects-container">
+    <div class="page-header">
+        <h1>Share Research Projects</h1>
+        <p>Choose which projects to share with your academic connections</p>
+    </div>
+    
+    <div class="share-projects-content">
+        {% if saved_projects %}
+            {% for project in saved_projects %}
+            <div class="share-project-card" data-project-id="{{ project.id }}">
+                <div class="project-info">
+                    <h3 class="project-title">{{ project.title }}</h3>
+                    <div class="project-tags">
+                        {% for interest in project.interests %}
+                        <span class="project-tag">{{ interest.interest_name }}</span>
+                        {% endfor %}
+                    </div>
+                    <p class="project-summary">{{ project.summary }}</p>
+                </div>
+                
+                <div class="share-actions">
+                    <div class="share-stats">
+                        {% if project.id in sharing_stats %}
+                            <span class="shared-with-count">Shared with {{ sharing_stats[project.id] }} connection{% if sharing_stats[project.id] != 1 %}s{% endif %}</span>
+                        {% else %}
+                            <span class="not-shared">Not shared</span>
+                        {% endif %}
+                    </div>
+                    
+                    <button class="btn-share-project" onclick="openShareModal({{ project.id }}, '{{ project.title }}')">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>No saved projects</h3>
+                <p>You haven't saved any research projects yet. Browse the <a href="{{ url_for('projects') }}">Projects</a> page to find and save projects first.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sharing Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share Project</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="shareProjectTitle"></p>
+                
+                <div class="connection-selection">
+                    <h3>Select connections to share with:</h3>
+                    
+                    {% if connections %}
+                        <div class="select-actions">
+                            <button class="select-all">Select All</button>
+                            <button class="deselect-all">Deselect All</button>
+                        </div>
+                        
+                        <div class="connections-list">
+                            {% for connection in connections %}
+                            <div class="connection-option">
+                                <input type="checkbox" id="conn-{{ connection.id }}" value="{{ connection.id }}" class="connection-checkbox">
+                                <label for="conn-{{ connection.id }}">
+                                    <div class="connection-avatar">{{ connection.username[0].upper() }}</div>
+                                    <div class="connection-name">{{ connection.username }}</div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-connections">
+                            <p>You don't have any connections yet. <a href="{{ url_for('social') }}">Connect with researchers</a> to share projects.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeShareModal()">Cancel</button>
+                <button class="btn-share" id="confirmShare" onclick="shareProject()">Share</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .share-projects-container {
+        padding: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        margin-bottom: 30px;
+    }
+    
+    .page-header h1 {
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+    
+    .page-header p {
+        color: var(--text-secondary);
+    }
+    
+    .share-project-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-sm);
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .project-info {
+        flex: 1;
+    }
+    
+    .project-title {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+    
+    .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .project-tag {
+        background-color: rgba(0, 113, 227, 0.1);
+        color: var(--primary-color);
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+    
+    .project-summary {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 0;
+    }
+    
+    .share-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+    
+    .share-stats {
+        font-size: 12px;
+        color: var(--text-tertiary);
+    }
+    
+    .shared-with-count {
+        color: var(--accent-green);
+    }
+    
+    .not-shared {
+        color: var(--text-tertiary);
+    }
+    
+    .btn-share-project {
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    
+    .btn-share-project:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        color: var(--text-tertiary);
+        margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+    
+    .empty-state p {
+        color: var(--text-secondary);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .empty-state a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: var(--shadow-lg);
+        animation: modalFadeIn 0.3s;
+    }
+    
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+    
+    .close-modal {
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-tertiary);
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    #shareProjectTitle {
+        font-weight: 500;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .connection-selection h3 {
+        font-size: 16px;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    
+    .select-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .select-actions button {
+        background-color: transparent;
+        border: 1px solid var(--border-light);
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+    
+    .connections-list {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+    }
+    
+    .connection-option {
+        padding: 10px 15px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .connection-option:last-child {
+        border-bottom: none;
+    }
+    
+    .connection-option label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    
+    .connection-checkbox {
+        margin-right: 15px;
+    }
+    
+    .connection-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+    
+    .no-connections {
+        padding: 20px;
+        text-align: center;
+        color: var(--text-tertiary);
+    }
+    
+    .no-connections a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .btn-cancel {
+        padding: 8px 15px;
+        border: 1px solid var(--border-light);
+        background-color: white;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    
+    .btn-share {
+        padding: 8px 15px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .share-project-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .share-actions {
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+    }
+</style>
+
+<script>
+    let currentProjectId = null;
+    
+    function openShareModal(projectId, projectTitle) {
+        currentProjectId = projectId;
+        
+        // Set project title in modal
+        document.getElementById('shareProjectTitle').textContent = `Sharing: ${projectTitle}`;
+        
+        // Show the modal
+        document.getElementById('shareModal').style.display = 'block';
+        
+        // Get existing sharing data (if available)
+        fetchExistingShares(projectId);
+    }
+    
+    function closeShareModal() {
+        document.getElementById('shareModal').style.display = 'none';
+        currentProjectId = null;
+        
+        // Reset checkboxes
+        document.querySelectorAll('.connection-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+    
+    function fetchExistingShares(projectId) {
+        // This would fetch the connections this project is already shared with
+        // For now, we'll just implement the UI without this functionality
+    }
+    
+    function shareProject() {
+        if (!currentProjectId) return;
+        
+        // Get all selected connections
+        const selectedConnections = [];
+        document.querySelectorAll('.connection-checkbox:checked').forEach(checkbox => {
+            selectedConnections.push(checkbox.value);
+        });
+        
+        // Make API call to share the project
+        fetch(`/share_project/${currentProjectId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_ids: selectedConnections
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the UI to show the new share count
+                const shareStatsElement = document.querySelector(`.share-project-card[data-project-id="${currentProjectId}"] .share-stats`);
+                
+                if (data.shared_count > 0) {
+                    shareStatsElement.innerHTML = `<span class="shared-with-count">Shared with ${data.shared_count} connection${data.shared_count !== 1 ? 's' : ''}</span>`;
+                } else {
+                    shareStatsElement.innerHTML = `<span class="not-shared">Not shared</span>`;
+                }
+                
+                // Close the modal
+                closeShareModal();
+            } else {
+                alert(data.message || 'Error sharing project');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sharing the project');
+        });
+    }
+    
+    // Select all / deselect all buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllButton = document.querySelector('.select-all');
+        const deselectAllButton = document.querySelector('.deselect-all');
+        
+        if (selectAllButton) {
+            selectAllButton.addEventListener('click', function() {
+                document.querySelectorAll('.connection-checkbox').forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+            });
+        }
+        
+        if (deselectAllButton) {
+            deselectAllButton.addEventListener('click', function() {
+                document.querySelectorAll('.connection-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            });
+        }
+        
+        // Close modal when clicking outside or on close button
+        const modal = document.getElementById('shareModal');
+        const closeButton = document.querySelector('.close-modal');
+        
+        if (closeButton) {
+            closeButton.addEventListener('click', closeShareModal);
+        }
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeShareModal();
+            }
+        });
+        
+        // Check if there's a pre-selected project
+        {% if pre_selected_project %}
+            // Automatically open the share modal for this project
+            openShareModal({{ pre_selected_project.id }}, '{{ pre_selected_project.title }}');
+        {% endif %}
+    });
+</script>
+{% endblock %}

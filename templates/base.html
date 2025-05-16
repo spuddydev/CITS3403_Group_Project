@@ -153,6 +153,20 @@
                 </ul>
             </div>
             
+            <div class="sidebar-section">
+                <h3 class="sidebar-header">Share</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a href="{{ url_for('share_projects_page') }}" class="sidebar-link {% if request.path == '/share_projects' %}active{% endif %}">
+                            <span class="sidebar-icon" style="color: var(--accent-teal);">
+                                <i class="fas fa-share-alt"></i>
+                            </span>
+                            <span class="sidebar-text">Share Projects</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
             <button class="sidebar-toggle" id="sidebarToggle">
                 <i class="fas fa-chevron-left"></i>
             </button>

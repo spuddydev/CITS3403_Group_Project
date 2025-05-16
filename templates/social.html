@@ -20,7 +20,11 @@
                         {{ connection.username[0].upper() }}
                     </div>
                     <div class="connection-info">
-                        <h3 class="connection-name">{{ connection.username }}</h3>
+                        <h3 class="connection-name">
+                            <a href="{{ url_for('view_user_profile', username=connection.username) }}" class="user-profile-link">
+                                {{ connection.username }}
+                            </a>
+                        </h3>
                         {% if connection.interests %}
                         <div class="connection-interests">
                             {% for interest in connection.interests %}
