@@ -16,11 +16,6 @@ The sidebar in base.html has been updated with new links, but the template condi
 
 # ResearchMatch - Recent Updates
 
-## Authentication & User Management
-- **Enhanced Login Security**: Implemented JWT token authentication with HTTP-only cookies for improved security
-- **Session Management**: Added proper session handling with user data persistence
-- **Error Feedback**: Improved login form with clear error messages for invalid credentials
-- **Logout Functionality**: Added comprehensive logout that clears both session data and authentication cookies
 
 ## Navigation & UI Consistency
 - **Smart Navigation**: Logo/title now directs to dashboard for logged-in users and home page for guests
@@ -35,7 +30,7 @@ The sidebar in base.html has been updated with new links, but the template condi
 - **Project Details**: Enhanced project cards with comprehensive information display
 
 ## Academic Connections
-- **Connection Management**: Added ability to connect with other researchers/users
+- **Connection Management**: removed ability to connect with other researchers/users, replaced with view profile and contact them 
 - **Suggested Connections**: Algorithm suggests new connections not already in user's network
 - **Connection Interface**: Interactive UI for managing connections with real-time updates
 - **Dashboard Integration**: Academic connections now displayed on dashboard with interaction options
