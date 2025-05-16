@@ -22,13 +22,6 @@
             
             <div class="nav-actions">
                 {% if is_authenticated_page or '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path or '/settings' in request.path or '/projects' in request.path or '/saved' in request.path or '/supervisors' in request.path or '/profile' in request.path %}
-                    <div class="nav-action-item">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="nav-action-item">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
                     <div class="user-profile">
                         <div class="nav-action-item">
                             <a href="/settings">
@@ -40,9 +33,11 @@
                                 <i class="fas fa-sign-out-alt"></i>
                             </a>
                         </div>
-                        <div class="user-avatar">
-                            {{ user_name[0].upper() if user_name else 'U' }}
-                        </div>
+                        <a href="{{ url_for('profile') }}">
+                            <div class="user-avatar">
+                                {{ user_name[0].upper() if user_name else 'U' }}
+                            </div>
+                        </a>
                     </div>
                 {% else %}
                     <a href="/login" class="btn-sign-in">Sign In</a>
