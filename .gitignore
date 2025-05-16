@@ -23,3 +23,4 @@ models/
 
 # Stop tracking database now that it has been finalised
 *.db
+instance/

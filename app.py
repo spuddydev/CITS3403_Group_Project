@@ -259,24 +259,45 @@ def upload():
 @token_required
 def trends():
     user = db.session.query(User).filter_by(id=session['user_id']).first()
-    if user.interests:
-        user_interests = user.interests  # This will give you the list of interests
-    else:
-        user_interests = None
 
-    interest_ids = [interest.id for interest in user_interests]
-    if user_interests:
-        results = db.session.query(
-            Interest.interest_name,
-            func.count(project_interest.c.project_id)
-        ).join(project_interest).filter(
-            Interest.id.in_(interest_ids)
-        ).group_by(Interest.id).all()
+    if not user or not user.interests:
+        return render_template("trends.html",
+                               user_interest_labels=[],
+                               user_interest_data=[],
+                               project_interest_labels=[],
+                               project_interest_data=[])
 
-        trend_labels = [name for name, count in results]
-        trend_data = [count for name, count in results]
+    # Current user's interest IDs
+    interest_ids = [interest.id for interest in user.interests]
 
-    return render_template("trends.html", trend_labels=trend_labels, trend_data=trend_data)
+    # User-specific project interest counts
+    user_interest_results = db.session.query(
+        Interest.interest_name,
+        func.count(project_interest.c.project_id)
+    ).join(project_interest).filter(
+        Interest.id.in_(interest_ids)
+    ).group_by(Interest.id).all()
+
+    project_interest_labels = [name for name, count in user_interest_results]
+    project_interest_data = [count for name, count in user_interest_results]
+
+    # Count how many *other* users share these interests
+    project_interest_results = db.session.query(
+        Interest.interest_name,
+        func.count(user_interest.c.user_id)
+    ).join(user_interest).filter(
+        Interest.id.in_(interest_ids),
+        user_interest.c.user_id != user.id
+    ).group_by(Interest.id).all()
+
+    user_interest_labels = [name for name, count in project_interest_results]
+    user_interest_data = [count for name, count in project_interest_results]
+
+    return render_template("trends.html", 
+                           user_interest_labels=user_interest_labels,
+                           user_interest_data=user_interest_data,
+                           project_interest_labels=project_interest_labels,
+                           project_interest_data=project_interest_data)
 
 
 
