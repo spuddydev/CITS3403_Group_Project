@@ -14,10 +14,9 @@
             <label for="filter-faculty">Faculty:</label>
             <select id="filter-faculty" class="form-control">
                 <option value="">All Faculties</option>
-                <option value="science">Science</option>
-                <option value="engineering">Engineering</option>
-                <option value="medicine">Medicine</option>
-                <option value="arts">Arts</option>
+                {% for area in research_areas %}
+                    <option value="{{ area.area }}">{{ area.area }}</option>
+                {% endfor %}
             </select>
         </div>
         
@@ -30,7 +29,7 @@
             </select>
         </div>
         
-        <button id="apply-filters" class="btn">Apply Filters</button>
+        <button style="transform: translateY(45%);" id="apply-filters" class="btn">Apply Filters</button>
     </div>
 
     <div class="projects-container">
@@ -95,7 +94,7 @@
             <div class="project-actions">
                 <a href="{{ project.link }}" target="_blank" class="btn primary">View Details</a>
                 <button class="btn secondary save-project" data-project-id="{{ project.id }}">
-                    <i class="fas fa-bookmark"></i> Save
+                    <i class="fas fa-bookmark"></i> {{ 'Saved' if project in saved_user_projects else 'Save' }}
                 </button>
                 <button class="btn tertiary share-project" data-project-id="{{ project.id }}" data-project-title="{{ project.title }}">
                     <i class="fas fa-share-alt"></i> Share

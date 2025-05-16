@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="content-container">
-    <h2> Upload Your Research Interests</h2>
+    <h2 style="text-align: center;"> Upload Your Research Interests</h2>
 
     <!-- Flex container to align input, button, and tags -->
     <form action="/upload" method="POST" class="interest-form">
@@ -44,17 +44,41 @@
         {% endif %}
     </form>
 
-    <hr>
-
     <h3>Your Matched Projects</h3>
-    <ul class="list-group">
-        {% for project in matched_projects %}
-        <li class="list-group-item">
-            <strong>{{ project.title }}</strong> - {{ project.researcher }}
-            <a href="{{ project.link }}" class="btn btn-sm">More Info</a>
-        </li>
-        {% endfor %}
-    </ul>
+    {% for project in project_matches[0:15] %}
+        <div class="matches-grid">
+            <div class="match-card ai-match">
+                <div class="match-header">
+                    <div class="match-category">{% for interest in project.interests%}{{interest.interest_name}}{% if not loop.last %}, {% endif %}{% endfor %}</div>
+                </div>
+                <h3 class="match-title">{{project.title}}</h3>
+                <p class="match-description">{% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}</p>
+                <div class="match-meta">
+                    <div class="researcher">
+                        <span class="meta-label">Researcher:</span>
+                        <span class="meta-value">{% for researcher in project.researchers%}{{researcher.first_name}} {{researcher.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                    </div>
+                    <div class="department">
+                        <span class="meta-label">Department:</span>
+                        <span class="meta-value">
+                            {% if project.research_areas %}
+                                {% for research in project.research_areas %}
+                                    {{ research.area }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                No Faculty
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="match-footer">
+                    <button class="match-action primary">View Details</button>
+                    <button class="btn secondary save-project" data-project-id="{{ project.id }}">
+                        <i class="fas fa-bookmark"></i> {{ 'Saved' if project in saved_user_projects else 'Save' }}
+                    </button>
+                </div>
+            </div>
+    {% endfor %}
 
 </div>
 
@@ -229,6 +253,42 @@
                 suggestionsBox.style.display = "none";
             }
         });
+
+    // Save project functionality
+    const saveButtons = document.querySelectorAll('.save-project');
+    
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            
+            fetch(`/save_project/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Toggle save/unsave status
+                    if (data.saved) {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                        this.classList.add('saved');
+                    } else {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Save';
+                        this.classList.remove('saved');
+                    }
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
     });
+});
+
 </script>
 {% endblock %}
