@@ -21,3 +21,5 @@ models/
 # Automatic files
 .DS_Store
 
+# Stop tracking database now that it has been finalised
+*.db
