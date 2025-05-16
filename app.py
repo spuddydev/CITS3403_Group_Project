@@ -198,8 +198,12 @@ def dashboard():
     else:
         user_interests = None
     
-    all_projects = db.session.query(Project).all() # DEVELOPEMENT----getting example projects for now
-    project_matches = [all_projects[0],all_projects[1],all_projects[2]]
+    all_projects = db.session.query(Project).all()
+    
+    # Safely get available projects
+    project_matches = []
+    for i in range(min(3, len(all_projects))):
+        project_matches.append(all_projects[i])
 
     connections = ["person1", "person2"]
 
@@ -273,11 +277,24 @@ def trends():
 @app.route('/social')
 @token_required
 def social():
-    similar_users = [
-        {'name': 'John Doe', 'interests': 'AI, Robotics'},
-        {'name': 'Jane Smith', 'interests': 'Health, Neuroscience'}
-    ]
-    return render_template('social.html', similar_users=similar_users)
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Get current user
+    user = User.query.get(session['user_id'])
+    
+    # Get all user's connections
+    connections = user.get_all_connections()
+    
+    # Get users that current user is not connected with (suggestions)
+    suggested_users = User.query.filter(User.id != user.id).all()
+    suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
+    
+    return render_template('social.html', 
+                          username=session['username'],
+                          connections=connections,
+                          suggested_users=suggested_users[:5])  # Limit to 5 suggestions
+
 
 # Settings Page
 @app.route('/settings')
@@ -299,5 +316,150 @@ def settings():
 
 
 
+# Projects Page
+@app.route('/projects')
+@token_required
+def projects():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get all projects from database
+    all_projects = db.session.query(Project).all()
+    
+    return render_template('projects.html', 
+                          username=session['username'],
+                          projects=all_projects)
+
+# Saved Projects Page
+@app.route('/saved')
+@token_required
+def saved():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get the current user
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+    
+    # Get user's saved projects
+    saved_projects = user.saved_projects if user.saved_projects else []
+    
+    return render_template('saved.html', 
+                          username=session['username'],
+                          saved_projects=saved_projects)
+
+# Supervisors Page
+@app.route('/supervisors')
+@token_required
+def supervisors():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get all supervisors from database
+    all_supervisors = db.session.query(Supervisor).all()
+    
+    return render_template('supervisors.html', 
+                          username=session['username'],
+                          supervisors=all_supervisors)
+
+# User Profile Page
+@app.route('/profile')
+@token_required
+def profile():
+    if not session.get('user_id'):  # Check login status
+        return redirect(url_for('login'))
+    
+    # Get current user
+    user = db.session.query(User).filter_by(id=session['user_id']).first()
+    
+    # If user.faculty is an ID, let's get the actual ResearchArea object
+    if user.faculty is None and user.research_area_id is not None:
+        from database.schema import ResearchArea
+        user.faculty = db.session.query(ResearchArea).filter_by(id=user.research_area_id).first()
+    
+    return render_template('profile.html', 
+                          username=session['username'],
+                          user=user)
+
+# Save Project Route (for AJAX)
+@app.route('/save_project/<int:project_id>', methods=['POST'])
+@token_required
+def save_project(project_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        user = db.session.query(User).filter_by(id=session['user_id']).first()
+        project = db.session.query(Project).filter_by(id=project_id).first()
+        
+        if not project:
+            return jsonify({'success': False, 'message': 'Project not found'}), 404
+        
+        # Check if already saved
+        if project in user.saved_projects:
+            user.saved_projects.remove(project)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Project removed from saved', 'saved': False})
+        else:
+            user.saved_projects.append(project)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Project saved', 'saved': True})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+@app.route('/connect/<int:user_id>', methods=['POST'])
+@token_required
+def connect_user(user_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        current_user = User.query.get(session['user_id'])
+        other_user = User.query.get(user_id)
+        
+        if not other_user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+            
+        if current_user.connect_with(other_user):
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': f'Connected with {other_user.username}',
+                'username': other_user.username,
+                'user_id': other_user.id
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Already connected or invalid operation'}), 400
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/disconnect/<int:user_id>', methods=['POST'])
+@token_required
+def disconnect_user(user_id):
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    try:
+        current_user = User.query.get(session['user_id'])
+        other_user = User.query.get(user_id)
+        
+        if not other_user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+            
+        if current_user.disconnect_from(other_user):
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': f'Disconnected from {other_user.username}',
+                'user_id': other_user.id
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Not connected or invalid operation'}), 400
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)

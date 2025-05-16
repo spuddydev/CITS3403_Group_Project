@@ -91,11 +91,12 @@
                 </ul>
             </div>
             
+            <!-- Sidebar section for Research -->
             <div class="sidebar-section">
                 <h3 class="sidebar-header">Research</h3>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
-                        <a href="#" class="sidebar-link">
+                        <a href="{{ url_for('projects') }}" class="sidebar-link {% if '/projects' in request.path %}active{% endif %}">
                             <span class="sidebar-icon" style="color: var(--accent-pink);">
                                 <i class="fas fa-file-alt"></i>
                             </span>
@@ -103,7 +104,7 @@
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
-                        <a href="#" class="sidebar-link">
+                        <a href="{{ url_for('saved') }}" class="sidebar-link {% if '/saved' in request.path %}active{% endif %}">
                             <span class="sidebar-icon" style="color: var(--accent-orange);">
                                 <i class="fas fa-bookmark"></i>
                             </span>
@@ -111,7 +112,7 @@
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
-                        <a href="#" class="sidebar-link">
+                        <a href="{{ url_for('supervisors') }}" class="sidebar-link {% if '/supervisors' in request.path %}active{% endif %}">
                             <span class="sidebar-icon" style="color: var(--accent-indigo);">
                                 <i class="fas fa-graduation-cap"></i>
                             </span>
@@ -121,11 +122,12 @@
                 </ul>
             </div>
             
+            <!-- Sidebar section for Settings -->
             <div class="sidebar-section">
                 <h3 class="sidebar-header">Settings</h3>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
-                        <a href="#" class="sidebar-link">
+                        <a href="{{ url_for('profile') }}" class="sidebar-link {% if '/profile' in request.path %}active{% endif %}">
                             <span class="sidebar-icon" style="color: var(--accent-red);">
                                 <i class="fas fa-user-circle"></i>
                             </span>
@@ -133,19 +135,11 @@
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
-                        <a href="/settings" class="sidebar-link">
+                        <a href="{{ url_for('settings') }}" class="sidebar-link {% if '/settings' in request.path %}active{% endif %}">
                             <span class="sidebar-icon" style="color: var(--accent-yellow);">
                                 <i class="fas fa-cog"></i>
                             </span>
                             <span class="sidebar-text">Preferences</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-menu-item">
-                        <a href="#" class="sidebar-link">
-                            <span class="sidebar-icon" style="color: var(--accent-green);">
-                                <i class="fas fa-question-circle"></i>
-                            </span>
-                            <span class="sidebar-text">Help & Support</span>
                         </a>
                     </li>
                 </ul>

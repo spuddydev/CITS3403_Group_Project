@@ -11,7 +11,7 @@
         <div class="welcome-message">
             <div class="greeting-container">
                 <h1>Welcome back, <span class="user-name">{{ username }}</span></h1>
-                <p class="date-info">Monday, April 27 • <span class="status online">Online</span></p>
+                <p class="date-info" id="dateInfo"><span class="status online">Online</span></p>
             </div>
         </div>
     </div>
@@ -303,5 +303,16 @@
             });
         });
     });
+    function updateDateInfo() {
+        const dateElement = document.getElementById("dateInfo");
+        const now = new Date();
+
+        const options = { weekday: 'long', month: 'long', day: 'numeric' };
+        const formattedDate = now.toLocaleDateString(undefined, options);
+
+        dateElement.innerHTML = `${formattedDate} <span class="status online">Online</span>`;
+    }
+
+    updateDateInfo(); 
 </script>
 {% endblock %}

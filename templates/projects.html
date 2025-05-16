@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects - ResearchMatch{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>Research Projects</h1>
+        <p class="text-muted">Browse all available research projects</p>
+    </div>
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label for="filter-faculty">Faculty:</label>
+            <select id="filter-faculty" class="form-control">
+                <option value="">All Faculties</option>
+                <option value="science">Science</option>
+                <option value="engineering">Engineering</option>
+                <option value="medicine">Medicine</option>
+                <option value="arts">Arts</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="filter-status">Status:</label>
+            <select id="filter-status" class="form-control">
+                <option value="">All</option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+        
+        <button id="apply-filters" class="btn">Apply Filters</button>
+    </div>
+
+    <div class="projects-container">
+        {% for project in projects %}
+        <div class="project-card {% if project.is_open %}open-project{% else %}closed-project{% endif %}" 
+             data-faculty="{% for area in project.research_area %}{{ area.area|lower }}{% if not loop.last %} {% endif %}{% endfor %}">
+            <div class="project-header">
+                <div class="project-category">
+                    {% for interest in project.interests %}
+                    <span class="category-badge">{{ interest.interest_name }}</span>
+                    {% endfor %}
+                </div>
+                <div class="project-status">
+                    <span class="status-badge {% if project.is_open %}open{% else %}closed{% endif %}">
+                        {{ 'Open' if project.is_open else 'Closed' }}
+                    </span>
+                </div>
+            </div>
+            
+            <h3 class="project-title">{{ project.title }}</h3>
+            
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Supervisor:</span>
+                    <span class="meta-value">
+                        {% for supervisor in project.supervisors %}
+                            {{ supervisor.first_name }} {{ supervisor.last_name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                
+                <div class="meta-item">
+                    <span class="meta-label">Faculty:</span>
+                    <span class="meta-value">
+                        {% for area in project.research_area %}
+                            {{ area.area }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                
+                {% if project.is_open and project.close_date %}
+                <div class="meta-item">
+                    <span class="meta-label">Close Date:</span>
+                    <span class="meta-value">{{ project.close_date.strftime('%d %b %Y') }}</span>
+                </div>
+                {% endif %}
+                
+                {% if not project.is_open and project.publication_date %}
+                <div class="meta-item">
+                    <span class="meta-label">Published:</span>
+                    <span class="meta-value">{{ project.publication_date.strftime('%d %b %Y') }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if project.summary %}
+            <div class="project-summary">
+                <p>{{ project.summary|truncate(200) }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="project-actions">
+                <a href="{{ project.link }}" target="_blank" class="btn primary">View Details</a>
+                <button class="btn secondary save-project" data-project-id="{{ project.id }}">
+                    <i class="fas fa-bookmark"></i> Save
+                </button>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-data-message">
+            <p>No projects found. Please check back later.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        margin-bottom: 30px;
+    }
+    
+    .text-muted {
+        color: var(--text-secondary);
+    }
+    
+    .filters-container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: var(--background-medium);
+        border-radius: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .form-control {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border-light);
+        min-width: 180px;
+    }
+    
+    .projects-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+    }
+    
+    .project-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        border-top: 5px solid;
+    }
+    
+    .open-project {
+        border-color: var(--accent-green);
+    }
+    
+    .closed-project {
+        border-color: var(--accent-purple);
+    }
+    
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    
+    .category-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+        background-color: rgba(0, 113, 227, 0.1);
+        color: var(--primary-color);
+        margin-right: 5px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .status-badge.open {
+        background-color: rgba(52, 199, 89, 0.1);
+        color: var(--accent-green);
+    }
+    
+    .status-badge.closed {
+        background-color: rgba(94, 92, 230, 0.1);
+        color: var(--accent-purple);
+    }
+    
+    .project-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .project-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .meta-item {
+        font-size: 14px;
+    }
+    
+    .meta-label {
+        font-weight: 500;
+        color: var(--text-tertiary);
+    }
+    
+    .meta-value {
+        color: var(--text-primary);
+    }
+    
+    .project-summary {
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .project-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+    }
+    
+    .btn.primary {
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+        color: white;
+    }
+    
+    .btn.secondary {
+        background-color: var(--background-medium);
+        color: var(--text-primary);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .no-data-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    @media (max-width: 768px) {
+        .projects-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality
+    const facultyFilter = document.getElementById('filter-faculty');
+    const statusFilter = document.getElementById('filter-status');
+    const applyButton = document.getElementById('apply-filters');
+    const projects = document.querySelectorAll('.project-card');
+    
+    applyButton.addEventListener('click', function() {
+        const facultyValue = facultyFilter.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        
+        projects.forEach(project => {
+            let showProject = true;
+            
+            // Apply faculty filter
+            if (facultyValue && !project.getAttribute('data-faculty').includes(facultyValue)) {
+                showProject = false;
+            }
+            
+            // Apply status filter
+            if (statusValue === 'open' && !project.classList.contains('open-project')) {
+                showProject = false;
+            } else if (statusValue === 'closed' && !project.classList.contains('closed-project')) {
+                showProject = false;
+            }
+            
+            // Show or hide based on filters
+            project.style.display = showProject ? 'block' : 'none';
+        });
+    });
+    
+    // Save project functionality
+    const saveButtons = document.querySelectorAll('.save-project');
+    
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            
+            fetch(`/save_project/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Toggle save/unsave status
+                    if (data.saved) {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                        this.classList.add('saved');
+                    } else {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Save';
+                        this.classList.remove('saved');
+                    }
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
