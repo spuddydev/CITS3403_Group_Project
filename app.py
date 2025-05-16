@@ -35,13 +35,19 @@ with app.app_context():
         db.create_all()
 
 # Helper functions
-def add_mutual_friend(user_a: User, user_b: User) -> None:
+def add_friend(user_a: User, user_b: User) -> None:
     if user_b not in user_a.connections:
         user_a.connections.append(user_b)
     if user_a not in user_b.connections:
         user_b.connections.append(user_a)
     db.session.commit()
 
+def remove_friend(user_a: User, user_b: User) -> bool:
+    if user_b in user_a.connections:
+        user_a.connections.remove(user_b)
+    if user_a in user_b.connections:
+        user_b.connections.remove(user_a)
+    db.session.commit()
 
 # Routing functions
 def back_to_login():
@@ -194,9 +200,11 @@ def register():
 def dashboard():
     user = db.session.query(User).filter_by(id=session['user_id']).first()
     if user.interests:
-        user_interests = user.interests  # This will give you the list of interests
+        user_interests = user.interests  
+        user_connections = user.connections
     else:
         user_interests = None
+        user_connections = None
     
     all_projects = db.session.query(Project).all()
     
@@ -205,13 +213,12 @@ def dashboard():
     for i in range(min(3, len(all_projects))):
         project_matches.append(all_projects[i])
 
-    connections = ["person1", "person2"]
 
     return render_template('dashboard.html',
                             username= session['username'],
                             user_interests= user_interests,
                             project_matches =project_matches,
-                            connections = connections)
+                            connections = user_connections)
 
 # Upload Page (GET and POST for form)
 @app.route('/upload', methods=['GET', 'POST'])
@@ -284,11 +291,11 @@ def social():
     user = User.query.get(session['user_id'])
     
     # Get all user's connections
-    connections = user.get_all_connections()
+    connections = user.connections
     
     # Get users that current user is not connected with (suggestions)
     suggested_users = User.query.filter(User.id != user.id).all()
-    suggested_users = [u for u in suggested_users if not user.is_connected_to(u)]
+    suggested_users = [u for u in suggested_users if not user in connections]
     
     return render_template('social.html', 
                           username=session['username'],
@@ -347,19 +354,19 @@ def saved():
                           username=session['username'],
                           saved_projects=saved_projects)
 
-# Supervisors Page
-@app.route('/supervisors')
+# Reseachers Page
+@app.route('/researchers')
 @token_required
-def supervisors():
+def researchers():
     if not session.get('user_id'):  # Check login status
         return redirect(url_for('login'))
     
-    # Get all supervisors from database
-    all_supervisors = db.session.query(Supervisor).all()
+    # Get all researchers from database
+    all_researchers = db.session.query(Researcher).all()
     
-    return render_template('supervisors.html', 
+    return render_template('researchers.html', 
                           username=session['username'],
-                          supervisors=all_supervisors)
+                          researchers=all_researchers)
 
 # User Profile Page
 @app.route('/profile')
@@ -407,6 +414,7 @@ def save_project(project_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+    
 @app.route('/connect/<int:user_id>', methods=['POST'])
 @token_required
 def connect_user(user_id):
@@ -419,9 +427,9 @@ def connect_user(user_id):
         
         if not other_user:
             return jsonify({'success': False, 'message': 'User not found'}), 404
-            
-        if current_user.connect_with(other_user):
-            db.session.commit()
+
+        if other_user not in current_user.connections:
+            add_friend(current_user, other_user)
             return jsonify({
                 'success': True, 
                 'message': f'Connected with {other_user.username}',
@@ -429,8 +437,7 @@ def connect_user(user_id):
                 'user_id': other_user.id
             })
         else:
-            return jsonify({'success': False, 'message': 'Already connected or invalid operation'}), 400
-            
+            return jsonify({'success': False, 'message': 'Already connected'}), 400
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
@@ -447,19 +454,20 @@ def disconnect_user(user_id):
         
         if not other_user:
             return jsonify({'success': False, 'message': 'User not found'}), 404
-            
-        if current_user.disconnect_from(other_user):
-            db.session.commit()
+
+        if other_user in current_user.connections:
+            remove_friend(current_user, other_user)
             return jsonify({
                 'success': True, 
                 'message': f'Disconnected from {other_user.username}',
                 'user_id': other_user.id
             })
         else:
-            return jsonify({'success': False, 'message': 'Not connected or invalid operation'}), 400
-            
+            return jsonify({'success': False, 'message': 'Not connected'}), 400
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)

@@ -54,10 +54,10 @@
             
             <div class="project-meta">
                 <div class="meta-item">
-                    <span class="meta-label">Supervisor:</span>
+                    <span class="meta-label">Researcher:</span>
                     <span class="meta-value">
-                        {% for supervisor in project.supervisors %}
-                            {{ supervisor.first_name }} {{ supervisor.last_name }}{% if not loop.last %}, {% endif %}
+                        {% for researcher in project.researchers %}
+                            {{ researcher.first_name }} {{ researcher.last_name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
                 </div>

@@ -101,9 +101,9 @@
                         <h3 class="match-title">{{project.title}}</h3>
                         <p class="match-description">{% if project.is_open %}{{project.summary}}{% else %} Project is closed {% endif %}</p>
                         <div class="match-meta">
-                            <div class="supervisor">
-                                <span class="meta-label">Supervisor:</span>
-                                <span class="meta-value">{% for supervisor in project.researchers %}{{supervisor.first_name}} {{supervisor.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                            <div class="researcher">
+                                <span class="meta-label">Researcher:</span>
+                                <span class="meta-value">{% for researcher in project.researchers%}{{researcher.first_name}} {{researcher.last_name}}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                             </div>
                             <div class="department">
                                 <span class="meta-label">Department:</span>
