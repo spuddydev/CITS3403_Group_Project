@@ -1770,24 +1770,27 @@ blockquote {
 /* Form styles */
 .form-page {
     display: flex;
-    gap: 40px;
+    justify-content: center;   
+    align-items: center;   
     padding: 40px;
-    justify-content: space-between;
-    align-items: flex-start;
+    gap: 40px;
+    min-height: 100vh;  
     flex-wrap: wrap;
   }
   
   form {
-    flex: 1 1 45%;
+    flex: 1 1 100%; 
     max-width: 500px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin: 0 auto;             /* Center horizontally if needed */
   }
   
   form label {
     font-weight: bold;
     margin-bottom: 5px;
+    text-align: left;           /* Keep label alignment clean */
   }
   
   form input[type="text"],
@@ -1827,6 +1830,11 @@ blockquote {
 @media (max-width: 1200px) {
     .stats-overview {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-content {
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
     }
     
     .animated-text {

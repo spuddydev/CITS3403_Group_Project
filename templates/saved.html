@@ -117,15 +117,9 @@
                         <a href="{{ shared.project.link }}" target="_blank" class="btn-view-project">
                             <i class="fas fa-external-link-alt"></i> View Project
                         </a>
-                        {% if not shared.is_saved %}
-                        <button class="btn-save-project" onclick="saveProject({{ shared.project.id }}, this)">
-                            <i class="far fa-bookmark"></i> Save
+                        <button class="btn secondary save-project" data-project-id="{{ shared.project.id }}">
+                            <i class="fas fa-bookmark"></i> {{ 'Saved' if shared.project in saved_user_projects else 'Save' }}
                         </button>
-                        {% else %}
-                        <button class="btn-save-project saved" onclick="saveProject({{ shared.project.id }}, this)">
-                            <i class="fas fa-bookmark"></i> Saved
-                        </button>
-                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -412,12 +406,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Share saved project functionality
-    const shareButtons = document.querySelectorAll('.share-saved');
+    // Save project functionality
+    const saveButtons = document.querySelectorAll('.save-project');
     
-    shareButtons.forEach(button => {
+    saveButtons.forEach(button => {
         button.addEventListener('click', function() {
             const projectId = this.getAttribute('data-project-id');
-            window.location.href = `/share_projects?project_id=${projectId}`;
+            
+            fetch(`/save_project/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Toggle save/unsave status
+                    if (data.saved) {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                        this.classList.add('saved');
+                    } else {
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Save';
+                        this.classList.remove('saved');
+                    }
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
     });
 });
