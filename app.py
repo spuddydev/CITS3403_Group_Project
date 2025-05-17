@@ -277,8 +277,9 @@ def upload():
             db.session.commit()
             flash("Your interests have been cleared.", "success")
 
-        # Re-fetch after changes
+
         user_interests = user.interests if user.interests else []
+
         # Safely get project_matches
         project_matches = []
         if user_interests:
@@ -298,6 +299,7 @@ def upload():
 
     # GET method
     user_interests = user.interests if user.interests else []
+
     # Safely get project_matches
     project_matches = []
     if user_interests:
@@ -767,5 +769,7 @@ def share_project(project_id):
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
+# needed for test.py
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
