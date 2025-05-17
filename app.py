@@ -359,9 +359,6 @@ def projects():
 @app.route('/saved')
 @token_required
 def saved():
-    if not session.get('user_id'):
-        return redirect(url_for('login'))
-    
     # Get the current user
     user = User.query.get(session['user_id'])
     
@@ -437,9 +434,6 @@ def trends():
 @app.route('/social')
 @token_required
 def social():
-    if not session.get('user_id'):
-        return redirect(url_for('login'))
-    
     # Get current user
     user = User.query.get(session['user_id'])
     
@@ -464,8 +458,6 @@ def social():
 @app.route('/profile')
 @token_required
 def profile():
-    if not session.get('user_id'):
-        return redirect(url_for('login'))
     
     # Get the current user with all related data
     user = User.query.get(session['user_id'])

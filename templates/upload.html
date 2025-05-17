@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="match-footer">
-                    <button class="match-action primary">View Details</button>
+                    <a href="{{ project.link }}" class="match-action primary">View Details</a>
                     <button class="btn secondary save-project" data-project-id="{{ project.id }}">
                         <i class="fas fa-bookmark"></i> {{ 'Saved' if project in saved_user_projects else 'Save' }}
                     </button>

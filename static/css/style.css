@@ -671,6 +671,7 @@ a, .btn, .card, .input, .nav-link {
     height: 100%;
 }
 
+
 .node {
     position: absolute;
     width: 80px;
@@ -1159,6 +1160,9 @@ blockquote {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+}
+.dbconnections {
+    transform: translateY(-6px);
 }
 
 .view-all {
@@ -1879,7 +1883,7 @@ blockquote {
     }
     
     .menu-toggle {
-        display: block;
+        display: inline-block;
     }
     
     .main-content {
@@ -2434,3 +2438,4 @@ blockquote {
         flex-direction: column;
     }
 }
+
