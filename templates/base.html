@@ -6,6 +6,7 @@
     <title>{% block title %}ResearchMatch{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="/static/favicon/favicon.ico" type="image/x-icon">
 </head>
 <body class="{% if is_authenticated_page or '/dashboard' in request.path or '/upload' in request.path or '/trends' in request.path or '/social' in request.path or '/settings' in request.path or '/projects' in request.path or '/saved' in request.path or '/researchers' in request.path or '/profile' in request.path %}with-sidebar{% else %}full-page{% endif %}">
     <div class="app-container">
