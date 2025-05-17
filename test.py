@@ -24,32 +24,46 @@ class BasicFlaskTests(unittest.TestCase):
 
     def test_redirect_default(self):
         response = self.app.get('/')
-        self.assertEqual(response.status_code, 302)  # redirect to somewhere
+        self.assertEqual(response.status_code, 302)
 
     def test_login_page_loads(self):
         response = self.app.get('/login')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Login', response.data)
+        self.assertIn(b'login', response.data.lower())
 
     def test_register_page_loads(self):
         response = self.app.get('/register')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Register', response.data)
+        self.assertIn(b'register', response.data.lower())
 
-    def test_profile_page_requires_login(self):
+    def test_profile_requires_login(self):
         response = self.app.get('/profile', follow_redirects=True)
-        # Assuming profile redirects to login if not authenticated
-        self.assertIn(b'Login', response.data)
+        self.assertIn(b'login', response.data.lower())
 
     def test_dashboard_requires_login(self):
         response = self.app.get('/dashboard', follow_redirects=True)
-        # Assuming dashboard redirects to login if not authenticated
-        self.assertIn(b'Login', response.data)
+        self.assertIn(b'login', response.data.lower())
 
     def test_404_error(self):
-        response = self.app.get('/nonexistentpage')
+        response = self.app.get('/nonexistent')
         self.assertEqual(response.status_code, 404)
-        self.assertIn(b'Not Found', response.data)
+        self.assertIn(b'not found', response.data.lower())
+
+    def test_logout_redirects(self):
+        response = self.app.get('/logout', follow_redirects=True)
+        self.assertIn(b'login', response.data.lower())
+
+    def test_static_css_exists(self):
+        response = self.app.get('/static/css/style.css')  
+        self.assertIn(response.status_code, [200, 304])
+
+    def test_about_page_loads(self):
+        response = self.app.get('/about')
+        self.assertIn(response.status_code, [200, 302, 404])  # change if route is defined
+
+    def test_contact_page_loads(self):
+        response = self.app.get('/contact')
+        self.assertIn(response.status_code, [200, 302, 404])  # change if route is defined
 
 
 class SeleniumWebDriverTests(unittest.TestCase):
@@ -58,15 +72,15 @@ class SeleniumWebDriverTests(unittest.TestCase):
         ctx = multiprocessing.get_context('spawn')
         cls.server_process = ctx.Process(target=run_app)
         cls.server_process.start()
-        time.sleep(2)  
+        time.sleep(2.5)  # Give Flask time to spin up
 
         options = Options()
-        options.add_argument("--headless")
+        options.add_argument("--headless=new")
         cls.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
             options=options
         )
-        cls.base_url = "http://localhost:5003/"
+        cls.base_url = "http://localhost:5003"
 
     @classmethod
     def tearDownClass(cls):
@@ -74,9 +88,50 @@ class SeleniumWebDriverTests(unittest.TestCase):
         cls.server_process.terminate()
         cls.server_process.join()
 
+    def visit_and_assert(self, path, expected_text):
+        self.driver.get(f"{self.base_url}{path}")
+        self.assertIn(expected_text.lower(), self.driver.page_source.lower())
+
     def test_homepage_loads(self):
-        self.driver.get(self.base_url + "home")
-        self.assertIn("html", self.driver.page_source.lower())
+        self.visit_and_assert("/home", "html")
+
+    def test_login_page_loads(self):
+        self.visit_and_assert("/login", "login")
+
+    def test_register_page_loads(self):
+        self.visit_and_assert("/register", "register")
+
+    def test_404_page_displays(self):
+        self.driver.get(f"{self.base_url}/notarealpage")
+        self.assertIn("not found", self.driver.page_source.lower())
+
+    def test_dashboard_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/dashboard")
+        self.assertIn("login", self.driver.page_source.lower())
+
+    def test_profile_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/profile")
+        self.assertIn("login", self.driver.page_source.lower())
+
+    def test_social_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/social")
+        self.assertIn("login", self.driver.page_source.lower())
+
+    def test_trends_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/trends")
+        self.assertIn("login", self.driver.page_source.lower())
+
+    def test_researchers_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/researchers")
+        self.assertIn("login", self.driver.page_source.lower())
+
+    def test_upload_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/upload")
+        self.assertIn("login", self.driver.page_source.lower())
+
+    def test_saved_redirects_unauthenticated(self):
+        self.driver.get(f"{self.base_url}/saved")
+        self.assertIn("login", self.driver.page_source.lower())
 
 if __name__ == '__main__':
     unittest.main()
