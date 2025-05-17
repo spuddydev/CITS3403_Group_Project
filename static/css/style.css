@@ -1436,7 +1436,7 @@ blockquote {
 
 /* Trends Section */
 .trends-container {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     gap: 15px;
 }
@@ -1862,6 +1862,11 @@ blockquote {
     
     .sidebar-toggle {
         display: none;
+    }
+
+    .trends-container {
+        display: flex;
+        flex-direction: row;
     }
 
     .content-area {
