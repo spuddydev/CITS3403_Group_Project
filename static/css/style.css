@@ -1879,7 +1879,7 @@ blockquote {
     }
     
     .menu-toggle {
-        display: block;
+        display: inline-block;
     }
     
     .main-content {
