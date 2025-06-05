@@ -230,7 +230,7 @@ def dashboard():
         trend_labels = [name for name, count in results]
         trend_data = [count for name, count in results]
 
-    saved_user_projects = user.saved_projects if user.saved_projects else None
+    saved_user_projects = user.saved_projects if user.saved_projects else []
 
     return render_template('dashboard.html',
                             username= session['username'],
@@ -277,15 +277,16 @@ def upload():
             db.session.commit()
             flash("Your interests have been cleared.", "success")
 
-        # Re-fetch after changes
-        user_interests = user.interests if user.interests else None
+
+        user_interests = user.interests if user.interests else []
+
         # Safely get project_matches
         project_matches = []
         if user_interests:
             interest_ids = [interest.id for interest in user_interests]
             project_matches = db.session.query(Project).join(Project.interests).filter(Interest.id.in_(interest_ids)).distinct().all()
 
-        saved_user_projects = user.saved_projects if user.saved_projects else None
+        saved_user_projects = user.saved_projects if user.saved_projects else []
 
         return render_template('upload.html', 
                               project_matches=project_matches, 
@@ -297,7 +298,8 @@ def upload():
                               user_name=session.get('username'))
 
     # GET method
-    user_interests = user.interests if user.interests else None
+    user_interests = user.interests if user.interests else []
+
     # Safely get project_matches
     project_matches = []
     if user_interests:
@@ -338,7 +340,7 @@ def projects():
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     projects = pagination.items
 
-    saved_user_projects = user.saved_projects if user.saved_projects else None
+    saved_user_projects = user.saved_projects if user.saved_projects else []
 
     research_areas = ResearchArea.query.all()
 
@@ -388,7 +390,7 @@ def saved():
             'is_saved': project in saved_projects
         })
     
-    saved_user_projects = user.saved_projects if user.saved_projects else None
+    saved_user_projects = user.saved_projects if user.saved_projects else []
 
     return render_template('saved.html', 
                           username=session['username'],
@@ -767,5 +769,7 @@ def share_project(project_id):
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
+# needed for test.py
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
